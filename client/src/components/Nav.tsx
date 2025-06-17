@@ -18,7 +18,7 @@ const Nav = () => {
     },
   ];
   return (
-    <div className="  w-full flex justify-between items-center mb-20  ">
+    <div className="  w-full flex justify-between items-center mb-5  ">
       <div>
         <p className=" text-[25px] font-[600] text-[#535bf2] ">SafiPro</p>
       </div>

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { AddOrder } from "../components";
+import { Link } from "react-router";
 
-const Customer = () => {
+const Orders = () => {
   const [addModal, setaddModal] = useState(false);
   const orders = [
     {
@@ -178,7 +179,7 @@ const Customer = () => {
 
   return (
     <div className=" ">
-      <div className="flex w-full justify-end ">
+      <div className="flex w-full justify-end  ">
         <button
           onClick={() => setaddModal(true)}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
@@ -211,16 +212,39 @@ const Customer = () => {
                 <td className="p-4 w-1/4">{item.phone_number}</td>
                 <td className="p-4 w-1/4">{item.status}</td>
                 <td className="p-4 w-1/4">
-                  {" "}
-                  <button>View</button>
+                  <Link to="/orders/101">
+                    <button>View</button>
+                  </Link>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <div className="flex justify-between items-center px-4 py-3">
+          <div className="text-sm text-slate-500">
+            Showing <b>1-5</b> of 45
+          </div>
+          <div className="flex space-x-1">
+            <button className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+              Prev
+            </button>
+            <button className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-white bg-slate-800 border border-slate-800 rounded hover:bg-slate-600 hover:border-slate-600 transition duration-200 ease">
+              1
+            </button>
+            <button className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+              2
+            </button>
+            <button className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+              3
+            </button>
+            <button className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+              Next
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Customer;
+export default Orders;

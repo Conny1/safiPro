@@ -45,3 +45,10 @@ export type Order = {
   is_completed: boolean;
   notes: string;
 };
+
+// types.ts
+export type Branch = {
+  id: string;
+  name: string;
+  location: string;
+};
