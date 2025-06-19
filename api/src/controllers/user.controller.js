@@ -50,9 +50,9 @@ const resetPassword = async (req, resp, next) => {
 };
 
 const getauthUser = async (req, resp, next) => {
-  console.log(req.user._id, req.params.app);
+  console.log(req.user._id);
   try {
-    const user = await userService.getauthUser(req.user._id, req.params.app);
+    const user = await userService.getauthUser(req.user._id);
     resp.status(200).json({ status: 200, data: user });
   } catch (error) {
     return next(createError(error.status || 500, error.message));

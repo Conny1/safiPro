@@ -5,6 +5,11 @@ const deletion = require("./plugins/deletion.plugin");
 
 const brachSchema = new mongoose.Schema(
   {
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // assuming you have a Branch model
+      required: true,
+    },
     name: {
       type: String,
       required: true,

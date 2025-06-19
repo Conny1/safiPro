@@ -68,17 +68,10 @@ const updateUser = {
   }),
 };
 
-const authuser = {
-  params: Joi.object().keys({
-    app: Joi.string().required(),
-  }),
-};
-
 module.exports = {
   createUser,
   login,
   updateUser,
   updateUser,
   resetPassword,
-  authuser,
 };

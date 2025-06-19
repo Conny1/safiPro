@@ -24,6 +24,7 @@ export type addOrder = {
 
 export type Order = {
   order_no: number;
+  branch_id: string;
   name: string;
   email: string;
   phone_number: string;

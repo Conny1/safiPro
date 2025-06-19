@@ -4,8 +4,8 @@ const { objectId } = require("../utils");
 const addNewBranch = {
   body: Joi.object().keys({
     user_id: Joi.string().custom(objectId).required(),
-    name: Joi.string().required(),
-    location: Joi.string().default("").allow(null),
+    name: Joi.string().lowercase().required(),
+    location: Joi.string().lowercase().default("").allow(null),
   }),
 };
 
@@ -27,8 +27,8 @@ const getBranchByid = {
 
 const updateBranch = {
   body: Joi.object().keys({
-    name: Joi.string().required(),
-    location: Joi.string().default("").allow(null),
+    name: Joi.string().lowercase(),
+    location: Joi.string().lowercase(),
   }),
   params: Joi.object().keys({
     id: Joi.string().custom(objectId).required(),

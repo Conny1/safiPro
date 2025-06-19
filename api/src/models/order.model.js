@@ -6,7 +6,7 @@ const deletion = require("./plugins/deletion.plugin");
 const OrderSchema = new mongoose.Schema(
   {
     order_no: {
-      type: Number,
+      type: String,
       required: true,
       unique: true,
     },
@@ -29,6 +29,10 @@ const OrderSchema = new mongoose.Schema(
     },
     amount: {
       type: Number,
+      required: true,
+    },
+    currency: {
+      type: String,
       required: true,
     },
     payment_status: {

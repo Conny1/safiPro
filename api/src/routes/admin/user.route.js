@@ -19,6 +19,7 @@ route.post(
 );
 
 route.post("/login", validate(userValidation.login), userController.login);
+// require authorisation to access
 route.use(verifyTokens);
 route.put(
   "/:id",
@@ -26,10 +27,6 @@ route.put(
   userController.updateUser
 );
 
-route.get(
-  "/auth-user/:app",
-  validate(userValidation.authuser),
-  userController.getauthUser
-);
+route.get("/auth-user", userController.getauthUser);
 
 module.exports = route;

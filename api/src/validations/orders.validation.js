@@ -1,28 +1,93 @@
 const Joi = require("joi");
 const { objectId } = require("../utils/index");
 
-const createInvoice = {
+const createOrder = {
   body: Joi.object().keys({
-    invoice_settings_id: Joi.string().custom(objectId).required(),
-    notes: Joi.string(),
-    user_id: Joi.string().custom(objectId).required(),
-    tax: Joi.number().default(0),
-    discount: Joi.number().default(0),
-    due_date: Joi.date(),
-    status: Joi.string().default("pending"),
-    currency: Joi.string(),
-    client: Joi.string().custom(objectId).required(),
-    items: Joi.array().items(
-      Joi.object({
-        description: Joi.string().required(),
-        quantity: Joi.number().default(1).required(),
-        unit_price: Joi.number().required(),
-      })
-    ),
+    // order_no: Joi.string().optional(),
+    branch_id: Joi.custom(objectId).required(),
+    name: Joi.string().required(),
+    email: Joi.string().email().required(),
+    phone_number: Joi.string().required(),
+    delivery_method: Joi.string()
+      .valid("Pickup", "Customer drop-off")
+      .required(),
+    items_description: Joi.string().default("").allow("", null),
+    service_type: Joi.string()
+      .valid(
+        "Wash Only",
+        "Dry Cleaning",
+        "Ironing",
+        "Wash & Fold",
+        "Full Service",
+        "Wash & Iron"
+      )
+      .required(),
+
+    pickup_date: Joi.string().required(),
+    order_date: Joi.string().optional(),
+    amount: Joi.number().required(),
+    currency: Joi.string().default("KES"),
+    payment_status: Joi.string().valid("pending", "paid").required(),
+    payment_method: Joi.string().valid("cash", "M-Pesa", "card").required(),
+
+    status: Joi.string()
+      .valid("pending", "in-progress", "completed")
+      .required(),
+
+    is_completed: Joi.boolean().default(false),
+    notes: Joi.string().allow("", null),
   }),
 };
 
-const findandfilter = {
+const getOrderById = {
+  params: Joi.object().keys({
+    id: Joi.custom(objectId).required(), // Use .custom(objectId) if using MongoDB
+  }),
+};
+
+const updateOrder = {
+  body: Joi.object().keys({
+    name: Joi.string(),
+    email: Joi.string().email(),
+    phone_number: Joi.string(),
+
+    delivery_method: Joi.string().valid("Pickup", "Customer drop-off"),
+
+    items_description: Joi.string(),
+
+    service_type: Joi.string().valid(
+      "Wash Only",
+      "Dry Cleaning",
+      "Ironing",
+      "Wash & Fold",
+      "Full Service",
+      "Wash & Iron"
+    ),
+
+    pickup_date: Joi.string(),
+    order_date: Joi.string(),
+    amount: Joi.number(),
+    payment_status: Joi.string().valid("pending", "paid"),
+    payment_method: Joi.string().valid("cash", "M-Pesa", "card"),
+
+    status: Joi.string().valid("pending", "in-progress", "completed"),
+
+    is_completed: Joi.boolean(),
+
+    notes: Joi.string().allow("", null),
+  }),
+  params: Joi.object().keys({
+    id: Joi.custom(objectId).required(),
+  }),
+};
+
+const deleteOrder = {
+  params: Joi.object().keys({
+    id: Joi.custom(objectId).required(),
+  }),
+};
+
+const findAndFilterOrders = {
   body: Joi.object().keys({
     sortBy: Joi.string().allow("", null).default(""),
     limit: Joi.number().default(10),
@@ -32,75 +97,10 @@ const findandfilter = {
   }),
 };
 
-const getInvoiceByid = {
-  params: Joi.object().keys({
-    id: Joi.string().custom(objectId).required(),
-  }),
-};
-
-const updateInvoice = {
-  body: Joi.object().keys({
-    user_id: Joi.string().custom(objectId),
-
-    tax: Joi.number(),
-    discount: Joi.number(),
-    due_date: Joi.date(),
-    status: Joi.string(),
-    send_status: Joi.string(),
-    paid_amount: Joi.number(),
-    type: Joi.string(),
-    notes: Joi.string(),
-    currency: Joi.string(),
-    client: Joi.string().custom(objectId),
-    invoice_settings_id: Joi.string().custom(objectId),
-    __v: Joi.number(),
-    items: Joi.array().items(
-      Joi.object({
-        description: Joi.string(),
-        quantity: Joi.number(),
-        unit_price: Joi.number(),
-        total: Joi.number(),
-        _id: Joi.string().custom(objectId),
-      })
-    ),
-  }),
-  params: Joi.object().keys({
-    id: Joi.string().custom(objectId).required(),
-  }),
-};
-
-const deleteInvoice = {
-  params: Joi.object().keys({
-    id: Joi.string().custom(objectId).required(),
-  }),
-};
-
-const invoicesettings = {
-  body: Joi.object().keys({
-    user_id: Joi.string().custom(objectId),
-    company_name: Joi.string().required(),
-    address: Joi.string().required(),
-    logo: Joi.string(),
-  }),
-};
-
-const updateInvoiceSett = {
-  body: Joi.object().keys({
-    company_name: Joi.string(),
-    address: Joi.string(),
-    logo: Joi.string().allow(null, ""),
-  }),
-  params: Joi.object().keys({
-    id: Joi.string().custom(objectId).required(),
-  }),
-};
-
 module.exports = {
-  createInvoice,
-  findandfilter,
-  getInvoiceByid,
-  updateInvoice,
-  deleteInvoice,
-  invoicesettings,
-  updateInvoiceSett,
+  createOrder,
+  getOrderById,
+  updateOrder,
+  deleteOrder,
+  findAndFilterOrders,
 };

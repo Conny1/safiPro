@@ -15,9 +15,10 @@ const createUser = async (body) => {
     const user = new User(body);
     return await user.save();
   } catch (error) {
-    if (error?.errorResponse.code === 11000) {
+    if (error?.errorResponse?.code === 11000) {
       throw createError(400, "Account with that email exists.");
     } else {
+      console.log(error);
       throw new Error(error);
     }
   }
@@ -69,7 +70,7 @@ const updateUser = async (id, body) => {
   return other;
 };
 
-const getauthUser = async (userid, app) => {
+const getauthUser = async (userid) => {
   const user = await User.findById(new ObjectId(userid));
 
   if (!user) {

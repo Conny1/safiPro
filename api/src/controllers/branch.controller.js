@@ -24,9 +24,8 @@ const updateBranch = async (req, resp, next) => {
 };
 
 const getBranchByUserid = async (req, resp, next) => {
-  let userid = req.user._id;
   try {
-    let filter = { user_id: new ObjectId(userid) };
+    let filter = {};
 
     for (key in req.body.match_values) {
       if (req.body.match_values[key]) {

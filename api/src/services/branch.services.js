@@ -4,8 +4,8 @@ const { ObjectId } = require("mongodb");
 
 const addNewBranch = async (body) => {
   const user = await User.findOne({ _id: new ObjectId(body.user_id) });
-  if (user) {
-    throw createError(400, "user with that email exists.");
+  if (!user) {
+    throw createError(404, "user not found");
   }
   try {
     const branch = new Branch(body);
