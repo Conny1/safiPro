@@ -11,6 +11,7 @@ import {
 import AddBranchModal from "../components/NewBranch";
 import { Link } from "react-router";
 import { Listbranches } from "../components";
+import { ToastContainer } from "react-toastify";
 
 const Dashboard = () => {
   const [branchModal, setbranchModal] = useState(false);
@@ -51,6 +52,7 @@ const Dashboard = () => {
 
   return (
     <div className="p-6 space-y-8">
+      <ToastContainer />
       {branchModal && (
         <div>
           <AddBranchModal setbranchModal={setbranchModal} />
@@ -58,10 +60,7 @@ const Dashboard = () => {
       )}
       {lisbranchesModal && (
         <div>
-          <Listbranches
-            branches={allBranches}
-            setlisbranchesModal={setlisbranchesModal}
-          />
+          <Listbranches setlisbranchesModal={setlisbranchesModal} />
         </div>
       )}
 

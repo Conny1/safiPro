@@ -1,5 +1,7 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router";
+import { updateUserData } from "../redux/userSlice";
 
 const Nav = () => {
   let list = [
@@ -17,6 +19,19 @@ const Nav = () => {
       value: "settings",
     },
   ];
+  const dispatch = useDispatch();
+  const logout = () => {
+    dispatch(
+      updateUserData({
+        first_name: "",
+        last_name: "",
+        email: "",
+        token: "",
+        _id: "",
+        subscription_data: {},
+      })
+    );
+  };
   return (
     <div className="  w-full flex justify-between items-center mb-5  ">
       <div>
@@ -28,7 +43,7 @@ const Nav = () => {
             <Link to={item.value}>{item.label}</Link>
           </div>
         ))}
-        <button>Logout</button>
+        <button onClick={logout}>Logout</button>
       </div>
     </div>
   );

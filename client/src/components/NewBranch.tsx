@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { useAddnewBranchMutation } from "../redux/apislice";
+import { useSelector } from "react-redux";
+import type { RootState } from "../redux/store";
+import { toast } from "react-toastify";
 
 type Props = {
   setbranchModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -7,12 +11,19 @@ type Props = {
 const AddBranchModal = ({ setbranchModal }: Props) => {
   const [name, setName] = useState("");
   const [location, setlocation] = useState("");
+  const [addnewBranch, { isLoading: addloading }] = useAddnewBranchMutation();
+  const user = useSelector((state: RootState) => state.user.value);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-    setName("");
-    setbranchModal(false);
+    const resp = await addnewBranch({ user_id: user._id, name, location });
+    if (resp.data?.status == 200) {
+      setName("");
+      setbranchModal(false);
+    } else {
+      toast.error("Try again..");
+    }
   };
 
   return (
@@ -44,10 +55,11 @@ const AddBranchModal = ({ setbranchModal }: Props) => {
             </button>
             <button
               onClick={handleSubmit}
+              disabled={addloading}
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded-md"
             >
-              Add
+              {addloading ? "Loading..." : "Add"}
             </button>
           </div>
         </form>

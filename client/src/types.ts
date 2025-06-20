@@ -49,7 +49,51 @@ export type Order = {
 
 // types.ts
 export type Branch = {
-  id: string;
+  _id?: string;
+  name?: string;
+  location?: string;
+  user_id?: string;
+};
+export type createBranch = {
+  user_id: string;
   name: string;
   location: string;
+};
+
+export type createAccount = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  repeat_password: string;
+};
+
+export type login = {
+  email: string;
+  password: string;
+};
+
+export type user = {
+  email?: string;
+  token?: string;
+  _id?: string;
+  first_name?: string;
+  last_name?: string;
+  subscription_data?: Object;
+  authorization?: Object;
+};
+
+export type findandfilter = {
+  match_values: Object;
+  sortBy: string;
+  limit: number;
+  page: number;
+  search: string;
+};
+
+export type pagination = {
+  page: number;
+  limit: number;
+  totalPages: number;
+  totalResults: number;
 };

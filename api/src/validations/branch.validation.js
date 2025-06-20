@@ -29,6 +29,9 @@ const updateBranch = {
   body: Joi.object().keys({
     name: Joi.string().lowercase(),
     location: Joi.string().lowercase(),
+    user_id: Joi.string().custom(objectId).required(),
+    _id: Joi.string().custom(objectId).required(),
+    __v: Joi.number().optional(),
   }),
   params: Joi.object().keys({
     id: Joi.string().custom(objectId).required(),
