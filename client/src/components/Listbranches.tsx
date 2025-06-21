@@ -28,7 +28,7 @@ const Listbranches = ({ setlisbranchesModal }: Props) => {
   const fetchBranches = () => {
     findAndFilterBranch({
       match_values: { user_id: user._id },
-      sortBy: "_id:1",
+      sortBy: "_id:-1",
       limit: paginationdata.limit,
       page: paginationdata.page,
       search: "",

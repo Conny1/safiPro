@@ -4,9 +4,9 @@ const { objectId } = require("../utils/index");
 const createOrder = {
   body: Joi.object().keys({
     // order_no: Joi.string().optional(),
-    branch_id: Joi.custom(objectId).required(),
+    branch_id: Joi.string().custom(objectId).required(),
     name: Joi.string().required(),
-    email: Joi.string().email().required(),
+    email: Joi.string().email().allow("", null),
     phone_number: Joi.string().required(),
     delivery_method: Joi.string()
       .valid("Pickup", "Customer drop-off")
@@ -48,12 +48,12 @@ const getOrderById = {
 const updateOrder = {
   body: Joi.object().keys({
     name: Joi.string(),
-    email: Joi.string().email(),
+    email: Joi.string().email().allow("", null),
     phone_number: Joi.string(),
 
     delivery_method: Joi.string().valid("Pickup", "Customer drop-off"),
 
-    items_description: Joi.string(),
+    items_description: Joi.string().allow("", null),
 
     service_type: Joi.string().valid(
       "Wash Only",
@@ -73,7 +73,7 @@ const updateOrder = {
     status: Joi.string().valid("pending", "in-progress", "completed"),
 
     is_completed: Joi.boolean(),
-
+    _id: Joi.custom(objectId).required(),
     notes: Joi.string().allow("", null),
   }),
   params: Joi.object().keys({

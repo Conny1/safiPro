@@ -1,26 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router";
-import type { Order } from "../types";
-
-const dummyOrders: Order[] = [
-  {
-    order_no: 101,
-    name: "Jane Wanjiku",
-    email: "jane@example.com",
-    phone_number: "0712345678",
-    amount: 850,
-    payment_status: "paid",
-    payment_method: "M-Pesa",
-    status: "completed",
-    order_date: "2025-06-01",
-    pickup_date: "2025-06-03",
-    service_type: "Wash & Fold",
-    items_description: "3 shirts, 2 trousers, 1 bedsheet",
-    delivery_method: "Pickup",
-    is_completed: true,
-    notes: "Handle shirts gently",
-  },
-];
+import { useGetOrderByIdQuery } from "../redux/apislice";
+import { UpdateOrder } from "../components";
 
 const InfoBlock = ({
   title,
@@ -36,20 +17,30 @@ const InfoBlock = ({
 );
 
 const OrderDetails = () => {
+  const [updateModal, setupdateModal] = useState(false);
   const { id } = useParams();
-  const order = dummyOrders.find((o) => o.order_no.toString() === id);
-
-  if (!order) {
+  const { data, isLoading } = useGetOrderByIdQuery(id as string);
+  const order = data?.data;
+  if (isLoading) {
+    return <p className="text-center text-gray-500 mt-10">Loading...</p>;
+  } else if (!order) {
     return <p className="text-center text-gray-500 mt-10">Order not found.</p>;
   }
 
   return (
     <div className="max-w-5xl mx-auto mt-8 px-4">
+      {updateModal && (
+        <div>
+          <UpdateOrder setupdateModal={setupdateModal} orderData={order} />
+        </div>
+      )}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
           Order #{order.order_no}
         </h1>
-        <p className="text-gray-500 text-sm">Placed on {order.order_date}</p>
+        <p className="text-gray-500 text-sm">
+          Placed on {(order.order_date as string).split("T")[0]}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -67,10 +58,20 @@ const OrderDetails = () => {
 
         <InfoBlock title="Payment Details">
           <p>
-            <strong>Amount:</strong> KES {order.amount.toLocaleString()}
+            <strong>Amount:</strong> KES{" "}
+            {(order.amount as number).toLocaleString()}
           </p>
           <p>
-            <strong>Status:</strong> {order.payment_status}
+            <strong>Status:</strong>
+            <span
+              className={`text-sm font-medium px-2 py-1 rounded-full
+      ${order.payment_status === "paid" && "bg-green-100 text-green-700"}
+      ${order.payment_status === "pending" && "bg-yellow-100 text-yellow-700"}
+     
+    `}
+            >
+              {order.status}
+            </span>
           </p>
           <p>
             <strong>Method:</strong> {order.payment_method}
@@ -88,7 +89,16 @@ const OrderDetails = () => {
 
         <InfoBlock title="Status & Delivery">
           <p>
-            <strong>Status:</strong> {order.status}
+            <strong>Status:</strong>
+            <span
+              className={`text-sm font-medium px-2 py-1 rounded-full
+      ${order.status === "completed" && "bg-green-100 text-green-700"}
+      ${order.status === "pending" && "bg-yellow-100 text-yellow-700"}
+      ${order.status === "in-progress" && "bg-blue-100 text-blue-700"}
+    `}
+            >
+              {order.status}
+            </span>
           </p>
           <p>
             <strong>Completed:</strong> {order.is_completed ? "Yes" : "No"}
@@ -97,7 +107,8 @@ const OrderDetails = () => {
             <strong>Delivery Method:</strong> {order.delivery_method}
           </p>
           <p>
-            <strong>Pickup Date:</strong> {order.pickup_date}
+            <strong>Pickup Date:</strong>{" "}
+            {(order.pickup_date as string).split("T")[0]}
           </p>
         </InfoBlock>
 
@@ -109,6 +120,9 @@ const OrderDetails = () => {
           </div>
         )}
       </div>
+      <button onClick={() => setupdateModal(true)} className="mt-10">
+        Update
+      </button>
     </div>
   );
 };

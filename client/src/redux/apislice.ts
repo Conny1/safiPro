@@ -1,10 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type {
+  addOrder,
   Branch,
   createAccount,
   createBranch,
   findandfilter,
   login,
+  Order,
   pagination,
   user,
 } from "../types";
@@ -72,7 +74,6 @@ export const laundryApi = createApi({
     addnewBranch: build.mutation<
       {
         status: Number;
-        data: Branch;
       },
       createBranch
     >({
@@ -97,7 +98,7 @@ export const laundryApi = createApi({
       }),
     }),
 
-    getBranchById: build.query<{ status: Number; data: user }, string>({
+    getBranchById: build.query<{ status: Number; data: Branch }, string>({
       query: (id) => `/admin/branch/${id}`,
     }),
 
@@ -110,6 +111,52 @@ export const laundryApi = createApi({
     >({
       query: (body) => ({
         url: "/admin/branch/findandfilter",
+        method: "POST",
+        body,
+      }),
+    }),
+
+    // OREDERS
+    createNewOrder: build.mutation<
+      {
+        status: Number;
+      },
+      addOrder
+    >({
+      query: (body) => ({
+        url: "/admin/orders",
+        method: "POST",
+        body,
+      }),
+    }),
+
+    updateOrder: build.mutation<
+      {
+        status: Number;
+        data: Order;
+      },
+      Order
+    >({
+      query: (body) => ({
+        url: `/admin/orders/${body?._id}`,
+        method: "PUT",
+        body,
+      }),
+    }),
+
+    getOrderById: build.query<{ status: Number; data: Order }, string>({
+      query: (id) => `/admin/orders/${id}`,
+    }),
+
+    findAndFilterOrder: build.mutation<
+      {
+        status: Number;
+        data: { results: Order[] } & pagination;
+      },
+      findandfilter
+    >({
+      query: (body) => ({
+        url: "/admin/orders/findandfilter",
         method: "POST",
         body,
       }),
@@ -128,4 +175,8 @@ export const {
   useFindAndFilterBranchMutation,
   useGetBranchByIdQuery,
   useUpdateBranchMutation,
+  useCreateNewOrderMutation,
+  useFindAndFilterOrderMutation,
+  useGetOrderByIdQuery,
+  useUpdateOrderMutation,
 } = laundryApi;

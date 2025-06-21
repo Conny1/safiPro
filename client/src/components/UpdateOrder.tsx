@@ -1,30 +1,31 @@
 import React, { useState } from "react";
-import type { addOrder } from "../types";
-import { useCreateNewOrderMutation } from "../redux/apislice";
+import type { addOrder, Order } from "../types";
+import { useUpdateOrderMutation } from "../redux/apislice";
 import { toast, ToastContainer } from "react-toastify";
 
 type Props = {
-  setaddModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setupdateModal: React.Dispatch<React.SetStateAction<boolean>>;
+  orderData: Order;
 };
 
-const AddOrder = ({ setaddModal }: Props) => {
+const UpdateOrder = ({ setupdateModal, orderData }: Props) => {
   const [formData, setFormData] = useState<addOrder>({
-    name: "",
-    email: "",
-    phone_number: "",
-    delivery_method: "Pickup",
-    items_description: "",
-    service_type: "Wash Only",
-    pickup_date: "",
-    amount: 0,
-    payment_status: "pending",
-    payment_method: "cash",
-    status: "pending",
-    is_completed: false,
-    notes: "",
+    name: orderData.name || "",
+    email: orderData.email || "",
+    phone_number: orderData.phone_number!,
+    delivery_method: orderData.delivery_method || "Pickup",
+    items_description: orderData.items_description || "",
+    service_type: orderData.service_type || "Wash Only",
+    pickup_date: orderData.pickup_date?.split("T")[0] || "",
+    amount: orderData.amount!,
+    payment_status: orderData.payment_status || "pending",
+    payment_method: orderData.payment_method || "cash",
+    status: orderData.status || "pending",
+    is_completed: orderData.is_completed || false,
+    notes: orderData.notes || "",
   });
-  const [createNewOrder, { isLoading: createloading }] =
-    useCreateNewOrderMutation();
+  const [updateOrder, { isLoading: updateloading }] = useUpdateOrderMutation();
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -50,16 +51,11 @@ const AddOrder = ({ setaddModal }: Props) => {
       alert("Phone number is required.");
       return;
     }
-
-    console.log("Submitted Order:", formData);
-    createNewOrder({
-      ...formData,
-      branch_id: "6853e7b75afb07137243d47b",
-      order_date: new Date().toISOString().toString().split("T")[0],
-    })
-      .then((item) => {
-        if (item.data?.status === 200) {
-          toast.success("Success... New order added.");
+    updateOrder({ ...formData, _id: orderData._id })
+      .then((resp) => {
+        if (resp.data?.status === 200) {
+          toast.success("Success...Order updated");
+          // Reset
           setFormData({
             name: "",
             email: "",
@@ -75,18 +71,15 @@ const AddOrder = ({ setaddModal }: Props) => {
             is_completed: false,
             notes: "",
           });
-          setTimeout(() => {
-            setaddModal(false);
-          }, 4000);
+          setupdateModal(false);
         } else {
-          toast.error("Order not added. Try again.");
+          toast.error("Order not updated. Try again.");
         }
       })
       .catch((err) => {
-        toast.error("Try again..");
+        toast.error("Try again...");
         console.log(err);
       });
-    // Reset
   };
 
   return (
@@ -96,7 +89,7 @@ const AddOrder = ({ setaddModal }: Props) => {
         onSubmit={handleSubmit}
         className="h-[70vh] max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6 space-y-6 overflow-y-scroll "
       >
-        <h2 className="text-2xl font-semibold text-gray-800">Add New Order</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">Edit Order</h2>
 
         {/* Customer Info */}
         <div>
@@ -314,17 +307,17 @@ const AddOrder = ({ setaddModal }: Props) => {
         <div className="flex justify-between pt-6">
           <button
             type="button"
-            onClick={() => setaddModal(false)}
+            onClick={() => setupdateModal(false)}
             className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500"
           >
             Cancel
           </button>
           <button
-            disabled={createloading}
+            disabled={updateloading}
             type="submit"
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
           >
-            {createloading ? "Loading..." : "Submit Order"}
+            {updateloading ? "Loading..." : "Update Order"}
           </button>
         </div>
       </form>
@@ -332,4 +325,4 @@ const AddOrder = ({ setaddModal }: Props) => {
   );
 };
 
-export default AddOrder;
+export default UpdateOrder;

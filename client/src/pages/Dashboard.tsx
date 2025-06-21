@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BarChart3,
   DollarSign,
   ShoppingCart,
-  Users,
   PlusCircle,
   Settings,
   List,
@@ -12,10 +11,15 @@ import AddBranchModal from "../components/NewBranch";
 import { Link } from "react-router";
 import { Listbranches } from "../components";
 import { ToastContainer } from "react-toastify";
+import { useFindAndFilterOrderMutation } from "../redux/apislice";
+import type { Order } from "../types";
 
 const Dashboard = () => {
   const [branchModal, setbranchModal] = useState(false);
   const [lisbranchesModal, setlisbranchesModal] = useState(false);
+  const [recentOrders, setrecentOrders] = useState<Order[] | []>([]);
+  const [findAndFilterOrder, { isLoading: findloading }] =
+    useFindAndFilterOrderMutation();
   const stats = [
     { title: "Total Orders", value: 342, icon: <ShoppingCart /> },
     { title: "Completed", value: 290, icon: <BarChart3 /> },
@@ -26,29 +30,24 @@ const Dashboard = () => {
     { id: "1", name: "Westl", location: "Roysambu" },
     { id: "2", name: "Kilii", location: "Westlands" },
   ];
-  const recentOrders = [
-    {
-      order_no: 331,
-      name: "Jane Wanjiku",
-      amount: 500,
-      status: "Pending",
-      date: "2025-06-05",
-    },
-    {
-      order_no: 332,
-      name: "John Mwangi",
-      amount: 1200,
-      status: "Completed",
-      date: "2025-06-04",
-    },
-    {
-      order_no: 333,
-      name: "Lilian Njeri",
-      amount: 800,
-      status: "In Progress",
-      date: "2025-06-03",
-    },
-  ];
+
+  useEffect(() => {
+    findAndFilterOrder({
+      match_values: { branch_id: "6853e7b75afb07137243d47b" },
+      sortBy: "_id:-1",
+      limit: 10,
+      page: 1,
+      search: "",
+    })
+      .then((resp) => {
+        if (resp.data?.status === 200) {
+          setrecentOrders(resp.data.data.results);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <div className="p-6 space-y-8">
@@ -110,21 +109,45 @@ const Dashboard = () => {
                 <th className="p-4 w-1/4">-</th>
               </tr>
             </thead>
-            <tbody className=" max-h-[40vh] bg-grey-light flex flex-col items-center justify-between overflow-y-scroll w-full">
-              {recentOrders.map((item) => (
-                <tr key={item.order_no} className="flex w-full mb-4">
-                  <td className="p-4 w-1/4"> {item.order_no} </td>
-                  <td className="p-4 w-1/4">{item.name || "-"}</td>
-                  {/* <td className="p-4 w-1/4">{item.phone_number}</td> */}
-                  <td className="p-4 w-1/4">{item.status}</td>
-                  <td className="p-4 w-1/4">
-                    <Link to="/orders/101">
-                      <button>View</button>
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            {findloading ? (
+              <p>Loading...</p>
+            ) : (
+              <tbody className=" max-h-[40vh] bg-grey-light flex flex-col items-center overflow-y-scroll w-full">
+                {recentOrders.map((item) => (
+                  <tr key={item._id} className="flex w-full mb-4">
+                    <td className="p-4 w-1/4"> {item.order_no} </td>
+                    <td className="p-4 w-1/4">{item.name || "-"}</td>
+                    {/* <td className="p-4 w-1/4">{item.phone_number}</td> */}
+                    <td className="p-4 w-1/4">
+                      <span
+                        className={`text-sm font-medium px-2 py-1 rounded-full
+                          ${
+                            item.status === "completed" &&
+                            "bg-green-100 text-green-700"
+                          }
+                          ${
+                            item.status === "pending" &&
+                            "bg-yellow-100 text-yellow-700"
+                          }
+                          ${
+                            item.status === "in-progress" &&
+                            "bg-blue-100 text-blue-700"
+                          }
+                        `}
+                      >
+                        {item.status}
+                      </span>
+                    </td>
+
+                    <td className="p-4 w-1/4">
+                      <Link to={`/orders/${item._id}`}>
+                        <button>View</button>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            )}
           </table>
         </div>
       </div>
