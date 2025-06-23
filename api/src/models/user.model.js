@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const paginate = require("./plugins/paginatePulugins");
+const deletion = require("./plugins/deletion.plugin");
 
 const userSchema = mongoose.Schema(
   {
@@ -9,6 +11,10 @@ const userSchema = mongoose.Schema(
     last_name: {
       type: String,
       required: true,
+    },
+    super_admin_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
     },
     email: {
       type: String,
@@ -23,8 +29,24 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    role: {
+      type: String,
+      enum: ["Super Admin", "Admin", "Branch Manager", "Staff"],
+    },
+    branches: [
+      {
+        branch_id: mongoose.Schema.Types.ObjectId,
+        role: {
+          type: String,
+          enum: ["Admin", "Branch Manager", "Staff"],
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
+
+userSchema.plugin(paginate);
+userSchema.plugin(deletion);
 const User = mongoose.model("user", userSchema);
 module.exports = User;

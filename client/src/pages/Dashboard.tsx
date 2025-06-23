@@ -11,29 +11,46 @@ import AddBranchModal from "../components/NewBranch";
 import { Link } from "react-router";
 import { Listbranches } from "../components";
 import { ToastContainer } from "react-toastify";
-import { useFindAndFilterOrderMutation } from "../redux/apislice";
-import type { Order } from "../types";
+import {
+  useFindAndFilterOrderMutation,
+  useGetBranchNamesByuserIdQuery,
+} from "../redux/apislice";
+import type { Branch, Order } from "../types";
+import { useSelector } from "react-redux";
+import type { RootState } from "../redux/store";
 
 const Dashboard = () => {
+  const user = useSelector((state: RootState) => state.user.value);
   const [branchModal, setbranchModal] = useState(false);
+  const [activeBranch, setactiveBranch] = useState("");
   const [lisbranchesModal, setlisbranchesModal] = useState(false);
   const [recentOrders, setrecentOrders] = useState<Order[] | []>([]);
   const [findAndFilterOrder, { isLoading: findloading }] =
     useFindAndFilterOrderMutation();
+  const { data: allBranchesResp } = useGetBranchNamesByuserIdQuery(user._id);
+  const [allBranches, setallBranches] = useState<Branch[] | []>([]);
   const stats = [
     { title: "Total Orders", value: 342, icon: <ShoppingCart /> },
     { title: "Completed", value: 290, icon: <BarChart3 /> },
     { title: "Total Revenue", value: "KES 128,000", icon: <DollarSign /> },
   ];
 
-  const allBranches = [
-    { id: "1", name: "Westl", location: "Roysambu" },
-    { id: "2", name: "Kilii", location: "Westlands" },
-  ];
+  useEffect(() => {
+    if (allBranchesResp && "data" in allBranchesResp) {
+      setallBranches(allBranchesResp.data);
+
+      // Set first branch as default if none is selected
+      if (!activeBranch && allBranchesResp.data.length > 0) {
+        setactiveBranch(allBranchesResp.data[0]._id as string);
+      }
+    }
+  }, [allBranchesResp]);
 
   useEffect(() => {
+    if (!activeBranch) return;
+
     findAndFilterOrder({
-      match_values: { branch_id: "6853e7b75afb07137243d47b" },
+      match_values: { branch_id: activeBranch },
       sortBy: "_id:-1",
       limit: 10,
       page: 1,
@@ -45,9 +62,9 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
-  }, []);
+  }, [activeBranch]);
 
   return (
     <div className="p-6 space-y-8">
@@ -65,12 +82,12 @@ const Dashboard = () => {
 
       <div className="flex justify-between items-center">
         <select
-          // value={activeBranch}
-          // onChange={(e) => setActiveBranch(e.target.value)}
+          value={activeBranch}
+          onChange={(e) => setactiveBranch(e.target.value)}
           className="border border-gray-300 rounded-md px-4 py-2"
         >
           {allBranches.map((b) => (
-            <option key={b.id} value={b.id}>
+            <option key={b._id} value={b._id}>
               {b.name}
             </option>
           ))}

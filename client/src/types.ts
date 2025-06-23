@@ -61,12 +61,21 @@ export type createBranch = {
   location: string;
 };
 
+export const roles = ["Staff"];
+export type Role = (typeof roles)[number];
+
 export type createAccount = {
   first_name: string;
   last_name: string;
   email: string;
   password: string;
   repeat_password: string;
+  role?: Role;
+  branches?: {
+    branch_id: string;
+    role: Role;
+  }[];
+  super_admin_id?: string;
 };
 
 export type login = {
@@ -82,6 +91,20 @@ export type user = {
   last_name?: string;
   subscription_data?: Object;
   authorization?: Object;
+  role?: Role;
+  branches?: {
+    branch_id: string;
+    role: Role;
+  }[];
+  super_admin_id?: string;
+};
+
+export type updatestaff = {
+  email: string;
+  first_name: string;
+  last_name: string;
+  role: Role;
+  branch_id: string;
 };
 
 export type findandfilter = {

@@ -44,10 +44,17 @@ const deleteBranch = {
   }),
 };
 
+const getBranchByUserid = {
+  params: Joi.object().keys({
+    user_id: Joi.string().custom(objectId).required(),
+  }),
+};
+
 module.exports = {
   addNewBranch,
   deleteBranch,
   getBranchByid,
   findandfilter,
   updateBranch,
+  getBranchByUserid,
 };

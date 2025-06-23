@@ -28,7 +28,7 @@ const getOrderByBranchid = async (req, resp, next) => {
     let filter = {};
 
     for (key in req.body.match_values) {
-      if (req.body.match_values[key]) {
+      if (req.body.match_values[key] || req.body.match_values[key] === "") {
         filter[key] = req.body.match_values[key];
       }
       if (ObjectId.isValid(req.body.match_values[key]))
@@ -47,6 +47,7 @@ const getOrderByBranchid = async (req, resp, next) => {
         },
       ];
     }
+    console.log(filter);
     const order = await orderService.getOrderByBranchid(filter, options);
 
     resp.status(200).json({ status: 200, data: order });

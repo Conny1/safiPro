@@ -16,7 +16,7 @@ route.post(
 route.post(
   "/findandfilter",
   validate(branchValidation.findandfilter),
-  branchController.getBranchByUserid
+  branchController.findandfilter
 );
 route.get(
   "/:id",
@@ -32,6 +32,12 @@ route.delete(
   "/:id",
   validate(branchValidation.deleteBranch),
   branchController.deleteBranch
+);
+
+route.get(
+  "/branch/:user_id",
+  validate(branchValidation.getBranchByUserid),
+  branchController.getBranchByUserid
 );
 
 module.exports = route;

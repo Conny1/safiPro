@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Profile } from "../components";
+import { AddnewUser, ListStaff, Profile } from "../components";
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState<"system" | "profile">("system");
@@ -34,11 +34,9 @@ const Settings = () => {
       {activeTab === "system" && (
         <div>
           <h2 className="text-lg font-semibold mb-2">🔧 System Settings</h2>
-          <p className="text-gray-700">
-            Here you can manage global settings like company info, branding,
-            etc.
-          </p>
-          {/* Add more system-related settings here */}
+
+          <AddnewUser />
+          <ListStaff />
         </div>
       )}
 

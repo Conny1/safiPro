@@ -7,3 +7,6 @@ export { default as Login } from "./Login";
 export { default as Signup } from "./Signup";
 export { default as Layout } from "./Layout";
 export { default as UpdateOrder } from "./UpdateOrder";
+export { default as AddnewUser } from "./AddnewUsers";
+export { default as ListStaff } from "./ListStaff";
+export { default as UpdateStaff } from "./UpdateStaff";

@@ -23,12 +23,12 @@ const updateBranch = async (req, resp, next) => {
   }
 };
 
-const getBranchByUserid = async (req, resp, next) => {
+const findandfilter = async (req, resp, next) => {
   try {
     let filter = {};
 
     for (key in req.body.match_values) {
-      if (req.body.match_values[key]) {
+      if (req.body.match_values[key] || req.body.match_values[key] === "") {
         filter[key] = req.body.match_values[key];
       }
       if (ObjectId.isValid(req.body.match_values[key]))
@@ -47,7 +47,18 @@ const getBranchByUserid = async (req, resp, next) => {
         },
       ];
     }
-    const branch = await branchService.getBranchByUserid(filter, options);
+
+    const branch = await branchService.findandfilter(filter, options);
+
+    resp.status(200).json({ status: 200, data: branch });
+  } catch (error) {
+    return next(createError(error.status || 500, error.message));
+  }
+};
+
+const getBranchByUserid = async (req, resp, next) => {
+  try {
+    const branch = await branchService.getBranchByUserid(req.params.user_id);
 
     resp.status(200).json({ status: 200, data: branch });
   } catch (error) {
@@ -81,4 +92,5 @@ module.exports = {
   deleteBranch,
   getBranchByUserid,
   getBranchByid,
+  findandfilter,
 };

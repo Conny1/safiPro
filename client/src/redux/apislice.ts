@@ -39,6 +39,19 @@ export const laundryApi = createApi({
       }),
     }),
 
+    createStaffAccount: build.mutation<
+      {
+        status: Number;
+      },
+      createAccount
+    >({
+      query: (body) => ({
+        url: "/admin/user/create-staff",
+        method: "POST",
+        body,
+      }),
+    }),
+
     login: build.mutation<
       {
         status: Number;
@@ -70,6 +83,22 @@ export const laundryApi = createApi({
     getauthuser: build.query<{ status: Number; data: user }, void>({
       query: () => "/admin/user/auth-user/",
     }),
+
+    findAndFilterUser: build.mutation<
+      {
+        status: Number;
+        data: { results: user[] } & pagination;
+      },
+      findandfilter
+    >({
+      query: (body) => ({
+        url: "/admin/user/findandfilter",
+        method: "POST",
+        body,
+      }),
+    }),
+
+    // BRANCH ROUTES
 
     addnewBranch: build.mutation<
       {
@@ -114,6 +143,13 @@ export const laundryApi = createApi({
         method: "POST",
         body,
       }),
+    }),
+
+    getBranchNamesByuserId: build.query<
+      { status: Number; data: Branch[] },
+      string
+    >({
+      query: (id) => `/admin/branch/branch/${id}`,
     }),
 
     // OREDERS
@@ -179,4 +215,7 @@ export const {
   useFindAndFilterOrderMutation,
   useGetOrderByIdQuery,
   useUpdateOrderMutation,
+  useGetBranchNamesByuserIdQuery,
+  useCreateStaffAccountMutation,
+  useFindAndFilterUserMutation,
 } = laundryApi;

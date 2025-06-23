@@ -24,6 +24,24 @@ const createUser = async (body) => {
   }
 };
 
+const adminCreateEmployee = async (body) => {
+  let password = body.password;
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(password, salt);
+  body.password = hash;
+
+  try {
+    const user = new User(body);
+    return await user.save();
+  } catch (error) {
+    if (error?.errorResponse.code === 11000) {
+      throw createError(400, "Account with that email exists.");
+    } else {
+      throw new Error(error);
+    }
+  }
+};
+
 const login = async (body) => {
   const user = await User.findOne({ email: body.email });
   if (!user) {
@@ -80,4 +98,20 @@ const getauthUser = async (userid) => {
   // const subscription_data = await getSubscriptionData(other._id, app);
   return { ...other, subscription_data: {} };
 };
-module.exports = { createUser, login, updateUser, resetPassword, getauthUser };
+
+const findandfilter = async (filter, options) => {
+  const branch = await User.paginate(filter, options);
+  if (!branch || branch.length === 0) {
+    throw createError(404, "Branch not found.");
+  }
+  return branch;
+};
+module.exports = {
+  createUser,
+  login,
+  updateUser,
+  resetPassword,
+  getauthUser,
+  adminCreateEmployee,
+  findandfilter,
+};

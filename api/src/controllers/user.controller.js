@@ -1,8 +1,28 @@
 const { createError } = require("../configs/errorConfig");
+const { pick } = require("../middlewares/validation");
 const { userService } = require("../services");
+const ObjectId = require("mongoose").Types.ObjectId;
+
 const createUser = async (req, resp, next) => {
   try {
     const user = await userService.createUser(req.body);
+    // add notification config
+    // await subscriptionService.createSubscription({
+    //   userId: user._id,
+    //   app: "invoice",
+    //   packageType: "free",
+    // });
+    resp
+      .status(200)
+      .json({ status: 200, data: { message: "New account created" } });
+  } catch (error) {
+    return next(createError(error.status || 500, error.message));
+  }
+};
+
+const adminCreateEmployee = async (req, resp, next) => {
+  try {
+    const user = await userService.adminCreateEmployee(req.body);
     // add notification config
     // await subscriptionService.createSubscription({
     //   userId: user._id,
@@ -59,4 +79,44 @@ const getauthUser = async (req, resp, next) => {
   }
 };
 
-module.exports = { createUser, login, updateUser, resetPassword, getauthUser };
+const findandfilter = async (req, resp, next) => {
+  try {
+    let filter = {};
+
+    for (key in req.body.match_values) {
+      if (req.body.match_values[key] || req.body.match_values[key] === "") {
+        filter[key] = req.body.match_values[key];
+      }
+      if (ObjectId.isValid(req.body.match_values[key]))
+        filter[key] = new ObjectId(req.body.match_values[key]);
+      else if (Array.isArray(req.body.match_values[key]))
+        filter[key] = { $in: req.body.match_values[key] };
+    }
+    const options = pick(req.body, ["sortBy", "limit", "page"]);
+    if (req.body?.search) {
+      filter["$or"] = [
+        {
+          name: { $regex: ".*" + req.body.search + ".*", $options: "i" },
+        },
+        {
+          email: { $regex: ".*" + req.body.search + ".*", $options: "i" },
+        },
+      ];
+    }
+
+    const user = await userService.findandfilter(filter, options);
+
+    resp.status(200).json({ status: 200, data: user });
+  } catch (error) {
+    return next(createError(error.status || 500, error.message));
+  }
+};
+module.exports = {
+  createUser,
+  login,
+  updateUser,
+  resetPassword,
+  getauthUser,
+  adminCreateEmployee,
+  findandfilter,
+};

@@ -34,9 +34,8 @@ const Signup = ({ onSwitch }: Props) => {
   });
 
   const onSubmit = async (data: createAccount) => {
-    console.log(data);
     try {
-      const resp = await createAccount(data);
+      const resp = await createAccount({ ...data, role: "Super Admin" });
       console.log("Signup response:", resp);
       if (resp.data?.status === 200) {
         toast.success("Success..Log in to proceed.");
