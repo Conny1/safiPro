@@ -52,7 +52,7 @@ const login = async (body) => {
     throw createError(401, "Incorrect email or password.");
   }
   const token = jwt.sign(
-    { email: user.email, _id: user._id },
+    { email: user.email, _id: user._id, role: user.role },
     process.env.JWT_KEY
   );
   const { password, ...other } = user._doc;

@@ -15,19 +15,25 @@ import {
   useFindAndFilterOrderMutation,
   useGetBranchNamesByuserIdQuery,
 } from "../redux/apislice";
-import type { Branch, Order } from "../types";
+import { USER_ROLES, type Branch, type Order } from "../types";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 
 const Dashboard = () => {
   const user = useSelector((state: RootState) => state.user.value);
   const [branchModal, setbranchModal] = useState(false);
-  const [activeBranch, setactiveBranch] = useState("");
+  // SET STATE BASED ON USER ROLES
+  const [activeBranch, setactiveBranch] = useState(
+    user.role === USER_ROLES.SUPER_ADMIN ? "" : user?.branches[0]?.branch_id
+  );
   const [lisbranchesModal, setlisbranchesModal] = useState(false);
   const [recentOrders, setrecentOrders] = useState<Order[] | []>([]);
   const [findAndFilterOrder, { isLoading: findloading }] =
     useFindAndFilterOrderMutation();
-  const { data: allBranchesResp } = useGetBranchNamesByuserIdQuery(user._id);
+  // FETCH BASED ON USER ROLES
+  const { data: allBranchesResp } = useGetBranchNamesByuserIdQuery(user._id, {
+    skip: user.role !== USER_ROLES.SUPER_ADMIN,
+  });
   const [allBranches, setallBranches] = useState<Branch[] | []>([]);
   const stats = [
     { title: "Total Orders", value: 342, icon: <ShoppingCart /> },
@@ -50,7 +56,9 @@ const Dashboard = () => {
     if (!activeBranch) return;
 
     findAndFilterOrder({
-      match_values: { branch_id: activeBranch },
+      match_values: {
+        branch_id: activeBranch,
+      },
       sortBy: "_id:-1",
       limit: 10,
       page: 1,
@@ -80,19 +88,21 @@ const Dashboard = () => {
         </div>
       )}
 
-      <div className="flex justify-between items-center">
-        <select
-          value={activeBranch}
-          onChange={(e) => setactiveBranch(e.target.value)}
-          className="border border-gray-300 rounded-md px-4 py-2"
-        >
-          {allBranches.map((b) => (
-            <option key={b._id} value={b._id}>
-              {b.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      {user.role === USER_ROLES.SUPER_ADMIN && (
+        <div className="flex justify-between items-center">
+          <select
+            value={activeBranch}
+            onChange={(e) => setactiveBranch(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2"
+          >
+            {allBranches.map((b) => (
+              <option key={b._id} value={b._id}>
+                {b.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((stat, i) => (
@@ -173,20 +183,25 @@ const Dashboard = () => {
       <div>
         <h2 className="text-xl font-semibold mb-2">Quick Actions</h2>
         <div className="flex gap-4">
-          <button
-            onClick={() => setbranchModal(true)}
-            className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
-          >
-            <PlusCircle size={18} />
-            New brach
-          </button>
-          <button
-            onClick={() => setlisbranchesModal(true)}
-            className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
-          >
-            <List size={18} />
-            View branches
-          </button>
+          {user.role === USER_ROLES.SUPER_ADMIN && (
+            <>
+              {" "}
+              <button
+                onClick={() => setbranchModal(true)}
+                className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
+              >
+                <PlusCircle size={18} />
+                New brach
+              </button>
+              <button
+                onClick={() => setlisbranchesModal(true)}
+                className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
+              >
+                <List size={18} />
+                View branches
+              </button>
+            </>
+          )}
           <Link to="/order">
             <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
               <PlusCircle size={18} />
@@ -203,13 +218,15 @@ const Dashboard = () => {
       </div>
 
       {/* Chart Placeholder */}
-      <div>
-        <h2 className="text-xl font-semibold mb-2">Revenue Chart</h2>
-        <div className="bg-white shadow-md rounded-lg h-64 flex items-center justify-center text-gray-400">
-          {/* You can plug in a real chart here later (e.g., Recharts or Chart.js) */}
-          Chart Placeholder
+      {user.role === USER_ROLES.SUPER_ADMIN && (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Revenue Chart</h2>
+          <div className="bg-white shadow-md rounded-lg h-64 flex items-center justify-center text-gray-400">
+            {/* You can plug in a real chart here later (e.g., Recharts or Chart.js) */}
+            Chart Placeholder
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -3,8 +3,11 @@ import { AddOrder } from "../components";
 import { Link } from "react-router";
 import type { Order, pagination } from "../types";
 import { useFindAndFilterOrderMutation } from "../redux/apislice";
+import { useSelector } from "react-redux";
+import type { RootState } from "../redux/store";
 
 const Orders = () => {
+  const user = useSelector((state: RootState) => state.user.value);
   const [addModal, setaddModal] = useState(false);
   const [orders, setorders] = useState<Order[] | []>([]);
   const [paginationdata, setpaginationdata] = useState<pagination>({
@@ -13,12 +16,13 @@ const Orders = () => {
     totalPages: 0,
     totalResults: 0,
   });
+
   const [findAndFilterOrder, { isLoading: fetchloading }] =
     useFindAndFilterOrderMutation();
 
-  const fetchBranches = () => {
+  const fetchOrders = () => {
     findAndFilterOrder({
-      match_values: { branch_id: "6853e7b75afb07137243d47b" },
+      match_values: { branch_id: user.branches.map((val) => val?.branch_id) },
       sortBy: "_id:-1",
       limit: paginationdata.limit,
       page: paginationdata.page,
@@ -42,7 +46,7 @@ const Orders = () => {
       });
   };
   useEffect(() => {
-    fetchBranches();
+    fetchOrders();
   }, [paginationdata.page]);
 
   return (

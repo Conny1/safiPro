@@ -1,13 +1,19 @@
-import React, { useState } from "react";
-import type { addOrder } from "../types";
-import { useCreateNewOrderMutation } from "../redux/apislice";
+import React, { useEffect, useState } from "react";
+import { USER_ROLES, type addOrder, type Branch } from "../types";
+import {
+  useCreateNewOrderMutation,
+  useGetBranchNamesByuserIdQuery,
+} from "../redux/apislice";
 import { toast, ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux";
+import type { RootState } from "../redux/store";
 
 type Props = {
   setaddModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const AddOrder = ({ setaddModal }: Props) => {
+  const user = useSelector((state: RootState) => state.user.value);
   const [formData, setFormData] = useState<addOrder>({
     name: "",
     email: "",
@@ -23,6 +29,16 @@ const AddOrder = ({ setaddModal }: Props) => {
     is_completed: false,
     notes: "",
   });
+  // SET STATE BASED ON USER ROLES
+  const [activeBranch, setactiveBranch] = useState(
+    user.role === USER_ROLES.SUPER_ADMIN ? "" : user.branches[0].branch_id
+  );
+  // FETCH BASED ON USER ROLES
+  const { data: allBranchesResp } = useGetBranchNamesByuserIdQuery(user._id, {
+    skip: user.role !== USER_ROLES.SUPER_ADMIN,
+  });
+  const [allBranches, setallBranches] = useState<Branch[] | []>([]);
+
   const [createNewOrder, { isLoading: createloading }] =
     useCreateNewOrderMutation();
   const handleChange = (
@@ -43,6 +59,11 @@ const AddOrder = ({ setaddModal }: Props) => {
       [name]: val,
     }));
   };
+  useEffect(() => {
+    if (allBranchesResp && "data" in allBranchesResp) {
+      setallBranches(allBranchesResp.data);
+    }
+  }, [allBranchesResp]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,10 +72,9 @@ const AddOrder = ({ setaddModal }: Props) => {
       return;
     }
 
-    console.log("Submitted Order:", formData);
     createNewOrder({
       ...formData,
-      branch_id: "6853e7b75afb07137243d47b",
+      branch_id: activeBranch,
       order_date: new Date().toISOString().toString().split("T")[0],
     })
       .then((item) => {
@@ -97,6 +117,22 @@ const AddOrder = ({ setaddModal }: Props) => {
         className="h-[70vh] max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6 space-y-6 overflow-y-scroll "
       >
         <h2 className="text-2xl font-semibold text-gray-800">Add New Order</h2>
+        {/* Branch in Based on roles */}
+        {user.role === USER_ROLES.SUPER_ADMIN && (
+          <div className="flex justify-between items-center">
+            <select
+              value={activeBranch}
+              onChange={(e) => setactiveBranch(e.target.value)}
+              className="border border-gray-300 rounded-md px-4 py-2"
+            >
+              {allBranches.map((b) => (
+                <option key={b._id} value={b._id}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* Customer Info */}
         <div>

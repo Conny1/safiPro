@@ -121,3 +121,10 @@ export type pagination = {
   totalPages: number;
   totalResults: number;
 };
+
+export const USER_ROLES = {
+  SUPER_ADMIN: "Super Admin",
+  ADMIN: "Admin",
+  BRANCH_MANAGER: "Branch Manager",
+  STAFF: "Staff",
+} as const;

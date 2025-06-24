@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { updateUserData } from "../redux/userSlice";
 
 const Nav = () => {
@@ -19,6 +19,7 @@ const Nav = () => {
       value: "settings",
     },
   ];
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const logout = () => {
     dispatch(
@@ -28,9 +29,17 @@ const Nav = () => {
         email: "",
         token: "",
         _id: "",
+        role: "",
         subscription_data: {},
+        branches: [
+          {
+            branch_id: "",
+            role: "",
+          },
+        ],
       })
     );
+    navigate("/auth");
   };
   return (
     <div className="  w-full flex justify-between items-center mb-5  ">

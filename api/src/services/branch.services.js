@@ -9,7 +9,11 @@ const addNewBranch = async (body) => {
   }
   try {
     const branch = new Branch(body);
-    return await branch.save();
+    const data = await branch.save();
+    await User.findByIdAndUpdate(new ObjectId(user._id), {
+      $push: { branches: { role: user.role, branch_id: data._id } },
+    });
+    return data;
   } catch (error) {
     throw new Error(error);
   }

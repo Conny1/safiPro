@@ -9,7 +9,14 @@ export const userSlice = createSlice({
       email: "",
       token: "",
       _id: "",
+      role: "",
       subscription_data: {},
+      branches: [
+        {
+          branch_id: "",
+          role: "",
+        },
+      ],
     },
   },
   reducers: {

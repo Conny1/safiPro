@@ -1,5 +1,5 @@
 const express = require("express");
-const { validate } = require("../../middlewares/validation");
+const { validate, roleValidation } = require("../../middlewares/validation");
 const { branchValidation } = require("../../validations");
 const { branchController } = require("../../controllers");
 const { verifyTokens } = require("../../middlewares/verifyTokens");
@@ -10,32 +10,38 @@ route.use(verifyTokens);
 
 route.post(
   "/",
+  roleValidation,
   validate(branchValidation.addNewBranch),
   branchController.addNewBranch
 );
 route.post(
   "/findandfilter",
+  roleValidation,
   validate(branchValidation.findandfilter),
   branchController.findandfilter
 );
 route.get(
   "/:id",
+  roleValidation,
   validate(branchValidation.getBranchByid),
   branchController.getBranchByid
 );
 route.put(
   "/:id",
+  roleValidation,
   validate(branchValidation.updateBranch),
   branchController.updateBranch
 );
 route.delete(
   "/:id",
+  roleValidation,
   validate(branchValidation.deleteBranch),
   branchController.deleteBranch
 );
 
 route.get(
   "/branch/:user_id",
+  roleValidation,
   validate(branchValidation.getBranchByUserid),
   branchController.getBranchByUserid
 );

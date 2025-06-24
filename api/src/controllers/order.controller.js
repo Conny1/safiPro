@@ -34,7 +34,15 @@ const getOrderByBranchid = async (req, resp, next) => {
       if (ObjectId.isValid(req.body.match_values[key]))
         filter[key] = new ObjectId(req.body.match_values[key]);
       else if (Array.isArray(req.body.match_values[key]))
-        filter[key] = { $in: req.body.match_values[key] };
+        filter[key] = {
+          $in: req.body.match_values[key].map((val) => {
+            if (ObjectId.isValid(val)) {
+              return new ObjectId(val);
+            } else {
+              return val;
+            }
+          }),
+        };
     }
     const options = pick(req.body, ["sortBy", "limit", "page"]);
     if (req.body?.search) {
