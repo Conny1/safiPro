@@ -158,7 +158,7 @@ const Listbranches = ({ setlisbranchesModal }: Props) => {
           <div className="mt-6 flex justify-end space-x-2">
             <button
               onClick={() => setlisbranchesModal(false)}
-              className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
+              className="bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded"
             >
               Close
             </button>

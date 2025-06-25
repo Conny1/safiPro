@@ -124,7 +124,7 @@ const Dashboard = () => {
       {/* Recent Orders */}
       <div>
         <h2 className="text-xl font-semibold mb-2">Recent Orders</h2>
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+        <div className="bg-white shadow-md rounded-lg overflow-x-scroll lg:overflow-hidden">
           <table className="text-left w-full">
             <thead className="bg-[#535bf2] flex text-white w-full">
               <tr className="flex w-full mb-4">
@@ -182,20 +182,20 @@ const Dashboard = () => {
       {/* Quick Actions */}
       <div>
         <h2 className="text-xl font-semibold mb-2">Quick Actions</h2>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           {user.role === USER_ROLES.SUPER_ADMIN && (
             <>
               {" "}
               <button
                 onClick={() => setbranchModal(true)}
-                className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
               >
                 <PlusCircle size={18} />
                 New brach
               </button>
               <button
                 onClick={() => setlisbranchesModal(true)}
-                className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
               >
                 <List size={18} />
                 View branches
@@ -209,7 +209,7 @@ const Dashboard = () => {
             </button>
           </Link>
           <Link to="/settings ">
-            <button className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
+            <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
               <Settings size={18} />
               Settings
             </button>

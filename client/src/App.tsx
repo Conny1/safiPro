@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router";
 import {
   Auth,
   Dashboard,
+  LandingPpage,
   OrderDetails,
   Orders,
   Payments,
@@ -15,8 +16,10 @@ function App() {
     <div>
       <Routes>
         <Route path="/auth" element={<Auth />} />
+        <Route path="/" element={<LandingPpage />} />
+
         <Route element={<Layout />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/payment" element={<Payments />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/order" element={<Orders />} />

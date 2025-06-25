@@ -50,7 +50,7 @@ const Orders = () => {
   }, [paginationdata.page]);
 
   return (
-    <div className=" ">
+    <div className="">
       <div className="flex w-full justify-end  ">
         <button
           onClick={() => setaddModal(true)}
@@ -64,8 +64,8 @@ const Orders = () => {
           </div>
         )}
       </div>
-      <div className=" w-full mt-10  ">
-        <table className="text-left w-full">
+      <div className=" w-full mt-10   overflow-x-scroll lg:overflow-x-hidden ">
+        <table className="text-left w-full ">
           <thead className="bg-[#535bf2] flex text-white w-full">
             <tr className="flex w-full mb-4">
               <th className="p-4 w-1/4">Order No.</th>
@@ -79,7 +79,7 @@ const Orders = () => {
           {fetchloading ? (
             <p>Loading...</p>
           ) : (
-            <tbody className=" h-[70vh] bg-grey-light flex flex-col items-center  overflow-y-scroll w-full">
+            <tbody className=" bg-grey-light flex flex-col items-center  overflow-y-scroll w-full">
               {orders.map((item) => (
                 <tr key={item._id} className=" flex w-full mb-4">
                   <td className="p-4 w-1/4"> {item.order_no} </td>
@@ -116,39 +116,37 @@ const Orders = () => {
             </tbody>
           )}
         </table>
+      </div>
+      <div className="flex justify-between items-center px-4 py-3">
+        <div className="text-sm text-slate-500">
+          Showing <b>{paginationdata.page} </b> of {paginationdata.totalPages}
+        </div>
+        <div className="flex space-x-1">
+          <button
+            onClick={() => {
+              setpaginationdata((prev) => ({
+                ...prev,
 
-        <div className="flex justify-between items-center px-4 py-3">
-          <div className="text-sm text-slate-500">
-            Showing <b>{paginationdata.page} </b> of {paginationdata.totalPages}
-          </div>
-          <div className="flex space-x-1">
-            <button
-              onClick={() => {
-                setpaginationdata((prev) => ({
-                  ...prev,
+                page: prev.page === 1 ? 1 : -1,
+              }));
+            }}
+            className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease"
+          >
+            Prev
+          </button>
 
-                  page: prev.page === 1 ? 1 : -1,
-                }));
-              }}
-              className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease"
-            >
-              Prev
-            </button>
+          <button
+            onClick={() => {
+              setpaginationdata((prev) => ({
+                ...prev,
 
-            <button
-              onClick={() => {
-                setpaginationdata((prev) => ({
-                  ...prev,
-
-                  page:
-                    prev.page === paginationdata.totalPages ? prev.page : +1,
-                }));
-              }}
-              className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease"
-            >
-              Next
-            </button>
-          </div>
+                page: prev.page === paginationdata.totalPages ? prev.page : +1,
+              }));
+            }}
+            className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>
