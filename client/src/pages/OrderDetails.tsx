@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import { useParams } from "react-router";
-import { useGetOrderByIdQuery } from "../redux/apislice";
-import { UpdateOrder } from "../components";
+import { useNavigate, useParams } from "react-router";
+import {
+  useDeleteOrderMutation,
+  useGetOrderByIdQuery,
+} from "../redux/apislice";
+import { ForwardButtons, UpdateOrder } from "../components";
+import { toast } from "react-toastify";
 
 const InfoBlock = ({
   title,
@@ -20,6 +24,8 @@ const OrderDetails = () => {
   const [updateModal, setupdateModal] = useState(false);
   const { id } = useParams();
   const { data, isLoading } = useGetOrderByIdQuery(id as string);
+  const [deleteOrder, { isLoading: deleteLoading }] = useDeleteOrderMutation();
+  const navigate = useNavigate();
   const order = data?.data;
   if (isLoading) {
     return <p className="text-center text-gray-500 mt-10">Loading...</p>;
@@ -120,9 +126,33 @@ const OrderDetails = () => {
           </div>
         )}
       </div>
-      <button onClick={() => setupdateModal(true)} className="mt-10">
-        Update
-      </button>
+      <div className="  flex justify-between gap-6  flex-wrap-reverse items-center ">
+        <div className="flex gap-3 flex-wrap items-center ">
+          <button
+            disabled={deleteLoading}
+            onClick={() => {
+              deleteOrder(id as string).then((resp) => {
+                if (resp.data?.status === 200) {
+                  toast.success("Success.. Order deleted");
+                  setTimeout(() => {
+                    navigate("/orders");
+                  }, 2000);
+                }
+              });
+            }}
+            className="mt-10 bg-red-600 "
+          >
+            {deleteLoading ? "Loading..." : "Delete"}
+          </button>
+          <button onClick={() => setupdateModal(true)} className="mt-10">
+            Update
+          </button>
+        </div>
+        <ForwardButtons
+          message="Hello, your laundry is ready for collection. Kindly pick it up at your convenience."
+          phone_number={order.phone_number as string}
+        />
+      </div>
     </div>
   );
 };

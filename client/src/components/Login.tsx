@@ -44,7 +44,7 @@ const Login = ({ onSwitch }: Props) => {
         toast.success("Success..");
         dispatch(updateUserData(resp.data.data));
         setTimeout(() => {
-          navigate("/");
+          navigate("/dashboard");
         }, 4000);
       } else {
         toast.error("Invalid password or email.");
@@ -98,7 +98,7 @@ const Login = ({ onSwitch }: Props) => {
         <button
           type="button"
           onClick={onSwitch}
-          className="text-blue-600 underline"
+          className="text-White underline"
         >
           Sign up
         </button>

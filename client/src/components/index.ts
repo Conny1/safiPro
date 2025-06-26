@@ -10,3 +10,4 @@ export { default as UpdateOrder } from "./UpdateOrder";
 export { default as AddnewUser } from "./AddnewUsers";
 export { default as ListStaff } from "./ListStaff";
 export { default as UpdateStaff } from "./UpdateStaff";
+export { default as ForwardButtons } from "./ForwardButtons";

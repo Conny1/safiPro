@@ -62,8 +62,11 @@ const AddOrder = ({ setaddModal }: Props) => {
   useEffect(() => {
     if (allBranchesResp && "data" in allBranchesResp) {
       setallBranches(allBranchesResp.data);
+      if (!activeBranch && allBranchesResp.data[0]._id) {
+        setactiveBranch(allBranchesResp.data[0]._id);
+      }
     }
-  }, [allBranchesResp]);
+  }, [allBranchesResp, activeBranch]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

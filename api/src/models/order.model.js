@@ -87,6 +87,10 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    is_deleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

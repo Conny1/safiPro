@@ -106,6 +106,14 @@ const findandfilter = async (filter, options) => {
   }
   return branch;
 };
+
+const deleteUser = async (id) => {
+  const branch = await User.findByIdAndUpdate(new ObjectId(id), {
+    $set: { is_deleted: true },
+  });
+
+  return branch;
+};
 module.exports = {
   createUser,
   login,
@@ -114,4 +122,5 @@ module.exports = {
   getauthUser,
   adminCreateEmployee,
   findandfilter,
+  deleteUser,
 };

@@ -95,7 +95,7 @@ const resetPassword = {
 const updateUser = {
   body: Joi.object().keys({
     first_name: Joi.string().alphanum(),
-
+    is_deleted: Joi.boolean(),
     last_name: Joi.string().alphanum(),
     password: Joi.string(),
 

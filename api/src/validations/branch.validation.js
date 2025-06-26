@@ -32,6 +32,7 @@ const updateBranch = {
     user_id: Joi.string().custom(objectId).required(),
     _id: Joi.string().custom(objectId).required(),
     __v: Joi.number().optional(),
+    is_deleted: Joi.boolean(),
   }),
   params: Joi.object().keys({
     id: Joi.string().custom(objectId).required(),

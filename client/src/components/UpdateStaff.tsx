@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
 import {
+  useDeleteUserMutation,
   useGetBranchNamesByuserIdQuery,
   useUpdateuserMutation,
 } from "../redux/apislice";
@@ -27,6 +28,7 @@ const schema = Yup.object({
 const EditStaff = ({ userToEdit, seteditmodal }: EditStaffProps) => {
   const [updateuser, { isLoading }] = useUpdateuserMutation();
   const user = useSelector((state: RootState) => state.user.value);
+  const [deleteUser, { isLoading: deleteLoading }] = useDeleteUserMutation();
   const { data: branchesResp } = useGetBranchNamesByuserIdQuery(user._id);
   const branches = branchesResp?.data || [];
 
@@ -148,6 +150,22 @@ const EditStaff = ({ userToEdit, seteditmodal }: EditStaffProps) => {
           <p className="text-red-500 text-sm">{errors.branch_id.message}</p>
         )}
         <div className="flex justify-evenly gap-3.5">
+          <button
+            disabled={deleteLoading}
+            onClick={() => {
+              deleteUser(userToEdit?._id as string).then((resp) => {
+                if (resp.data?.status === 200) {
+                  toast.success("Success.. User deleted");
+                  setTimeout(() => {
+                    seteditmodal(false);
+                  }, 1500);
+                }
+              });
+            }}
+            className="px-4 py-1 rounded bg-red-600 "
+          >
+            {deleteLoading ? "Loading..." : "Delete"}
+          </button>
           <button
             type="button"
             onClick={() => seteditmodal(false)}

@@ -14,7 +14,7 @@ const Auth = () => {
   useEffect(() => {
     if (user.token) {
       if (path) {
-        navigate("/");
+        navigate("/dashboard");
       }
     }
   }, [path, user.token, navigate]);

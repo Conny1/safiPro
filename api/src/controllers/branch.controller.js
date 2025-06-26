@@ -25,7 +25,7 @@ const updateBranch = async (req, resp, next) => {
 
 const findandfilter = async (req, resp, next) => {
   try {
-    let filter = {};
+    let filter = { is_deleted: false };
 
     for (key in req.body.match_values) {
       if (req.body.match_values[key] || req.body.match_values[key] === "") {

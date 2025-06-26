@@ -45,4 +45,11 @@ route.post(
   userController.findandfilter
 );
 
+route.delete(
+  "/:id",
+  roleValidation,
+  validate(userValidation.deleteBranch),
+  userController.deleteUser
+);
+
 module.exports = route;

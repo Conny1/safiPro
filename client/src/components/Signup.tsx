@@ -131,7 +131,7 @@ const Signup = ({ onSwitch }: Props) => {
 
       <p className="text-sm text-center">
         Already have an account?{" "}
-        <button onClick={onSwitch} className="text-blue-600 underline">
+        <button onClick={onSwitch} className="text-white underline">
           Login
         </button>
       </p>

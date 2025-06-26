@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { Branch, pagination } from "../types";
 import {
+  useDeleteBranchMutation,
   useFindAndFilterBranchMutation,
   useUpdateBranchMutation,
 } from "../redux/apislice";
@@ -25,6 +26,8 @@ const Listbranches = ({ setlisbranchesModal }: Props) => {
     useFindAndFilterBranchMutation();
   const [updateBranch, { isLoading: updateloading }] =
     useUpdateBranchMutation();
+  const [deleteBranch, { isLoading: deleteLoading }] =
+    useDeleteBranchMutation();
   const fetchBranches = () => {
     findAndFilterBranch({
       match_values: { user_id: user._id },
@@ -52,7 +55,7 @@ const Listbranches = ({ setlisbranchesModal }: Props) => {
   };
   useEffect(() => {
     fetchBranches();
-  }, [paginationdata.page]);
+  }, [paginationdata.page, deleteLoading]);
 
   const handleChange = (
     id: string | undefined,
@@ -109,7 +112,20 @@ const Listbranches = ({ setlisbranchesModal }: Props) => {
                   />
                 </div>
 
-                <div className="text-right">
+                <div className="text-right flex gap-3 flex-wrap ">
+                  <button
+                    disabled={deleteLoading}
+                    onClick={() => {
+                      deleteBranch(branch._id as string).then((resp) => {
+                        if (resp.data?.status === 200) {
+                          toast.success("Success.. Branch deleted");
+                        }
+                      });
+                    }}
+                    className="px-4 py-1 rounded bg-red-600 "
+                  >
+                    {deleteLoading ? "Loading..." : "Delete"}
+                  </button>
                   <button
                     onClick={() => handleSaveBranch(branch)}
                     disabled={updateloading}

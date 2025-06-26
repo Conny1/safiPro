@@ -25,6 +25,7 @@ export const laundryApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ["User", "Order", "Branch"],
   endpoints: (build) => ({
     createAccount: build.mutation<
       {
@@ -97,6 +98,17 @@ export const laundryApi = createApi({
         body,
       }),
     }),
+    deleteUser: build.mutation<
+      {
+        status: Number;
+      },
+      string
+    >({
+      query: (id) => ({
+        url: `/admin/user/${id}`,
+        method: "DELETE",
+      }),
+    }),
 
     // BRANCH ROUTES
 
@@ -111,6 +123,7 @@ export const laundryApi = createApi({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["Branch"],
     }),
 
     updateBranch: build.mutation<
@@ -125,10 +138,12 @@ export const laundryApi = createApi({
         method: "PUT",
         body,
       }),
+      invalidatesTags: ["Branch"],
     }),
 
     getBranchById: build.query<{ status: Number; data: Branch }, string>({
       query: (id) => `/admin/branch/${id}`,
+      providesTags: ["Branch"],
     }),
 
     findAndFilterBranch: build.mutation<
@@ -150,9 +165,22 @@ export const laundryApi = createApi({
       string
     >({
       query: (id) => `/admin/branch/branch/${id}`,
+      providesTags: ["Branch"],
+    }),
+    deleteBranch: build.mutation<
+      {
+        status: Number;
+      },
+      string
+    >({
+      query: (id) => ({
+        url: `/admin/branch/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Branch"],
     }),
 
-    // OREDERS
+    // ORDERS
     createNewOrder: build.mutation<
       {
         status: Number;
@@ -197,6 +225,18 @@ export const laundryApi = createApi({
         body,
       }),
     }),
+
+    deleteOrder: build.mutation<
+      {
+        status: Number;
+      },
+      string
+    >({
+      query: (id) => ({
+        url: `/admin/orders/${id}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -218,4 +258,7 @@ export const {
   useGetBranchNamesByuserIdQuery,
   useCreateStaffAccountMutation,
   useFindAndFilterUserMutation,
+  useDeleteBranchMutation,
+  useDeleteOrderMutation,
+  useDeleteUserMutation,
 } = laundryApi;

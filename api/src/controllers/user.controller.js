@@ -81,7 +81,7 @@ const getauthUser = async (req, resp, next) => {
 
 const findandfilter = async (req, resp, next) => {
   try {
-    let filter = {};
+    let filter = { is_deleted: false };
 
     for (key in req.body.match_values) {
       if (req.body.match_values[key] || req.body.match_values[key] === "") {
@@ -111,6 +111,17 @@ const findandfilter = async (req, resp, next) => {
     return next(createError(error.status || 500, error.message));
   }
 };
+
+const deleteUser = async (req, resp, next) => {
+  try {
+    await userService.deleteUser(req.params.id);
+    resp
+      .status(200)
+      .json({ status: 200, data: { message: "User has been deleted" } });
+  } catch (error) {
+    return next(createError(error.status || 500, error.message));
+  }
+};
 module.exports = {
   createUser,
   login,
@@ -119,4 +130,5 @@ module.exports = {
   getauthUser,
   adminCreateEmployee,
   findandfilter,
+  deleteUser,
 };

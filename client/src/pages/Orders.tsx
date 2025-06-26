@@ -47,7 +47,7 @@ const Orders = () => {
   };
   useEffect(() => {
     fetchOrders();
-  }, [paginationdata.page]);
+  }, [paginationdata.page, addModal]);
 
   return (
     <div className="">

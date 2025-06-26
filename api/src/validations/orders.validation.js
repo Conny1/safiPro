@@ -50,6 +50,7 @@ const updateOrder = {
     name: Joi.string(),
     email: Joi.string().email().allow("", null),
     phone_number: Joi.string(),
+    is_deleted: Joi.boolean(),
 
     delivery_method: Joi.string().valid("Pickup", "Customer drop-off"),
 

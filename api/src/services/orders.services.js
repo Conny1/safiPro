@@ -68,7 +68,9 @@ const getOrderByBranchid = async (filter, options) => {
 };
 
 const deleteOrder = async (id) => {
-  const order = await Order.findByIdAndDelete(id);
+  const order = await Order.findByIdAndUpdate(new ObjectId(id), {
+    $set: { is_deleted: true },
+  });
 
   return order;
 };

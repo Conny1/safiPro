@@ -1,5 +1,5 @@
 const { createError } = require("../configs/errorConfig.js");
-const { User, Branch } = require("../models/index.js");
+const { User, Branch, Order } = require("../models/index.js");
 const { ObjectId } = require("mongodb");
 
 const addNewBranch = async (body) => {
@@ -45,7 +45,7 @@ const findandfilter = async (filter, options) => {
   return branch;
 };
 const getBranchByUserid = async (user_id) => {
-  const branch = await Branch.find({ user_id });
+  const branch = await Branch.find({ user_id, is_deleted: false });
   if (!branch || branch.length === 0) {
     throw createError(404, "Branch not found.");
   }
@@ -53,7 +53,10 @@ const getBranchByUserid = async (user_id) => {
 };
 
 const deleteBranch = async (id) => {
-  const branch = await branch.findByIdAndDelete(id);
+  const branch = await Branch.findByIdAndUpdate(new ObjectId(id), {
+    $set: { is_deleted: true },
+  });
+  // await Order.updateMany({ branch_id: new ObjectId(id) }, { is_deleted: true });
 
   return branch;
 };
