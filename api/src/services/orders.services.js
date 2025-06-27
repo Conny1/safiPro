@@ -61,7 +61,7 @@ const getOrderByid = async (id) => {
 
 const getOrderByBranchid = async (filter, options) => {
   const order = await Order.paginate(filter, options);
-  if (!order || order.length === 0) {
+  if (!order) {
     throw createError(404, "Order not found.");
   }
   return order;

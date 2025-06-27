@@ -40,6 +40,7 @@ const ROUTES = {
   BRANCH: "/admin/branch",
   STAFF: "/admin/user/create-staff",
   USER: "/admin/user",
+  PAYMENT: "/admin/payment",
 };
 
 // Define route + method combinations per role
@@ -49,6 +50,7 @@ const ROUTE_PERMISSIONS = {
     { path: ROUTES.BRANCH, methods: ["GET", "POST", "PUT", "DELETE"] },
     { path: ROUTES.STAFF, methods: ["POST"] },
     { path: ROUTES.USER, methods: ["GET", "PUT", "DELETE", "POST"] },
+    { path: ROUTES.PAYMENT, methods: ["GET", "PUT", "DELETE", "POST"] },
   ],
   [USER_ROLES.STAFF]: [
     { path: ROUTES.ORDER, methods: ["GET", "POST", "PUT"] },

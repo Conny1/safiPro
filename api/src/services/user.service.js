@@ -100,19 +100,19 @@ const getauthUser = async (userid) => {
 };
 
 const findandfilter = async (filter, options) => {
-  const branch = await User.paginate(filter, options);
-  if (!branch || branch.length === 0) {
-    throw createError(404, "Branch not found.");
+  const user = await User.paginate(filter, options);
+  if (!user) {
+    throw createError(404, "user not found.");
   }
-  return branch;
+  return user;
 };
 
 const deleteUser = async (id) => {
-  const branch = await User.findByIdAndUpdate(new ObjectId(id), {
+  const user = await User.findByIdAndUpdate(new ObjectId(id), {
     $set: { is_deleted: true },
   });
 
-  return branch;
+  return user;
 };
 module.exports = {
   createUser,

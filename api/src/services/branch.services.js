@@ -39,7 +39,7 @@ const getBranchByid = async (id) => {
 
 const findandfilter = async (filter, options) => {
   const branch = await Branch.paginate(filter, options);
-  if (!branch || branch.length === 0) {
+  if (!branch) {
     throw createError(404, "Branch not found.");
   }
   return branch;

@@ -6,6 +6,7 @@ import {
   LandingPpage,
   OrderDetails,
   Orders,
+  PaymentConfirmation,
   Payments,
   Settings,
 } from "./pages";
@@ -20,6 +21,7 @@ function App() {
 
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/confirmation" element={<PaymentConfirmation />} />
           <Route path="/payment" element={<Payments />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/order" element={<Orders />} />

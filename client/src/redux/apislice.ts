@@ -6,8 +6,10 @@ import type {
   createBranch,
   findandfilter,
   login,
+  mobilePayments,
   Order,
   pagination,
+  Payment,
   user,
 } from "../types";
 import type { RootState } from "./store";
@@ -237,6 +239,34 @@ export const laundryApi = createApi({
         method: "DELETE",
       }),
     }),
+
+    // PAYMENTS
+    findAndFilterPayment: build.mutation<
+      {
+        status: Number;
+        data: { results: Payment[] } & pagination;
+      },
+      findandfilter
+    >({
+      query: (body) => ({
+        url: "/admin/payment/findandfilter",
+        method: "POST",
+        body,
+      }),
+    }),
+
+    mpesaPayment: build.mutation<
+      {
+        status: boolean;
+      },
+      mobilePayments
+    >({
+      query: (body) => ({
+        url: "/admin/payment/mobile/money",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -261,4 +291,6 @@ export const {
   useDeleteBranchMutation,
   useDeleteOrderMutation,
   useDeleteUserMutation,
+  useFindAndFilterPaymentMutation,
+  useMpesaPaymentMutation,
 } = laundryApi;

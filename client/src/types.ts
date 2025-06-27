@@ -128,3 +128,25 @@ export const USER_ROLES = {
   BRANCH_MANAGER: "Branch Manager",
   STAFF: "Staff",
 } as const;
+
+export type PaymentStatus = "pending" | "completed" | "failed";
+export type PaymentState = "active" | "expired" | "cancelled";
+export type PaymentMethod = "mpesa" | "card";
+
+export type Payment = {
+  _id: string;
+  user_id: string;
+  amount: number;
+  payment_method: PaymentMethod;
+  payment_status: PaymentStatus;
+  status: PaymentState;
+  expires_at: string; // ISO string format (can be parsed into Date)
+  created_at: string;
+};
+
+export type mobilePayments = {
+  email: string;
+  phone_number: string;
+  user_id: string;
+  amount: number;
+};

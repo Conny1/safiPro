@@ -21,6 +21,10 @@ const Nav = () => {
       label: "Settings",
       value: "/settings",
     },
+    {
+      label: "Payments",
+      value: "/payment",
+    },
   ];
 
   const navigate = useNavigate();

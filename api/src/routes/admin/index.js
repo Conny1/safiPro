@@ -2,6 +2,7 @@ const express = require("express");
 const orderRoute = require("./orders.route");
 const branchRoute = require("./branch.route");
 const userRoute = require("./user.route");
+const paymentRoute = require("./payment.route");
 
 const router = express.Router();
 
@@ -17,6 +18,10 @@ let routes = [
   {
     path: "/user",
     route: userRoute,
+  },
+  {
+    path: "/payment",
+    route: paymentRoute,
   },
 ];
 
