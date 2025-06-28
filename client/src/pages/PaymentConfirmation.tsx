@@ -1,16 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { useGetauthuserQuery } from "../redux/apislice";
 
 const PaymentConfirmation = () => {
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState(240); // 240 seconds
+  const hasRedirected = useRef(false); // 👈 Flag to prevent double redirects
+  const { data } = useGetauthuserQuery(undefined, {
+    pollingInterval: 60000,
+  });
+  useEffect(() => {
+    if (
+      data &&
+      data.data.subscription?.status === "active" &&
+      !hasRedirected.current
+    ) {
+      hasRedirected.current = true;
+
+      navigate("/dashboard");
+    }
+  }, [data, navigate]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          navigate("/dashboard"); // Redirect when time is up
+          if (!hasRedirected.current) {
+            hasRedirected.current = true;
+            navigate("/dashboard");
+          }
           return 0;
         }
         return prev - 1;

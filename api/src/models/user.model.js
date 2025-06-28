@@ -46,6 +46,11 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    subscription: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "inactive",
+    },
   },
   { timestamps: true }
 );

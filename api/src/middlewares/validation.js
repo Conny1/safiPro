@@ -76,4 +76,23 @@ const roleValidation = (req, res, next) => {
   }
 };
 
-module.exports = { validate, pick, roleValidation };
+const subscriptionValidation = (req, res, next) => {
+  const subscription = req.user.subscription;
+  if (!subscription) {
+    return res
+      .status(404)
+      .json({ data: { message: "subscription information not found." } });
+  } else {
+    if (subscription.status === "inactive") {
+      return res.status(403).json({
+        data: {
+          message: "Your subscription has expired. Please renew to continue.",
+        },
+      });
+    } else if (subscription.status === "active") {
+      next();
+    }
+  }
+};
+
+module.exports = { validate, pick, roleValidation, subscriptionValidation };

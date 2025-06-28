@@ -24,6 +24,16 @@ const createPayment = async (body) => {
     if (data.charnel === PAYSTACK_CODES.MOBILE) {
       payment_method = "mpesa";
     }
+    // update user subscrition status.
+    await Promise.all([
+      User.findByIdAndUpdate(new ObjectId(user_id), {
+        $set: { subscription: "active" },
+      }),
+      User.updateMany(
+        { super_admin_id: new ObjectId(user_id) },
+        { $set: { subscription: "active" } }
+      ),
+    ]);
   }
   const DAILY_COST = amount / 30; // KES per day (if plan is 1000 KES/month)
   const user = await User.findById(user_id);
@@ -43,6 +53,7 @@ const createPayment = async (body) => {
   });
 
   const savedPayment = await payment.save();
+
   return savedPayment;
 };
 

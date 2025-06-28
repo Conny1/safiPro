@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router"; // Using react-router-dom for web
+import { Link, useLocation, useNavigate } from "react-router"; // Using react-router-dom for web
 import { updateUserData } from "../redux/userSlice";
 import { MenuIcon, XIcon } from "lucide-react"; // Import XIcon for the mobile menu close button
 
 const Nav = () => {
   // State to manage the visibility of the mobile-specific menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation().pathname.match("/confirmation");
 
   let list = [
     {
@@ -62,45 +63,46 @@ const Nav = () => {
       <div>
         <p className="text-[25px] font-[600] text-[#535bf2]">SafiPro</p>
       </div>
-
-      {/* Mobile Menu Toggle Icon (Hamburger / Close) */}
-      {/* This icon is ONLY visible on screens smaller than 'lg' */}
-      <div className="lg:hidden z-50">
-        {" "}
-        {/* z-50 ensures icon is above the mobile menu overlay */}
-        {isMobileMenuOpen ? (
-          <XIcon
-            className="cursor-pointer"
-            onClick={toggleMobileMenu}
-            size={28}
-          />
-        ) : (
-          <MenuIcon
-            className="cursor-pointer"
-            onClick={toggleMobileMenu}
-            size={28}
-          />
-        )}
-      </div>
-
-      {/* --- Desktop Navigation Menu (Original, Unchanged) --- */}
-      {/* This menu is hidden by default and becomes flex ONLY on 'lg' screens and above */}
-      <div className="w-[40%] hidden lg:flex justify-evenly items-center">
-        {list.map((item) => (
-          <div key={item.value}>
-            <Link to={item.value}>{item.label}</Link>
+      {!location && (
+        <>
+          {/* Mobile Menu Toggle Icon (Hamburger / Close) */}
+          {/* This icon is ONLY visible on screens smaller than 'lg' */}
+          <div className="lg:hidden z-50">
+            {" "}
+            {/* z-50 ensures icon is above the mobile menu overlay */}
+            {isMobileMenuOpen ? (
+              <XIcon
+                className="cursor-pointer"
+                onClick={toggleMobileMenu}
+                size={28}
+              />
+            ) : (
+              <MenuIcon
+                className="cursor-pointer"
+                onClick={toggleMobileMenu}
+                size={28}
+              />
+            )}
           </div>
-        ))}
-        <button onClick={logout}>Logout</button>
-      </div>
 
-      {/* --- Mobile-Specific Navigation Menu (New) --- */}
-      {/*
+          {/* --- Desktop Navigation Menu (Original, Unchanged) --- */}
+          {/* This menu is hidden by default and becomes flex ONLY on 'lg' screens and above */}
+          <div className="w-[40%] hidden lg:flex justify-evenly items-center">
+            {list.map((item) => (
+              <div key={item.value}>
+                <Link to={item.value}>{item.label}</Link>
+              </div>
+            ))}
+            <button onClick={logout}>Logout</button>
+          </div>
+
+          {/* --- Mobile-Specific Navigation Menu (New) --- */}
+          {/*
         This menu is ONLY visible on screens smaller than 'lg'.
         It will slide in from the right when toggled open.
       */}
-      <div
-        className={`
+          <div
+            className={`
           // Control visibility based on state for mobile, and hide on large screens
           ${isMobileMenuOpen ? "flex" : "hidden"}
           lg:hidden
@@ -116,45 +118,47 @@ const Nav = () => {
             isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
           } // Slide in/out effect
         `}
-      >
-        {/* Close button inside the mobile menu (for better mobile UX) */}
-        <div className="flex justify-end mb-6">
-          <XIcon
-            className="cursor-pointer"
-            onClick={toggleMobileMenu}
-            size={28}
-          />
-        </div>
+          >
+            {/* Close button inside the mobile menu (for better mobile UX) */}
+            <div className="flex justify-end mb-6">
+              <XIcon
+                className="cursor-pointer"
+                onClick={toggleMobileMenu}
+                size={28}
+              />
+            </div>
 
-        {list.map((item) => (
-          <div key={item.value}>
-            <Link
-              to={item.value}
-              className="text-lg text-gray-800 hover:text-[#535bf2] block py-2" // Added block and py-2 for better touch targets on mobile
-              onClick={toggleMobileMenu} // Close mobile menu when a link is clicked
+            {list.map((item) => (
+              <div key={item.value}>
+                <Link
+                  to={item.value}
+                  className="text-lg text-gray-800 hover:text-[#535bf2] block py-2" // Added block and py-2 for better touch targets on mobile
+                  onClick={toggleMobileMenu} // Close mobile menu when a link is clicked
+                >
+                  {item.label}
+                </Link>
+              </div>
+            ))}
+            <button
+              onClick={() => {
+                logout();
+                toggleMobileMenu();
+              }} // Close mobile menu on logout, then logout
+              className="bg-[#535bf2] text-white py-2 px-4 rounded-md hover:bg-[#434bcf] mt-4"
             >
-              {item.label}
-            </Link>
+              Logout
+            </button>
           </div>
-        ))}
-        <button
-          onClick={() => {
-            logout();
-            toggleMobileMenu();
-          }} // Close mobile menu on logout, then logout
-          className="bg-[#535bf2] text-white py-2 px-4 rounded-md hover:bg-[#434bcf] mt-4"
-        >
-          Logout
-        </button>
-      </div>
 
-      {/* Mobile Menu Overlay */}
-      {/* Visible only when the mobile menu is open and on screens smaller than 'lg' */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-          onClick={toggleMobileMenu} // Clicking overlay closes the menu
-        ></div>
+          {/* Mobile Menu Overlay */}
+          {/* Visible only when the mobile menu is open and on screens smaller than 'lg' */}
+          {isMobileMenuOpen && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+              onClick={toggleMobileMenu} // Clicking overlay closes the menu
+            ></div>
+          )}
+        </>
       )}
     </div>
   );

@@ -11,7 +11,7 @@ const Layout = () => {
   const navigate = useNavigate();
 
   const user = useSelector((state: RootState) => state.user.value);
-
+  const location = useLocation().pathname.match("/confirmation");
   // Only run the query if user has a token
   const { data } = useGetauthuserQuery(undefined, {
     skip: !user.token,
@@ -23,6 +23,9 @@ const Layout = () => {
     if (!user.token) {
       navigate("/auth");
     }
+    if (user.subscription.status !== "active" && !location) {
+      navigate("/payment");
+    }
   }, [user.token, navigate]);
 
   useEffect(() => {
@@ -33,7 +36,7 @@ const Layout = () => {
 
   return (
     <div className="min-h-screen">
-      <Nav />
+      {user.subscription.status === "active" && <Nav />}
       <Outlet />
     </div>
   );

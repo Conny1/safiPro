@@ -89,7 +89,7 @@ export type user = {
   _id?: string;
   first_name?: string;
   last_name?: string;
-  subscription_data?: Object;
+  subscription?: { status: "active" | "inactive" };
   authorization?: Object;
   role?: Role;
   branches?: {

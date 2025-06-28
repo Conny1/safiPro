@@ -10,7 +10,7 @@ export const userSlice = createSlice({
       token: "",
       _id: "",
       role: "",
-      subscription_data: {},
+      subscription: { status: "" },
       branches: [
         {
           branch_id: "",

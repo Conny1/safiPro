@@ -13,6 +13,7 @@ const Payments = () => {
   const [payments, setpayments] = useState<Payment[] | []>([]);
   const [showMpesaModal, setShowMpesaModal] = useState(false);
   const [phoneInput, setPhoneInput] = useState("");
+  const [amount, setamount] = useState(1000);
   // const [formattedPhone, setFormattedPhone] = useState("");
 
   const [findAndFilterPayment, { isLoading: findLoading }] =
@@ -72,7 +73,7 @@ const Payments = () => {
     console.log("Paying with phone:", formatted);
     mpesaPayment({
       user_id: user._id,
-      amount: 1500,
+      amount: amount,
       email: user.email,
       phone_number: formatted,
     }).then((resp) => {
@@ -151,7 +152,13 @@ const Payments = () => {
                     <td className="p-2 text-sm text-green-600 font-medium">
                       {item.payment_status}
                     </td>
-                    <td className="p-2 text-sm text-green-600 font-medium">
+                    <td
+                      className={`p-2 text-sm ${
+                        item.status == "active"
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }  font-medium`}
+                    >
                       {item.status}
                     </td>
                   </tr>

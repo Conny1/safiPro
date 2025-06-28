@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const app = require("./app");
+const { startAllCrons } = require("./configs/cron");
 const port = process.env.PORT;
 
 const connecttoDB = async () => {
@@ -14,4 +15,5 @@ const connecttoDB = async () => {
 app.listen(port, async () => {
   console.log("Server runing on port ", port);
   await connecttoDB();
+  startAllCrons();
 });

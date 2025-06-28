@@ -31,7 +31,7 @@ const adminCreateEmployee = async (body) => {
   body.password = hash;
 
   try {
-    const user = new User(body);
+    const user = new User({ ...body, subscription: "active" });
     return await user.save();
   } catch (error) {
     if (error?.errorResponse.code === 11000) {
@@ -52,7 +52,12 @@ const login = async (body) => {
     throw createError(401, "Incorrect email or password.");
   }
   const token = jwt.sign(
-    { email: user.email, _id: user._id, role: user.role },
+    {
+      email: user.email,
+      _id: user._id,
+      role: user.role,
+      subscription: { status: user.subscription },
+    },
     process.env.JWT_KEY
   );
   const { password, ...other } = user._doc;
@@ -96,7 +101,7 @@ const getauthUser = async (userid) => {
   }
   const { password, ...other } = user._doc;
   // const subscription_data = await getSubscriptionData(other._id, app);
-  return { ...other, subscription_data: {} };
+  return { ...other, subscription: { status: user.subscription } };
 };
 
 const findandfilter = async (filter, options) => {
