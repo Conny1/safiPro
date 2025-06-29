@@ -26,7 +26,7 @@ const Layout = () => {
     if (user.subscription.status !== "active" && !location) {
       navigate("/payment");
     }
-  }, [user.token, navigate]);
+  }, [user.token, navigate, location]);
 
   useEffect(() => {
     if (data && "data" in data && user.token) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { AddnewUser, ListStaff, Profile } from "../components";
 import { USER_ROLES } from "../types";
 import { useSelector } from "react-redux";

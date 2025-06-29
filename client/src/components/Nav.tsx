@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router"; // Using react-router-dom for web
 import { updateUserData } from "../redux/userSlice";
@@ -9,7 +9,7 @@ const Nav = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation().pathname.match("/confirmation");
 
-  let list = [
+  const list = [
     {
       value: "/dashboard",
       label: "Dashboard",

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AddOrder } from "../components";
 import { Link } from "react-router";
 import type { Order, pagination } from "../types";

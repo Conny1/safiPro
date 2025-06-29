@@ -10,6 +10,7 @@ export default defineConfig({
       registerType: "autoUpdate", // handles update checking
       includeAssets: ["favicon.svg", "robots.txt", "apple-touch-icon.png"],
       manifest: {
+        id: "/dashboard",
         name: "SafiPro",
         short_name: "SafiPro",
         description: "Manage laundry operations efficiently.",

@@ -50,6 +50,7 @@ const Login = ({ onSwitch }: Props) => {
         toast.error("Invalid password or email.");
       }
     } catch (error) {
+      console.log(error);
       toast.error("Error logingin. Try again.");
     }
   };

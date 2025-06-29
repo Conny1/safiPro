@@ -44,6 +44,7 @@ const Profile = () => {
         toast.error("Failed to update user.");
       }
     } catch (err) {
+      console.log(err);
       toast.error("Error updating user.");
     }
   };

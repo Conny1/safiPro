@@ -37,7 +37,9 @@ const AddNewUser = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (
+    data: createAccount & { role: string; branch_id: string }
+  ) => {
     try {
       const { branch_id, ...userData } = data;
       const resp = await createStaffAccount({

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Login, Signup } from "../components";
 import { ToastContainer } from "react-toastify";
 import { useLocation, useNavigate } from "react-router";

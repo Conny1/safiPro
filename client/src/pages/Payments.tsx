@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useFindAndFilterPaymentMutation,
   useMpesaPaymentMutation,
@@ -10,10 +10,11 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 
 const Payments = () => {
+  const user = useSelector((state: RootState) => state.user.value);
   const [payments, setpayments] = useState<Payment[] | []>([]);
   const [showMpesaModal, setShowMpesaModal] = useState(false);
   const [phoneInput, setPhoneInput] = useState("");
-  const [amount, setamount] = useState(1000);
+  const [amount] = useState(1000);
   // const [formattedPhone, setFormattedPhone] = useState("");
 
   const [findAndFilterPayment, { isLoading: findLoading }] =
@@ -25,7 +26,6 @@ const Payments = () => {
     totalResults: 0,
   });
 
-  const user = useSelector((state: RootState) => state.user.value);
   const [mpesaPayment, { isLoading: mobileLoading }] =
     useMpesaPaymentMutation();
   const navigate = useNavigate();
@@ -107,17 +107,23 @@ const Payments = () => {
 
         <div>
           <h3 className="text-lg font-semibold mb-2">Payment Options</h3>
-          <div className="space-y-4">
-            <button
-              onClick={() => setShowMpesaModal(true)}
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md"
-            >
-              Pay with M-PESA
+          {user.subscription.status === "active" ? (
+            <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md">
+              Active
             </button>
-            <button className="w-full border border-blue-600 text-blue-600 py-2 rounded-md hover:bg-blue-50">
-              Pay with Card
-            </button>
-          </div>
+          ) : (
+            <div className="space-y-4">
+              <button
+                onClick={() => setShowMpesaModal(true)}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md"
+              >
+                Pay with M-PESA
+              </button>
+              <button className="w-full border border-blue-600 text-blue-600 py-2 rounded-md hover:bg-blue-50">
+                Pay with Card
+              </button>
+            </div>
+          )}
         </div>
 
         <div>

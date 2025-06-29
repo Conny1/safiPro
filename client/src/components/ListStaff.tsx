@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFindAndFilterUserMutation } from "../redux/apislice";
 import type { pagination, user } from "../types";
 import { useSelector } from "react-redux";
@@ -43,7 +43,7 @@ const ListStaff = () => {
   };
   useEffect(() => {
     fetchBranches();
-  }, [paginationdata.page, editmodal]);
+  }, [paginationdata.page, editmodal, fetchBranches]);
 
   return (
     <div className="p-6 space-y-8">
