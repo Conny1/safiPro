@@ -95,6 +95,7 @@ const updateUser = async (id, body) => {
 
 const getauthUser = async (userid) => {
   const user = await User.findById(new ObjectId(userid));
+  console.log(user);
 
   if (!user) {
     throw createError(404, "user not found!");

@@ -84,10 +84,20 @@ const deleteOrder = async (req, resp, next) => {
   }
 };
 
+const dashboardanalysis = async (req, resp, next) => {
+  try {
+    const order = await orderService.dashboardanalysis(req.params.id);
+    resp.status(200).json({ status: 200, data: order });
+  } catch (error) {
+    return next(createError(error.status || 500, error.message));
+  }
+};
+
 module.exports = {
   addNewOrder,
   updateOrder,
   deleteOrder,
   getOrderByBranchid,
   getOrderByid,
+  dashboardanalysis,
 };

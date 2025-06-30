@@ -55,7 +55,7 @@ const Listbranches = ({ setlisbranchesModal }: Props) => {
   };
   useEffect(() => {
     fetchBranches();
-  }, [paginationdata.page, deleteLoading, fetchBranches]);
+  }, [paginationdata.page, deleteLoading]);
 
   const handleChange = (
     id: string | undefined,

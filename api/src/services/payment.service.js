@@ -6,6 +6,7 @@ const { ObjectId } = require("mongodb");
 const PAYSTACK_CODES = {
   SUCCESS: "charge.success",
   MOBILE: "mobile_money",
+  CARD: "card",
 };
 
 const createPayment = async (body) => {
@@ -14,26 +15,50 @@ const createPayment = async (body) => {
   let payment_method = "mpesa";
   let payment_status = "pending";
   let status = "inactive";
-  console.log("confirming mobile payments...");
+
   if (body.event === PAYSTACK_CODES.SUCCESS) {
     let { data } = body;
-    user_id = data.metadata.user_id;
+
     amount = data.amount;
     status = "active";
     payment_status = "completed";
-    if (data.charnel === PAYSTACK_CODES.MOBILE) {
+    if (
+      data.channel === PAYSTACK_CODES.MOBILE ||
+      data.charnel === PAYSTACK_CODES.MOBILE
+    ) {
+      console.log("confirming mobile payments...");
+      user_id = data.metadata.user_id;
       payment_method = "mpesa";
+      // update user subscrition status.
+      await Promise.all([
+        User.findByIdAndUpdate(new ObjectId(user_id), {
+          $set: { subscription: "active" },
+        }),
+        User.updateMany(
+          { super_admin_id: new ObjectId(user_id) },
+          { $set: { subscription: "active" } }
+        ),
+      ]);
     }
-    // update user subscrition status.
-    await Promise.all([
-      User.findByIdAndUpdate(new ObjectId(user_id), {
-        $set: { subscription: "active" },
-      }),
-      User.updateMany(
-        { super_admin_id: new ObjectId(user_id) },
-        { $set: { subscription: "active" } }
-      ),
-    ]);
+    if (
+      data.channel === PAYSTACK_CODES.CARD ||
+      data.charnel === PAYSTACK_CODES.MOBILE
+    ) {
+      const user = await User.findOne({ email: data.customer.email });
+      console.log(user, "User data");
+      if (!user) return;
+      payment_method = "card";
+      user_id = user._id;
+      await Promise.all([
+        User.findByIdAndUpdate(new ObjectId(user._id), {
+          $set: { subscription: "active" },
+        }),
+        User.updateMany(
+          { super_admin_id: new ObjectId(user._id) },
+          { $set: { subscription: "active" } }
+        ),
+      ]);
+    }
   }
   const DAILY_COST = amount / 30; // KES per day (if plan is 1000 KES/month)
   const user = await User.findById(user_id);
@@ -42,19 +67,18 @@ const createPayment = async (body) => {
   const daysPaidFor = Math.floor(amount / DAILY_COST);
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + daysPaidFor);
+  if ((payment_status = "completed")) {
+    const payment = new Payment({
+      user_id: new ObjectId(user_id),
+      amount,
+      payment_method,
+      payment_status,
+      status: status,
+      expires_at: expiresAt,
+    });
 
-  const payment = new Payment({
-    user_id: new ObjectId(user_id),
-    amount,
-    payment_method,
-    payment_status: "completed",
-    status: "active",
-    expires_at: expiresAt,
-  });
-
-  const savedPayment = await payment.save();
-
-  return savedPayment;
+    await payment.save();
+  }
 };
 
 const findAndFilterPayments = async (filter, options) => {

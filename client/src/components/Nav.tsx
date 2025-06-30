@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router"; // Using react-router-dom for web
-import { updateUserData } from "../redux/userSlice";
 import { MenuIcon, XIcon } from "lucide-react"; // Import XIcon for the mobile menu close button
+import { logout } from "../redux/userSlice";
+import { persistor } from "../redux/store";
 
 const Nav = () => {
   // State to manage the visibility of the mobile-specific menu
@@ -31,24 +32,10 @@ const Nav = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const logout = () => {
-    dispatch(
-      updateUserData({
-        first_name: "",
-        last_name: "",
-        email: "",
-        token: "",
-        _id: "",
-        role: "",
-        subscription_data: {},
-        branches: [
-          {
-            branch_id: "",
-            role: "",
-          },
-        ],
-      })
-    );
+  const logOut = () => {
+    dispatch(logout());
+    persistor.purge();
+
     navigate("/auth");
   };
 
@@ -93,7 +80,7 @@ const Nav = () => {
                 <Link to={item.value}>{item.label}</Link>
               </div>
             ))}
-            <button onClick={logout}>Logout</button>
+            <button onClick={logOut}>Logout</button>
           </div>
 
           {/* --- Mobile-Specific Navigation Menu (New) --- */}
@@ -109,7 +96,7 @@ const Nav = () => {
 
           // Mobile-specific layout and positioning (full screen overlay)
           flex-col // Stack items vertically
-          fixed top-0 right-0 h-full w-full max-w-xs sm:max-w-sm // Full height, fixed to right, limited width
+           top-0 right-0 h-full w-full max-w-xs sm:max-w-sm // Full height, fixed to right, limited width
           bg-white shadow-lg p-6 space-y-6 z-40 // Styling: background, shadow, padding, vertical spacing, z-index
 
           // Slide-in/out animation for mobile
@@ -141,7 +128,8 @@ const Nav = () => {
             ))}
             <button
               onClick={() => {
-                logout();
+                logOut();
+
                 toggleMobileMenu();
               }} // Close mobile menu on logout, then logout
               className="bg-[#535bf2] text-white py-2 px-4 rounded-md hover:bg-[#434bcf] mt-4"

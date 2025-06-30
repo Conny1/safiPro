@@ -43,7 +43,7 @@ const ListStaff = () => {
   };
   useEffect(() => {
     fetchBranches();
-  }, [paginationdata.page, editmodal, fetchBranches]);
+  }, [paginationdata.page, editmodal]);
 
   return (
     <div className="p-6 space-y-8">

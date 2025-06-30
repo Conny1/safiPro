@@ -6,3 +6,4 @@ export { default as Orders } from "./Orders";
 export { default as OrderDetails } from "./OrderDetails";
 export { default as PaymentConfirmation } from "./PaymentConfirmation";
 export { default as LandingPpage } from "./LandingPage";
+export { default as SubscriptionRequired } from "./SubscriptionRequired";

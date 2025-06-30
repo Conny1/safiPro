@@ -7,6 +7,7 @@ const { pick } = require("../middlewares/validation");
 const createPayment = async (req, resp, next) => {
   console.log("1 was called");
   let body = req.body;
+  console.log(body);
   try {
     resp
       .status(200)

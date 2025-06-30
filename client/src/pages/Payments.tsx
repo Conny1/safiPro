@@ -119,9 +119,15 @@ const Payments = () => {
               >
                 Pay with M-PESA
               </button>
-              <button className="w-full border border-blue-600 text-blue-600 py-2 rounded-md hover:bg-blue-50">
-                Pay with Card
-              </button>
+              <a
+                href={import.meta.env.VITE_PAYMENT_URL}
+                target="_blank"
+                className="mt-10"
+              >
+                <button className="w-full border border-blue-600 text-blue-600 py-2 rounded-md hover:bg-blue-50">
+                  Pay with Card
+                </button>
+              </a>
             </div>
           )}
         </div>

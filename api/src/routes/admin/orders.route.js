@@ -43,4 +43,11 @@ route.delete(
   orderController.deleteOrder
 );
 
+route.get(
+  "/dashboard/:id",
+  roleValidation,
+  validate(orderValidation.getOrderById),
+  orderController.dashboardanalysis
+);
+
 module.exports = route;

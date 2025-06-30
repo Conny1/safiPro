@@ -45,7 +45,7 @@ const Login = ({ onSwitch }: Props) => {
         dispatch(updateUserData(resp.data.data));
         setTimeout(() => {
           navigate("/dashboard");
-        }, 4000);
+        }, 2000);
       } else {
         toast.error("Invalid password or email.");
       }

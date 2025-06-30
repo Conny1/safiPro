@@ -214,6 +214,20 @@ export const laundryApi = createApi({
       query: (id) => `/admin/orders/${id}`,
     }),
 
+    getOrderDashbardAnalysis: build.query<
+      {
+        status: Number;
+        data: {
+          total_orders: number;
+          completed_orders: number;
+          total_revenue: number;
+        };
+      },
+      string
+    >({
+      query: (id) => `/admin/orders/dashboard/${id}`,
+    }),
+
     findAndFilterOrder: build.mutation<
       {
         status: Number;
@@ -293,4 +307,5 @@ export const {
   useDeleteUserMutation,
   useFindAndFilterPaymentMutation,
   useMpesaPaymentMutation,
+  useGetOrderDashbardAnalysisQuery,
 } = laundryApi;

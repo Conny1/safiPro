@@ -9,6 +9,7 @@ import {
   PaymentConfirmation,
   Payments,
   Settings,
+  SubscriptionRequired,
 } from "./pages";
 import { Layout } from "./components";
 
@@ -21,6 +22,10 @@ function App() {
 
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/subscriptionRequired"
+            element={<SubscriptionRequired />}
+          />
           <Route path="/confirmation" element={<PaymentConfirmation />} />
           <Route path="/payment" element={<Payments />} />
           <Route path="/settings" element={<Settings />} />

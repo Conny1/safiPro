@@ -1,5 +1,7 @@
 const Joi = require("joi");
 const { createError } = require("../configs/errorConfig.js");
+const { User } = require("../models/index.js");
+const { ObjectId } = require("mongodb");
 
 const pick = (object, keys) => {
   return keys.reduce((obj, key) => {
@@ -76,20 +78,21 @@ const roleValidation = (req, res, next) => {
   }
 };
 
-const subscriptionValidation = (req, res, next) => {
-  const subscription = req.user.subscription;
-  if (!subscription) {
+const subscriptionValidation = async (req, res, next) => {
+  const user = await User.findById(new ObjectId(userid));
+
+  if (!user) {
     return res
       .status(404)
       .json({ data: { message: "subscription information not found." } });
   } else {
-    if (subscription.status === "inactive") {
+    if (user.subscription === "inactive") {
       return res.status(403).json({
         data: {
           message: "Your subscription has expired. Please renew to continue.",
         },
       });
-    } else if (subscription.status === "active") {
+    } else if (user.subscription === "active") {
       next();
     }
   }

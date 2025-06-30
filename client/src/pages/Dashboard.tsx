@@ -14,6 +14,7 @@ import { ToastContainer } from "react-toastify";
 import {
   useFindAndFilterOrderMutation,
   useGetBranchNamesByuserIdQuery,
+  useGetOrderDashbardAnalysisQuery,
 } from "../redux/apislice";
 import { USER_ROLES, type Branch, type Order } from "../types";
 import { useSelector } from "react-redux";
@@ -31,14 +32,29 @@ const Dashboard = () => {
   const [findAndFilterOrder, { isLoading: findloading }] =
     useFindAndFilterOrderMutation();
   // FETCH BASED ON USER ROLES
-  const { data: allBranchesResp } = useGetBranchNamesByuserIdQuery(user._id, {
-    skip: user.role !== USER_ROLES.SUPER_ADMIN,
-  });
+  const { data: allBranchesResp } = useGetBranchNamesByuserIdQuery(user._id);
   const [allBranches, setallBranches] = useState<Branch[] | []>([]);
+  const { data: dashboard_analysis } =
+    useGetOrderDashbardAnalysisQuery(activeBranch);
   const stats = [
-    { title: "Total Orders", value: 342, icon: <ShoppingCart /> },
-    { title: "Completed", value: 290, icon: <BarChart3 /> },
-    { title: "Total Revenue", value: "KES 128,000", icon: <DollarSign /> },
+    {
+      title: "Total Orders",
+      value: dashboard_analysis?.data.total_orders || 0,
+      icon: <ShoppingCart />,
+    },
+    {
+      title: "Completed",
+      value: dashboard_analysis?.data.completed_orders || 0,
+      icon: <BarChart3 />,
+    },
+    {
+      title: "Total Revenue",
+      value:
+        `KES   ${
+          dashboard_analysis?.data.total_revenue.toLocaleString() || 0
+        } ` || 0,
+      icon: <DollarSign />,
+    },
   ];
 
   useEffect(() => {

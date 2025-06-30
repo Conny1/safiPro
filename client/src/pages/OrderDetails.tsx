@@ -135,7 +135,7 @@ const OrderDetails = () => {
                 if (resp.data?.status === 200) {
                   toast.success("Success.. Order deleted");
                   setTimeout(() => {
-                    navigate("/orders");
+                    navigate("/order");
                   }, 2000);
                 }
               });

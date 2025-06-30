@@ -5,6 +5,7 @@ import type { RootState } from "../redux/store";
 import { useEffect } from "react";
 import { useGetauthuserQuery } from "../redux/apislice";
 import { updateUserData } from "../redux/userSlice";
+import { USER_ROLES } from "../types";
 
 const Layout = () => {
   const dispatch = useDispatch();
@@ -18,15 +19,23 @@ const Layout = () => {
   });
 
   useEffect(() => {
-    console.log(user);
-
     if (!user.token) {
       navigate("/auth");
     }
-    if (user.subscription.status !== "active" && !location) {
+    if (
+      user.role === USER_ROLES.SUPER_ADMIN &&
+      user.subscription.status !== "active" &&
+      !location
+    ) {
       navigate("/payment");
+    } else if (
+      user.role === USER_ROLES.STAFF &&
+      user.subscription.status !== "active" &&
+      !location
+    ) {
+      navigate("/subscriptionRequired");
     }
-  }, [user.token, navigate, location]);
+  }, [user.token, location]);
 
   useEffect(() => {
     if (data && "data" in data && user.token) {
