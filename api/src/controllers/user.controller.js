@@ -6,12 +6,6 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const createUser = async (req, resp, next) => {
   try {
     const user = await userService.createUser(req.body);
-    // add notification config
-    // await subscriptionService.createSubscription({
-    //   userId: user._id,
-    //   app: "invoice",
-    //   packageType: "free",
-    // });
     resp
       .status(200)
       .json({ status: 200, data: { message: "New account created" } });
@@ -23,12 +17,7 @@ const createUser = async (req, resp, next) => {
 const adminCreateEmployee = async (req, resp, next) => {
   try {
     const user = await userService.adminCreateEmployee(req.body);
-    // add notification config
-    // await subscriptionService.createSubscription({
-    //   userId: user._id,
-    //   app: "invoice",
-    //   packageType: "free",
-    // });
+
     resp
       .status(200)
       .json({ status: 200, data: { message: "New account created" } });
@@ -70,7 +59,6 @@ const resetPassword = async (req, resp, next) => {
 };
 
 const getauthUser = async (req, resp, next) => {
-  console.log(req.user._id);
   try {
     const user = await userService.getauthUser(req.user._id);
     resp.status(200).json({ status: 200, data: user });

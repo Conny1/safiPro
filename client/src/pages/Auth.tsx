@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Login, Signup } from "../components";
+import { Forgotpassword, Login, Signup } from "../components";
 import { ToastContainer } from "react-toastify";
 import { useLocation, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
@@ -10,6 +10,7 @@ const Auth = () => {
   const path = useLocation().pathname.match("/auth");
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user.value);
+  const [forgotpassword, setforgotpassword] = useState(false);
 
   useEffect(() => {
     if (user.token) {
@@ -19,14 +20,19 @@ const Auth = () => {
     }
   }, [path, user.token, navigate]);
 
-  const toggleForm = () => setIsLogin((prev) => !prev);
+  const toggleForm = () => {
+    setIsLogin((prev) => !prev);
+    setforgotpassword(false);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center px-4">
       <ToastContainer />
 
-      {isLogin ? (
-        <Login onSwitch={toggleForm} />
+      {forgotpassword ? (
+        <Forgotpassword onSwitch={toggleForm} />
+      ) : isLogin ? (
+        <Login onSwitch={toggleForm} setforgotpassword={setforgotpassword} />
       ) : (
         <Signup onSwitch={toggleForm} />
       )}

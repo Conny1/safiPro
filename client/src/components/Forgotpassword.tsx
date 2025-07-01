@@ -10,19 +10,15 @@ import { updateUserData } from "../redux/userSlice";
 
 type Props = {
   onSwitch: () => void;
-  setforgotpassword: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const schema = Yup.object({
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
-  password: Yup.string()
-    .min(6, "Minimum 6 characters")
-    .required("Password is required"),
 });
 
-const Login = ({ onSwitch, setforgotpassword }: Props) => {
+const Forgotpassword = ({ onSwitch }: Props) => {
   const [login, { isLoading: loginloading }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -31,28 +27,28 @@ const Login = ({ onSwitch, setforgotpassword }: Props) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<login>({
+  } = useForm<{ email: string }>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data: login) => {
+  const onSubmit = async (data: { email: string }) => {
     // Handle login logic
-    try {
-      const resp = await login(data);
-      if (resp.data?.status === 200) {
-        console.log("logged in");
-        toast.success("Success..");
-        dispatch(updateUserData(resp.data.data));
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 2000);
-      } else {
-        toast.error("Invalid password or email.");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Error logingin. Try again.");
-    }
+    // try {
+    //   const resp = await login(data);
+    //   if (resp.data?.status === 200) {
+    //     console.log("logged in");
+    //     toast.success("Success..");
+    //     dispatch(updateUserData(resp.data.data));
+    //     setTimeout(() => {
+    //       navigate("/dashboard");
+    //     }, 2000);
+    //   } else {
+    //     toast.error("Invalid password or email.");
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    //   toast.error("Error logingin. Try again.");
+    // }
   };
 
   return (
@@ -60,7 +56,7 @@ const Login = ({ onSwitch, setforgotpassword }: Props) => {
       onSubmit={handleSubmit(onSubmit)}
       className="w-full max-w-sm bg-white p-6 rounded-md shadow-md space-y-4"
     >
-      <h2 className="text-xl font-semibold">Login</h2>
+      <h2 className="text-xl font-semibold">Enter your email</h2>
 
       <div>
         <input
@@ -74,18 +70,6 @@ const Login = ({ onSwitch, setforgotpassword }: Props) => {
         )}
       </div>
 
-      <div>
-        <input
-          type="password"
-          placeholder="Password"
-          {...register("password")}
-          className="w-full border px-3 py-2 rounded"
-        />
-        {errors.password && (
-          <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-        )}
-      </div>
-
       <button
         type="submit"
         disabled={loginloading}
@@ -95,23 +79,17 @@ const Login = ({ onSwitch, setforgotpassword }: Props) => {
       </button>
 
       <p className="text-sm text-center">
-        Don't have an account?{" "}
+        Back to login.
         <button
           type="button"
           onClick={onSwitch}
           className="text-White underline"
         >
-          Sign up
+          Login
         </button>
-      </p>
-      <p
-        onClick={() => setforgotpassword(true)}
-        className="text-sm text-center text-blue-500 underline cursor-pointer "
-      >
-        Forgot password ?
       </p>
     </form>
   );
 };
 
-export default Login;
+export default Forgotpassword;

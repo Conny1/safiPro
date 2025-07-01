@@ -131,53 +131,54 @@ const Payments = () => {
             </div>
           )}
         </div>
-
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Payment History</h3>
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="p-2 text-sm font-semibold">Date</th>
-                <th className="p-2 text-sm font-semibold">Amount</th>
-                <th className="p-2 text-sm font-semibold">Payment Status</th>
-                <th className="p-2 text-sm font-semibold">Status</th>
-              </tr>
-            </thead>
-            {findLoading ? (
-              <tbody>
-                <tr>
-                  <td colSpan={4} className="p-4 text-center">
-                    Loading...
-                  </td>
+        <h3 className="text-lg font-semibold mb-2">Payment History</h3>
+        <div className="overflow-scroll">
+          <div className="h-[50vh] min-w-96   ">
+            <table className="w-full text-left border-collapse ">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="p-2 text-sm font-semibold">Date</th>
+                  <th className="p-2 text-sm font-semibold">Amount</th>
+                  <th className="p-2 text-sm font-semibold">Payment Status</th>
+                  <th className="p-2 text-sm font-semibold">Status</th>
                 </tr>
-              </tbody>
-            ) : (
-              <tbody>
-                {payments.map((item) => (
-                  <tr key={item._id} className="border-b">
-                    <td className="p-2 text-sm">
-                      {new Date(item.created_at).toISOString().split("T")[0]}
-                    </td>
-                    <td className="p-2 text-sm">
-                      KES {item.amount.toLocaleString()}
-                    </td>
-                    <td className="p-2 text-sm text-green-600 font-medium">
-                      {item.payment_status}
-                    </td>
-                    <td
-                      className={`p-2 text-sm ${
-                        item.status == "active"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }  font-medium`}
-                    >
-                      {item.status}
+              </thead>
+              {findLoading ? (
+                <tbody>
+                  <tr>
+                    <td colSpan={4} className="p-4 text-center">
+                      Loading...
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            )}
-          </table>
+                </tbody>
+              ) : (
+                <tbody>
+                  {payments.map((item) => (
+                    <tr key={item._id} className="border-b">
+                      <td className="p-2 text-sm">
+                        {new Date(item.created_at).toISOString().split("T")[0]}
+                      </td>
+                      <td className="p-2 text-sm">
+                        KES {item.amount.toLocaleString()}
+                      </td>
+                      <td className="p-2 text-sm text-green-600 font-medium">
+                        {item.payment_status}
+                      </td>
+                      <td
+                        className={`p-2 text-sm ${
+                          item.status == "active"
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }  font-medium`}
+                      >
+                        {item.status}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              )}
+            </table>
+          </div>
         </div>
       </div>
 

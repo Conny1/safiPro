@@ -127,7 +127,7 @@ const Orders = () => {
               setpaginationdata((prev) => ({
                 ...prev,
 
-                page: prev.page === 1 ? 1 : -1,
+                page: prev.page === 1 ? 1 : prev.page - 1,
               }));
             }}
             className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease"
@@ -137,11 +137,10 @@ const Orders = () => {
 
           <button
             onClick={() => {
-              console.log(paginationdata);
               setpaginationdata((prev) => ({
                 ...prev,
 
-                page: prev.page < prev.totalPages ? +1 : prev.page,
+                page: prev.page < prev.totalPages ? prev.page + 1 : prev.page,
               }));
             }}
             className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease"
