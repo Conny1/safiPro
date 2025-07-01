@@ -1,12 +1,6 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import type { login } from "../types";
-import { useLoginMutation } from "../redux/apislice";
-import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router";
-import { useDispatch } from "react-redux";
-import { updateUserData } from "../redux/userSlice";
 
 type Props = {
   onSwitch: () => void;
@@ -19,10 +13,6 @@ const schema = Yup.object({
 });
 
 const Forgotpassword = ({ onSwitch }: Props) => {
-  const [login, { isLoading: loginloading }] = useLoginMutation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const {
     register,
     handleSubmit,
@@ -32,6 +22,7 @@ const Forgotpassword = ({ onSwitch }: Props) => {
   });
 
   const onSubmit = async (data: { email: string }) => {
+    console.log(data);
     // Handle login logic
     // try {
     //   const resp = await login(data);
@@ -72,10 +63,9 @@ const Forgotpassword = ({ onSwitch }: Props) => {
 
       <button
         type="submit"
-        disabled={loginloading}
         className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
       >
-        {loginloading ? "Loading..." : "Login"}
+        Submit
       </button>
 
       <p className="text-sm text-center">
