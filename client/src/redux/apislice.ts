@@ -194,6 +194,7 @@ export const laundryApi = createApi({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["User"],
     }),
 
     updateOrder: build.mutation<
@@ -252,6 +253,7 @@ export const laundryApi = createApi({
         url: `/admin/orders/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["User"],
     }),
 
     // PAYMENTS
