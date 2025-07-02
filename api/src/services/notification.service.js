@@ -2,9 +2,7 @@ const { createError } = require("../configs/errorConfig.js");
 const { Notification } = require("../models/index.js");
 const { ObjectId } = require("mongodb");
 const { resetPasswordEmail } = require("../utils/emailTemplates.js");
-const {
-  emailConnect,
-} = require("../../../../invoice/api/configs/emailConfig.js");
+const { emailConnect } = require("../configs/emailConfig.js");
 
 // Add New Notification Settings
 const createNotification = async (body) => {

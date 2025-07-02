@@ -4,7 +4,6 @@ import * as Yup from "yup";
 import type { login } from "../types";
 import { useLoginMutation } from "../redux/apislice";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { updateUserData } from "../redux/userSlice";
 
