@@ -234,15 +234,15 @@ const Dashboard = () => {
       </div>
 
       {/* Chart Placeholder */}
-      {user.role === USER_ROLES.SUPER_ADMIN && (
+      {/* {user.role === USER_ROLES.SUPER_ADMIN && (
         <div>
           <h2 className="text-xl font-semibold mb-2">Revenue Chart</h2>
           <div className="bg-white shadow-md rounded-lg h-64 flex items-center justify-center text-gray-400">
-            {/* You can plug in a real chart here later (e.g., Recharts or Chart.js) */}
+          
             Chart Placeholder
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

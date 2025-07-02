@@ -28,14 +28,15 @@ const Layout = () => {
       !location
     ) {
       navigate("/payment");
-    } else if (
+    }
+    if (
       user.role === USER_ROLES.STAFF &&
       user.subscription.status !== "active" &&
       !location
     ) {
       navigate("/subscriptionRequired");
     }
-  }, [user.token, location]);
+  }, [user.token, location, navigate]);
 
   useEffect(() => {
     if (data && "data" in data && user.token) {

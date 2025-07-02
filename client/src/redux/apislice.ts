@@ -111,6 +111,21 @@ export const laundryApi = createApi({
         method: "DELETE",
       }),
     }),
+    resetPassword: build.mutation<
+      {
+        status: Number;
+      },
+      { token: string; password: string }
+    >({
+      query: ({ token, ...body }) => ({
+        url: `/admin/user/reset-password`,
+        method: "POST",
+        body,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
 
     // BRANCH ROUTES
 
@@ -283,6 +298,19 @@ export const laundryApi = createApi({
         body,
       }),
     }),
+    // Notifications
+    sendResetLinkEmail: build.mutation<
+      {
+        status: Number;
+      },
+      { email: string }
+    >({
+      query: (body) => ({
+        url: "/admin/notification/reset-password-link-email",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -310,4 +338,6 @@ export const {
   useFindAndFilterPaymentMutation,
   useMpesaPaymentMutation,
   useGetOrderDashbardAnalysisQuery,
+  useSendResetLinkEmailMutation,
+  useResetPasswordMutation,
 } = laundryApi;

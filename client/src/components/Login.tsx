@@ -24,7 +24,6 @@ const schema = Yup.object({
 
 const Login = ({ onSwitch, setforgotpassword }: Props) => {
   const [login, { isLoading: loginloading }] = useLoginMutation();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const {
@@ -42,10 +41,12 @@ const Login = ({ onSwitch, setforgotpassword }: Props) => {
       if (resp.data?.status === 200) {
         console.log("logged in");
         toast.success("Success..");
-        dispatch(updateUserData(resp.data.data));
+
         setTimeout(() => {
-          navigate("/dashboard");
-        }, 2000);
+          if (resp.data) {
+            dispatch(updateUserData(resp.data.data));
+          }
+        }, 1000);
       } else {
         toast.error("Invalid password or email.");
       }

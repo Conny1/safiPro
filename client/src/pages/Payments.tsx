@@ -115,7 +115,7 @@ const Payments = () => {
             <div className="space-y-4">
               <button
                 onClick={() => setShowMpesaModal(true)}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md"
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md mb-5"
               >
                 Pay with M-PESA
               </button>

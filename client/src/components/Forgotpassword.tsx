@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+import { useSendResetLinkEmailMutation } from "../redux/apislice";
+import { toast } from "react-toastify";
 
 type Props = {
   onSwitch: () => void;
@@ -20,26 +22,22 @@ const Forgotpassword = ({ onSwitch }: Props) => {
   } = useForm<{ email: string }>({
     resolver: yupResolver(schema),
   });
-
+  const [sendResetLinkEmail, { isLoading: sendLoading }] =
+    useSendResetLinkEmailMutation();
   const onSubmit = async (data: { email: string }) => {
-    console.log(data);
-    // Handle login logic
-    // try {
-    //   const resp = await login(data);
-    //   if (resp.data?.status === 200) {
-    //     console.log("logged in");
-    //     toast.success("Success..");
-    //     dispatch(updateUserData(resp.data.data));
-    //     setTimeout(() => {
-    //       navigate("/dashboard");
-    //     }, 2000);
-    //   } else {
-    //     toast.error("Invalid password or email.");
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    //   toast.error("Error logingin. Try again.");
-    // }
+    try {
+      const resp = await sendResetLinkEmail(data);
+      if (resp.data?.status === 200) {
+        toast.success(
+          "Success..Reset password link has been sent to your email."
+        );
+      } else {
+        toast.error("Not send. Try again");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error ... Try again.");
+    }
   };
 
   return (
@@ -62,10 +60,11 @@ const Forgotpassword = ({ onSwitch }: Props) => {
       </div>
 
       <button
+        disabled={sendLoading}
         type="submit"
         className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
       >
-        Submit
+        {sendLoading ? "Loading..." : "Submit"}
       </button>
 
       <p className="text-sm text-center">
