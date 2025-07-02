@@ -93,7 +93,7 @@ const findAndFilterPayments = async (filter, options) => {
 
 const mobileMoneyPayment = async (data) => {
   let payload = {
-    amount: data.amount,
+    amount: data.amount.toString(),
     email: data.email,
     currency: "KES",
     mobile_money: {
