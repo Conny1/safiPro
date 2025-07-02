@@ -62,7 +62,7 @@ const createPayment = async (body) => {
   }
   const DAILY_COST = amount / 30; // KES per day (if plan is 1000 KES/month)
   const user = await User.findById(user_id);
-  if (!user) throw createError(404, "User not found");
+  if (!user) return;
 
   const daysPaidFor = Math.floor(amount / DAILY_COST);
   const expiresAt = new Date();
@@ -70,7 +70,7 @@ const createPayment = async (body) => {
   if ((payment_status = "completed")) {
     const payment = new Payment({
       user_id: new ObjectId(user_id),
-      amount,
+      amount:(amount/100),
       payment_method,
       payment_status,
       status: status,
@@ -93,7 +93,7 @@ const findAndFilterPayments = async (filter, options) => {
 
 const mobileMoneyPayment = async (data) => {
   let payload = {
-    amount: data.amount.toString(),
+    amount: data.amount * 100, //uses subunit measurent
     email: data.email,
     currency: "KES",
     mobile_money: {
