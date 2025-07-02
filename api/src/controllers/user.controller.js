@@ -44,7 +44,6 @@ const updateUser = async (req, resp, next) => {
   }
 };
 const resetPassword = async (req, resp, next) => {
-  console.log("here");
   try {
     const user = await userService.resetPassword(req.user._id, req.body);
 

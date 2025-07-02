@@ -8,6 +8,7 @@ import {
   Orders,
   PaymentConfirmation,
   Payments,
+  ResetPassword,
   Settings,
   SubscriptionRequired,
 } from "./pages";
@@ -18,6 +19,7 @@ function App() {
     <div>
       <Routes>
         <Route path="/auth" element={<Auth />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/" element={<LandingPpage />} />
 
         <Route element={<Layout />}>

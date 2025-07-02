@@ -30,5 +30,5 @@ const brachSchema = new mongoose.Schema(
 brachSchema.plugin(paginate);
 brachSchema.plugin(deletion);
 
-const Branch = mongoose.model("brach", brachSchema);
+const Branch = mongoose.model("branch", brachSchema);
 module.exports = Branch;
