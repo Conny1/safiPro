@@ -85,6 +85,7 @@ export const laundryApi = createApi({
 
     getauthuser: build.query<{ status: Number; data: user }, void>({
       query: () => "/admin/user/auth-user/",
+      providesTags: ["User"],
     }),
 
     findAndFilterUser: build.mutation<
