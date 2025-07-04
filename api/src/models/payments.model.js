@@ -10,13 +10,13 @@ const paymentSchema = new Schema(
 
     payment_method: {
       type: String,
-      enum: ["card", "mpesa", "paypal", "bank"],
+      enum: ["card", "mpesa", "paypal", "free"],
       required: true,
     },
 
     payment_status: {
       type: String,
-      enum: ["pending", "completed", "failed"],
+      enum: ["pending", "completed", "failed", "free"],
       default: "pending",
     },
 

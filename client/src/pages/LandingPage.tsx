@@ -142,6 +142,10 @@ const LandingPage = () => {
             <p className="text-2xl font-semibold text-blue-800">
               KES 1000 / Month
             </p>
+            <p className="text-green-600 font-medium">
+              Start with a <strong>1 month free trial</strong>
+            </p>
+
             <ul className="text-gray-600 list-disc list-inside text-left space-y-2">
               <li>Track unlimited laundry orders</li>
               <li>Add upto 5 branches</li>
@@ -156,6 +160,23 @@ const LandingPage = () => {
               Get Started
             </button>
           </div>
+        </div>
+      </section>
+
+      {/* Demo Video Section */}
+      <section className="bg-white w-full py-12 px-6">
+        <div className="max-w-5xl mx-auto text-center space-y-6">
+          <h3 className="text-3xl font-bold text-blue-800">See It in Action</h3>
+          <p className="text-gray-600 text-lg">
+            Watch how SafiPro can simplify your laundry business.
+          </p>
+          <video
+            controls
+            className="w-full max-w-3xl rounded-lg shadow-md mx-auto"
+          >
+            <source src="/demo.webm" type="video/webm" />
+            Your browser does not support the video tag.
+          </video>
         </div>
       </section>
 
