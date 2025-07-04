@@ -61,6 +61,7 @@ const login = async (body) => {
     process.env.JWT_KEY
   );
   const { password, ...other } = user._doc;
+  other.subscription = { status: user.subscription };
   return { status: 200, data: { token, ...other } };
 };
 
@@ -95,13 +96,11 @@ const updateUser = async (id, body) => {
 
 const getauthUser = async (userid) => {
   const user = await User.findById(new ObjectId(userid));
-  console.log(user);
 
   if (!user) {
     throw createError(404, "user not found!");
   }
   const { password, ...other } = user._doc;
-  // const subscription_data = await getSubscriptionData(other._id, app);
   return { ...other, subscription: { status: user.subscription } };
 };
 

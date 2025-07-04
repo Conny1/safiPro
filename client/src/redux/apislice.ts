@@ -67,6 +67,7 @@ export const laundryApi = createApi({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["User"],
     }),
 
     updateuser: build.mutation<
@@ -225,10 +226,12 @@ export const laundryApi = createApi({
         method: "PUT",
         body,
       }),
+      invalidatesTags: ["Order"],
     }),
 
     getOrderById: build.query<{ status: Number; data: Order }, string>({
       query: (id) => `/admin/orders/${id}`,
+      providesTags: ["Order"],
     }),
 
     getOrderDashbardAnalysis: build.query<
@@ -243,6 +246,7 @@ export const laundryApi = createApi({
       string
     >({
       query: (id) => `/admin/orders/dashboard/${id}`,
+      providesTags: ["Order"],
     }),
 
     findAndFilterOrder: build.mutation<

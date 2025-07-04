@@ -60,7 +60,12 @@ const resetPassword = async (req, resp, next) => {
 const getauthUser = async (req, resp, next) => {
   try {
     const user = await userService.getauthUser(req.user._id);
-    resp.status(200).json({ status: 200, data: user });
+    console.log(user);
+
+    resp
+      .set("Cache-Control", "no-store")
+      .status(200)
+      .json({ status: 200, data: user });
   } catch (error) {
     return next(createError(error.status || 500, error.message));
   }
