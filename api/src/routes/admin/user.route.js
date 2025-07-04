@@ -1,5 +1,9 @@
 const express = require("express");
-const { validate, roleValidation } = require("../../middlewares/validation");
+const {
+  validate,
+  roleValidation,
+  subscriptionValidation,
+} = require("../../middlewares/validation");
 const { userValidation } = require("../../validations");
 const { userController } = require("../../controllers");
 const { verifyTokens } = require("../../middlewares/verifyTokens");
@@ -21,6 +25,9 @@ route.post(
 route.post("/login", validate(userValidation.login), userController.login);
 // require authorisation to access
 route.use(verifyTokens);
+route.get("/auth-user", userController.getauthUser);
+
+route.use(subscriptionValidation);
 
 route.post(
   "/create-staff",
@@ -35,8 +42,6 @@ route.put(
   validate(userValidation.updateUser),
   userController.updateUser
 );
-
-route.get("/auth-user", userController.getauthUser);
 
 route.post(
   "/findandfilter",

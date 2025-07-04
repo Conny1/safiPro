@@ -1,5 +1,9 @@
 const express = require("express");
-const { validate, roleValidation } = require("../../middlewares/validation");
+const {
+  validate,
+  roleValidation,
+  subscriptionValidation,
+} = require("../../middlewares/validation");
 const { branchValidation } = require("../../validations");
 const { branchController } = require("../../controllers");
 const { verifyTokens } = require("../../middlewares/verifyTokens");
@@ -7,6 +11,7 @@ const { verifyTokens } = require("../../middlewares/verifyTokens");
 const route = express.Router();
 
 route.use(verifyTokens);
+route.use(subscriptionValidation);
 
 route.post(
   "/",

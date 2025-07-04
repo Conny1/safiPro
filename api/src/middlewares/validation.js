@@ -79,7 +79,7 @@ const roleValidation = (req, res, next) => {
 };
 
 const subscriptionValidation = async (req, res, next) => {
-  const user = await User.findById(new ObjectId(userid));
+  const user = await User.findById(new ObjectId(req.user._id));
 
   if (!user) {
     return res
