@@ -35,8 +35,9 @@ const Nav = () => {
   const logOut = () => {
     dispatch(logout());
     persistor.purge();
-
-    navigate("/auth");
+    setTimeout(() => {
+      navigate("/auth");
+    }, 1500);
   };
 
   // Function to toggle the mobile menu's open/close state

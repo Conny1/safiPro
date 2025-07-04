@@ -1,11 +1,20 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { logout } from "../redux/userSlice";
-import { persistor } from "../redux/store";
+import { persistor, type RootState } from "../redux/store";
+import { useEffect } from "react";
+import { USER_ROLES } from "../types";
 
 const SubscriptionRequired = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user.value);
+  useEffect(() => {
+    if (user.role === USER_ROLES.SUPER_ADMIN) {
+      navigate("/dashboard");
+    }
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-blue-50 px-4 text-center">
       <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
