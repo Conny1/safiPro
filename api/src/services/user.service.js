@@ -1,5 +1,5 @@
 const { createError } = require("../configs/errorConfig.js");
-const { User } = require("../models/index.js");
+const { User, Payment } = require("../models/index.js");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const { ObjectId } = require("mongodb");
@@ -13,6 +13,20 @@ const createUser = async (body) => {
 
   try {
     const user = new User(body);
+    const currentDate = new Date();
+    const expiresAt = new Date(
+      currentDate.getTime() + 30 * 24 * 60 * 60 * 1000
+    ); // 30 days in milliseconds
+
+    const payment = new Payment({
+      user_id: new ObjectId(user._id),
+      amount: 1000,
+      payment_method: "free",
+      payment_status: "free",
+      status: "active",
+      expires_at: expiresAt,
+    });
+    await payment.save();
     return await user.save();
   } catch (error) {
     if (error?.errorResponse?.code === 11000) {

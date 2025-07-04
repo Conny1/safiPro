@@ -1,9 +1,5 @@
 const express = require("express");
-const {
-  validate,
-  roleValidation,
-  subscriptionValidation,
-} = require("../../middlewares/validation");
+const { validate, roleValidation } = require("../../middlewares/validation");
 const { paymentValidation } = require("../../validations");
 const { paymentController } = require("../../controllers");
 const { verifyTokens } = require("../../middlewares/verifyTokens");
@@ -12,7 +8,6 @@ const route = express.Router();
 // Create a new payment
 route.post("/webhook", paymentController.createPayment);
 route.use(verifyTokens);
-route.use(subscriptionValidation);
 
 // Find and filter payments
 route.post(

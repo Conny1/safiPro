@@ -49,7 +49,7 @@ const userSchema = mongoose.Schema(
     subscription: {
       type: String,
       enum: ["active", "inactive"],
-      default: "inactive",
+      default: "active", /// active for the one month free trial
     },
   },
   { timestamps: true }
