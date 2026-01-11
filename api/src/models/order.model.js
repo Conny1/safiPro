@@ -37,17 +37,17 @@ const OrderSchema = new mongoose.Schema(
     },
     payment_status: {
       type: String,
-      enum: ["pending", "paid"],
+      enum: [ "pending",  "partial",  "paid", "refunded"],
       default: "pending",
     },
     payment_method: {
       type: String,
-      enum: ["cash", "M-Pesa", "card"],
+      enum: ["cash", "mpesa", "card"],
       required: true,
     },
     status: {
       type: String,
-      enum: ["pending", "in-progress", "completed"],
+      enum:  ["pending", "processing","washing","drying","ironing","ready", "completed", "delivered","cancelled"],
       default: "pending",
     },
     order_date: {
@@ -76,7 +76,7 @@ const OrderSchema = new mongoose.Schema(
     },
     delivery_method: {
       type: String,
-      enum: ["Pickup", "Customer drop-off"],
+      enum: [ "pickup", "delivery"],
       required: true,
     },
     is_completed: {
@@ -84,6 +84,10 @@ const OrderSchema = new mongoose.Schema(
       default: false,
     },
     notes: {
+      type: String,
+      default: "",
+    },
+    address: {
       type: String,
       default: "",
     },

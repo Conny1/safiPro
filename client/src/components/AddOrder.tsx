@@ -165,9 +165,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   const paymentMethods = [
     { value: "cash", label: "Cash" },
     { value: "mpesa", label: "M-Pesa" },
-    { value: "card", label: "Card" },
-    { value: "bank_transfer", label: "Bank Transfer" },
-  ];
+      ];
 
   const nextStep = () => {
     if (currentStep < 3) setCurrentStep((prev)=> prev + 1 );

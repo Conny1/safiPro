@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const { objectId } = require("../utils/index");
-
+  const paymentStatusOptions = [ "pending",  "partial",  "paid", "refunded"]
+  const statusOptions = ["pending", "processing","washing","drying","ironing","ready", "completed", "delivered","cancelled"]
 const createOrder = {
   body: Joi.object().keys({
     // order_no: Joi.string().optional(),
@@ -9,7 +10,7 @@ const createOrder = {
     email: Joi.string().email().allow("", null),
     phone_number: Joi.string().required(),
     delivery_method: Joi.string()
-      .valid("Pickup", "Customer drop-off")
+      .valid( "pickup" , "delivery")
       .required(),
     items_description: Joi.string().default("").allow("", null),
     service_type: Joi.string()
@@ -22,16 +23,16 @@ const createOrder = {
         "Wash & Iron"
       )
       .required(),
-
+    address: Joi.string().allow(null,""),
     pickup_date: Joi.string().required(),
     order_date: Joi.string().optional(),
     amount: Joi.number().required(),
     currency: Joi.string().default("KES"),
-    payment_status: Joi.string().valid("pending", "paid").required(),
-    payment_method: Joi.string().valid("cash", "M-Pesa", "card").required(),
+    payment_status: Joi.string().valid(...paymentStatusOptions).required(),
+    payment_method: Joi.string().valid("cash", "mpesa", "card").required(),
 
     status: Joi.string()
-      .valid("pending", "in-progress", "completed")
+      .valid(...statusOptions)
       .required(),
 
     is_completed: Joi.boolean().default(false),
@@ -51,11 +52,9 @@ const updateOrder = {
     email: Joi.string().email().allow("", null),
     phone_number: Joi.string(),
     is_deleted: Joi.boolean(),
-
-    delivery_method: Joi.string().valid("Pickup", "Customer drop-off"),
-
+    delivery_method: Joi.string().valid( "pickup" , "delivery"),
     items_description: Joi.string().allow("", null),
-
+    address: Joi.string().allow(null,""),
     service_type: Joi.string().valid(
       "Wash Only",
       "Dry Cleaning",
@@ -64,14 +63,13 @@ const updateOrder = {
       "Full Service",
       "Wash & Iron"
     ),
-
     pickup_date: Joi.string(),
     order_date: Joi.string(),
     amount: Joi.number(),
-    payment_status: Joi.string().valid("pending", "paid"),
-    payment_method: Joi.string().valid("cash", "M-Pesa", "card"),
+    payment_status: Joi.string().valid(...paymentStatusOptions),
+    payment_method: Joi.string().valid("cash", "mpesa", "card"),
 
-    status: Joi.string().valid("pending", "in-progress", "completed"),
+    status: Joi.string().valid(...statusOptions),
 
     is_completed: Joi.boolean(),
     _id: Joi.custom(objectId).required(),
@@ -105,3 +103,8 @@ module.exports = {
   deleteOrder,
   findAndFilterOrders,
 };
+
+
+
+
+

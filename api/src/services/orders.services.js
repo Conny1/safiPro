@@ -90,6 +90,10 @@ const dashboardanalysis = async (id) => {
           { $match: { status: "completed" } },
           { $count: "count" },
         ],
+        pending_orders: [
+          { $match: { status: "pending" } },
+          { $count: "count" },
+        ],
         total_revenue: [
           { $match: { payment_status: "paid" } },
           {
@@ -105,6 +109,9 @@ const dashboardanalysis = async (id) => {
       $project: {
         total_orders: {
           $ifNull: [{ $arrayElemAt: ["$total_orders.count", 0] }, 0],
+        },
+          pending_orders: {
+          $ifNull: [{ $arrayElemAt: ["$pending_orders.count", 0] }, 0],
         },
         completed_orders: {
           $ifNull: [{ $arrayElemAt: ["$completed_orders.count", 0] }, 0],
