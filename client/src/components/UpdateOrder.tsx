@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { addOrder, Order } from "../types";
+import type {  Order } from "../types";
 import { useUpdateOrderMutation } from "../redux/apislice";
 import { toast, ToastContainer } from "react-toastify";
 import {
@@ -30,7 +30,7 @@ type Props = {
 };
 
 const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
-  const [formData, setFormData] = useState<addOrder>({
+  const [formData, setFormData] = useState<Order>({
     name: orderData.name || "",
     email: orderData.email || "",
     phone_number: orderData.phone_number!,
@@ -44,6 +44,7 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
     status: orderData.status || "pending",
     is_completed: orderData.is_completed || false,
     notes: orderData.notes || "",
+    
   });
 
   const [showAdvanced, setShowAdvanced] = useState(false);

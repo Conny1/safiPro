@@ -16,23 +16,23 @@ export type addOrder = {
   order_date?: string;
   amount: number;
   payment_status: "pending" | "paid";
-  payment_method: "cash" | "M-Pesa" | "card";
-  status?:"pending"|"processing"|"washing"|"drying"|"ironing"|"ready"| "completed"| "delivered"|"cancelled"
+  payment_method: "cash" | "mpesa" ;
+  status:"pending"|"processing"|"washing"|"drying"|"ironing"|"ready"| "completed"| "delivered"|"cancelled"
   is_completed: boolean;
-  address?:string;
+  address:string;
   notes: string;
 };
 
 export type Order = {
   _id?: string;
-  order_no?: number;
+  order_no?: string;
   branch_id?: string;
   name?: string;
   email?: string;
   phone_number?: string;
   amount?: number;
   payment_status?: "pending" | "paid";
-  payment_method?: "cash" | "M-Pesa" | "card";
+  payment_method?: "cash" | "mpesa";
   status?:"pending"|"processing"|"washing"|"drying"|"ironing"|"ready"| "completed"| "delivered"|"cancelled"
   order_date?: string; // ISO date string e.g. "2025-06-04"
   pickup_date?: string; // ISO date string

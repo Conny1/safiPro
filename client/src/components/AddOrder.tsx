@@ -47,6 +47,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
     status: "pending",
     is_completed: false,
     notes: "",
+    address:"",
   });
   const [submitForm, setsubmitForm] = useState(false)
 
@@ -131,6 +132,8 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
           status: "pending",
           is_completed: false,
           notes: "",
+          address:"",
+          branch_id:""
         });
         
         setTimeout(() => {
