@@ -191,62 +191,6 @@ const Orders = () => {
         </div>
       </div>
 
-      {/* Stats Summary */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div className="p-5 border border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-blue-700">Total Orders</p>
-              <p className="mt-2 text-2xl font-bold text-gray-900">{paginationdata.totalResults}</p>
-            </div>
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <FileText className="w-5 h-5 text-blue-600" />
-            </div>
-          </div>
-        </div>
-        
-        <div className="p-5 border border-green-200 bg-gradient-to-r from-green-50 to-green-100 rounded-xl">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-green-700">Completed</p>
-              <p className="mt-2 text-2xl font-bold text-gray-900">
-                {orders.filter(o => o.status === "completed").length}
-              </p>
-            </div>
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-            </div>
-          </div>
-        </div>
-        
-        <div className="p-5 border border-yellow-200 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-yellow-700">Pending</p>
-              <p className="mt-2 text-2xl font-bold text-gray-900">
-                {orders.filter(o => o.status === "pending").length}
-              </p>
-            </div>
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <Clock className="w-5 h-5 text-yellow-600" />
-            </div>
-          </div>
-        </div>
-        
-        <div className="p-5 border border-purple-200 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-purple-700">In Progress</p>
-              <p className="mt-2 text-2xl font-bold text-gray-900">
-                {orders.filter(o => o.status === "in-progress").length}
-              </p>
-            </div>
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <TrendingUp className="w-5 h-5 text-purple-600" />
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Filters */}
       <div className="p-5 bg-white border border-gray-200 rounded-xl">
@@ -314,7 +258,7 @@ const Orders = () => {
                 <option value="month">Last 30 Days</option>
               </select>
             </div>
-            
+{/*             
             {user.branches.length > 1 && (
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-700">Branch</label>
@@ -331,7 +275,7 @@ const Orders = () => {
                   ))}
                 </select>
               </div>
-            )}
+            )} */}
           </div>
         )}
       </div>
@@ -385,7 +329,7 @@ const Orders = () => {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {orders.map((order) => {
-                  const status = getStatusConfig(order.status);
+                  const status = getStatusConfig(order.status as string);
                   const StatusIcon = status.icon;
                   
                   return (
@@ -404,11 +348,11 @@ const Orders = () => {
                             <Tag className="w-4 h-4 text-gray-400" />
                             <span className="font-medium text-gray-900">{order.order_no}</span>
                           </div>
-                          {order.items && order.items.length > 0 && (
+                          {/* {order.items && order.items.length > 0 && (
                             <p className="mt-1 text-xs text-gray-500">
                               {order.items.length} item{order.items.length > 1 ? 's' : ''}
                             </p>
-                          )}
+                          )} */}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -427,7 +371,7 @@ const Orders = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className="font-medium text-gray-900">
-                          {formatCurrency(order.total_amount || 0)}
+                          {formatCurrency(order.amount || 0)}
                         </span>
                       </td>
                       <td className="px-6 py-4">

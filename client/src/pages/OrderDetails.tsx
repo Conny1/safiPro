@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, type ReactNode } from "react";
 import { useNavigate, useParams } from "react-router";
 import {
   useDeleteOrderMutation,
@@ -26,25 +26,41 @@ import {
   User,
   AlertCircle,
   Download,
-  Share2,
   MoreVertical,
   Loader2,
 } from "lucide-react";
 
 const StatusBadge = ({ status }: { status: string }) => {
   const config = {
-    completed: { color: "bg-green-100 text-green-800 border-green-200", icon: CheckCircle },
-    pending: { color: "bg-yellow-100 text-yellow-800 border-yellow-200", icon: Clock },
-    "in-progress": { color: "bg-blue-100 text-blue-800 border-blue-200", icon: Clock },
-    cancelled: { color: "bg-red-100 text-red-800 border-red-200", icon: AlertCircle },
-    delivered: { color: "bg-purple-100 text-purple-800 border-purple-200", icon: Truck },
+    completed: {
+      color: "bg-green-100 text-green-800 border-green-200",
+      icon: CheckCircle,
+    },
+    pending: {
+      color: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      icon: Clock,
+    },
+    "in-progress": {
+      color: "bg-blue-100 text-blue-800 border-blue-200",
+      icon: Clock,
+    },
+    cancelled: {
+      color: "bg-red-100 text-red-800 border-red-200",
+      icon: AlertCircle,
+    },
+    delivered: {
+      color: "bg-purple-100 text-purple-800 border-purple-200",
+      icon: Truck,
+    },
   };
 
   const statusConfig = config[status as keyof typeof config] || config.pending;
   const Icon = statusConfig.icon;
 
   return (
-    <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${statusConfig.color}`}>
+    <div
+      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${statusConfig.color}`}
+    >
       <Icon className="w-4 h-4" />
       <span className="text-sm font-medium capitalize">{status}</span>
     </div>
@@ -73,13 +89,23 @@ const InfoCard = ({
   </div>
 );
 
-const DetailItem = ({ label, value, icon: Icon }: { label: string; value: string | number; icon?: React.ElementType }) => (
+const DetailItem = ({
+  label,
+  value,
+  icon: Icon,
+}: {
+  label: string;
+  value: string | number | ReactNode
+  icon?: React.ElementType;
+}) => (
   <div className="flex items-start justify-between py-2 border-b border-gray-100 last:border-0">
     <div className="flex items-center gap-2">
       {Icon && <Icon className="w-4 h-4 text-gray-400" />}
       <span className="text-sm font-medium text-gray-600">{label}</span>
     </div>
-    <span className="text-sm font-medium text-right text-gray-900">{value}</span>
+    <span className="text-sm font-medium text-right text-gray-900">
+      {value}
+    </span>
   </div>
 );
 
@@ -107,10 +133,14 @@ const OrderDetails = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <AlertCircle className="w-16 h-16 mb-4 text-gray-300" />
-        <h2 className="mb-2 text-xl font-semibold text-gray-900">Order Not Found</h2>
-        <p className="mb-6 text-gray-600">The order you're looking for doesn't exist.</p>
+        <h2 className="mb-2 text-xl font-semibold text-gray-900">
+          Order Not Found
+        </h2>
+        <p className="mb-6 text-gray-600">
+          The order you're looking for doesn't exist.
+        </p>
         <button
-          onClick={() => navigate("/orders")}
+          onClick={() => navigate("/order")}
           className="flex items-center gap-2 px-4 py-2 font-medium text-blue-600 hover:text-blue-700"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -138,18 +168,18 @@ const OrderDetails = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-KE', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleDateString("en-KE", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const formatCurrency = (amount: number) => {
-    return `KES ${amount?.toLocaleString('en-KE') || "0"}`;
+    return `KES ${amount?.toLocaleString("en-KE") || "0"}`;
   };
 
   return (
@@ -161,8 +191,8 @@ const OrderDetails = () => {
             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
               <div>
                 <button
-                  onClick={() => navigate("/orders")}
-                  className="flex items-center gap-2 mb-4 text-gray-600 hover:text-gray-900"
+                  onClick={() => navigate("/order")}
+                  className="flex items-center gap-2 mb-4 text-gray-600 bg-transparent hover:text-gray-900"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back to Orders
@@ -176,15 +206,20 @@ const OrderDetails = () => {
                       Order #{order.order_no}
                     </h1>
                     <div className="flex items-center gap-3 mt-2">
-                      <StatusBadge status={order.status} />
+                      <StatusBadge status={order.status as string} />
                       <span className="text-sm text-gray-500">
-                        Created {formatDate(order.createdAt || order.order_date || new Date().toISOString())}
+                        Created{" "}
+                        {formatDate(
+                          order.createdAt ||
+                            order.order_date ||
+                            new Date().toISOString()
+                        )}
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-3">
                 <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
                   <Printer className="w-4 h-4" />
@@ -210,11 +245,29 @@ const OrderDetails = () => {
           <div className="space-y-6 lg:col-span-2">
             {/* Customer Information */}
             <InfoCard title="Customer Information" icon={User}>
-              <DetailItem label="Full Name" value={order.name || "N/A"} icon={User} />
-              <DetailItem label="Phone Number" value={order.phone_number} icon={Phone} />
-              <DetailItem label="Email Address" value={order.email || "Not provided"} icon={Mail} />
-              {order.address && (
-                <DetailItem label="Delivery Address" value={order.address} icon={MapPin} />
+              <DetailItem
+                label="Full Name"
+                value={order.name || "N/A"}
+                icon={User}
+              />
+              <DetailItem
+                label="Phone Number"
+                value={order.phone_number as string}
+                icon={Phone}
+              />
+              {order?.email && (
+                <DetailItem
+                  label="Email Address"
+                  value={order.email || "Not provided"}
+                  icon={Mail}
+                />
+              )}{" "}
+              {order?.address && (
+                <DetailItem
+                  label="Delivery Address"
+                  value={order.address}
+                  icon={MapPin}
+                />
               )}
             </InfoCard>
 
@@ -225,28 +278,36 @@ const OrderDetails = () => {
                   <p className="text-gray-700">{order.items_description}</p>
                 </div>
               ) : (
-                <p className="text-sm text-gray-500">No item details provided</p>
+                <p className="text-sm text-gray-500">
+                  No item details provided
+                </p>
               )}
-              {order.items && Array.isArray(order.items) && order.items.length > 0 && (
-                <div className="mt-4 space-y-2">
-                  <p className="text-sm font-medium text-gray-600">Item Breakdown:</p>
-                  {order.items.map((item: any, index: number) => (
-                    <div key={index} className="flex items-center justify-between p-2 rounded bg-gray-50">
-                      <span className="text-sm text-gray-700">{item.name}</span>
-                      <span className="text-sm font-medium">{formatCurrency(item.price)}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+    
             </InfoCard>
 
             {/* Service Details */}
             <InfoCard title="Service Details" icon={Home}>
-              <DetailItem label="Service Type" value={order.service_type || "Standard"} icon={Tag} />
-              <DetailItem label="Delivery Method" value={order.delivery_method || "Pickup"} icon={Truck} />
-              <DetailItem label="Pickup Date" value={formatDate(order.pickup_date as string)} icon={Calendar} />
-              {order.delivery_date && (
-                <DetailItem label="Delivery Date" value={formatDate(order.delivery_date as string)} icon={Calendar} />
+              <DetailItem
+                label="Service Type"
+                value={order.service_type || "Standard"}
+                icon={Tag}
+              />
+              <DetailItem
+                label="Delivery Method"
+                value={order.delivery_method || "Pickup"}
+                icon={Truck}
+              />
+          { order.delivery_method ==="pickup"&&    <DetailItem
+                label="Pickup Date"
+                value={formatDate(order.pickup_date as string)}
+                icon={Calendar}
+              />}
+              {order.delivery_method ==="delivery" && (
+                <DetailItem
+                  label=" Delivery Date"
+                  value={formatDate(order.pickup_date as string)}
+                  icon={Calendar}
+                />
               )}
             </InfoCard>
 
@@ -265,13 +326,32 @@ const OrderDetails = () => {
             {/* Order Summary */}
             <InfoCard title="Order Summary" icon={FileText}>
               <div className="space-y-3">
-                <DetailItem label="Subtotal" value={formatCurrency(order.amount || 0)} />
-                <DetailItem label="Delivery Fee" value={order.delivery_fee ? formatCurrency(order.delivery_fee) : "KES 0"} />
-                <DetailItem label="Discount" value={order.discount ? `-${formatCurrency(order.discount)}` : "KES 0"} />
+                <DetailItem
+                  label="Subtotal"
+                  value={formatCurrency(order.amount || 0)}
+                />
+                {/* <DetailItem
+                  label="Delivery Fee"
+                  value={
+                    order.delivery_fee
+                      ? formatCurrency(order.delivery_fee)
+                      : "KES 0"
+                  }
+                /> */}
+                {/* <DetailItem
+                  label="Discount"
+                  value={
+                    order.discount
+                      ? `-${formatCurrency(order.discount)}`
+                      : "KES 0"
+                  }
+                /> */}
                 <div className="pt-3 border-t border-gray-200">
-                  <DetailItem 
-                    label="Total Amount" 
-                    value={formatCurrency(order.total_amount || order.amount || 0)} 
+                  <DetailItem
+                    label="Total Amount"
+                    value={formatCurrency(
+                       order.amount || 0
+                    )}
                   />
                 </div>
               </div>
@@ -279,18 +359,28 @@ const OrderDetails = () => {
 
             {/* Payment Information */}
             <InfoCard title="Payment Information" icon={CreditCard}>
-              <DetailItem label="Payment Status" 
+              <DetailItem
+                label="Payment Status"
                 value={
                   <div className="flex items-center gap-2">
                     <StatusBadge status={order.payment_status || "pending"} />
-                  </div>
-                } 
+                  </div> 
+                }
               />
-              <DetailItem label="Payment Method" value={order.payment_method || "Cash"} />
-              <DetailItem label="Amount Paid" value={formatCurrency(order.amount_paid || 0)} />
-              {order.payment_date && (
-                <DetailItem label="Payment Date" value={formatDate(order.payment_date as string)} />
-              )}
+              <DetailItem
+                label="Payment Method"
+                value={order.payment_method || "Cash"}
+              />
+              {/* <DetailItem
+                label="Amount Paid"
+                value={formatCurrency(order.amount_paid || 0)}
+              /> */}
+              {/* {order.payment_date && (
+                <DetailItem
+                  label="Payment Date"
+                  value={formatDate(order.payment_date as string)}
+                />
+              )} */}
             </InfoCard>
 
             {/* Actions */}
@@ -304,11 +394,19 @@ const OrderDetails = () => {
                   <Edit className="w-4 h-4" />
                   Update Order
                 </button>
-                
+
                 <ForwardButtons
-                  message={`Hello ${order.name || "there"}, your laundry order #${order.order_no} is ${order.status}. ${order.status === 'completed' ? 'Ready for collection!' : 'Still in progress.'}`}
+                  message={`Hello ${
+                    order.name || "there"
+                  }, your laundry order #${order.order_no} is ${
+                    order.status
+                  }. ${
+                    order.status === "completed"
+                      ? "Ready for collection!"
+                      : "Still in progress."
+                  }`}
                   phone_number={order.phone_number as string}
-                  fullWidth
+                  // fullWidth
                 />
 
                 <div className="pt-3 border-t border-gray-200">
@@ -325,38 +423,54 @@ const OrderDetails = () => {
 
             {/* Order Timeline */}
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
-              <h3 className="mb-4 font-semibold text-gray-900">Order Timeline</h3>
+              <h3 className="mb-4 font-semibold text-gray-900">
+                Order Timeline
+              </h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <div className="p-1.5 bg-green-100 rounded-full mt-0.5">
                     <CheckCircle className="w-3 h-3 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Order Created</p>
-                    <p className="text-xs text-gray-500">{formatDate(order.createdAt || order.order_date || new Date().toISOString())}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      Order Created
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formatDate(
+                        order.createdAt ||
+                          order.order_date ||
+                          new Date().toISOString()
+                      )}
+                    </p>
                   </div>
                 </div>
-                
-                {order.status !== 'pending' && (
+
+                {order.status !== "pending" && (
                   <div className="flex items-start gap-3">
                     <div className="p-1.5 bg-blue-100 rounded-full mt-0.5">
                       <Clock className="w-3 h-3 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Processing Started</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        Processing Started
+                      </p>
                       <p className="text-xs text-gray-500">In progress</p>
                     </div>
                   </div>
                 )}
-                
-                {order.status === 'completed' && (
+
+                {order.status === "completed" && (
                   <div className="flex items-start gap-3">
                     <div className="p-1.5 bg-green-100 rounded-full mt-0.5">
                       <CheckCircle className="w-3 h-3 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Order Completed</p>
-                      <p className="text-xs text-gray-500">Ready for pickup/delivery</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        Order Completed
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Ready for pickup/delivery
+                      </p>
                     </div>
                   </div>
                 )}
@@ -370,7 +484,11 @@ const OrderDetails = () => {
       {updateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden">
-            <UpdateOrder setupdateModal={setupdateModal} orderData={order} onUpdate={refetch} />
+            <UpdateOrder
+              setupdateModal={setupdateModal}
+              orderData={order}
+              onUpdate={refetch}
+            />
           </div>
         </div>
       )}
@@ -383,9 +501,12 @@ const OrderDetails = () => {
               <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
                 <AlertCircle className="w-6 h-6 text-red-600" />
               </div>
-              <h3 className="mb-2 text-lg font-semibold text-gray-900">Delete Order</h3>
+              <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                Delete Order
+              </h3>
               <p className="mb-6 text-gray-600">
-                Are you sure you want to delete order #{order.order_no}? This action cannot be undone.
+                Are you sure you want to delete order #{order.order_no}? This
+                action cannot be undone.
               </p>
               <div className="flex justify-center gap-3">
                 <button

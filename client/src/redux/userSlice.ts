@@ -10,6 +10,7 @@ export const userSlice = createSlice({
       token: "",
       _id: "",
       role: "",
+      createdAt: "",
       subscription: { status: "" },
       branches: [
         {
@@ -32,6 +33,7 @@ export const userSlice = createSlice({
         token: "",
         _id: "",
         role: "",
+        createdAt: "",
         subscription: { status: "" },
         branches: [
           {

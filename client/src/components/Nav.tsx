@@ -1,31 +1,51 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useLocation, useNavigate } from "react-router"; // Using react-router-dom for web
-import { MenuIcon, XIcon } from "lucide-react"; // Import XIcon for the mobile menu close button
+import { Link, useLocation, useNavigate } from "react-router";
+import { 
+  MenuIcon, 
+  XIcon, 
+  LayoutDashboard,
+  Package,
+  Settings,
+  CreditCard,
+  LogOut,
+  User,
+  ChevronLeft,
+  ChevronRight,
+  Bell,
+  HelpCircle
+} from "lucide-react";
 import { logout } from "../redux/userSlice";
 import { persistor } from "../redux/store";
+import { useSelector } from "react-redux";
+import type { RootState } from "../redux/store";
 
 const Nav = () => {
-  // State to manage the visibility of the mobile-specific menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation().pathname.match("/confirmation");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const location = useLocation()
+  const user = useSelector((state: RootState) => state.user.value);
 
-  const list = [
+  const navItems = [
     {
       value: "/dashboard",
       label: "Dashboard",
+      icon: LayoutDashboard,
     },
     {
-      label: "Orders",
       value: "/order",
+      label: "Orders",
+      icon: Package,
     },
     {
-      label: "Settings",
-      value: "/settings",
-    },
-    {
-      label: "Payments",
       value: "/payment",
+      label: "Payments",
+      icon: CreditCard,
+    },
+    {
+      value: "/settings",
+      label: "Settings",
+      icon: Settings,
     },
   ];
 
@@ -40,116 +60,251 @@ const Nav = () => {
     }, 1500);
   };
 
-  // Function to toggle the mobile menu's open/close state
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
+
+
   return (
-    <div className=" border-b w-full flex justify-between items-center mb-5 p-4 relative">
-      {/* Brand/Logo Section */}
-      <div>
-        <p className="text-[25px] font-[600] text-[#535bf2]">SafiPro</p>
+    <>
+      {/* Mobile Menu Toggle (Hamburger) - Only visible on mobile */}
+      <div className="fixed z-50 lg:hidden top-4 left-4">
+        <button
+          onClick={toggleMobileMenu}
+          className="p-2 bg-white rounded-lg shadow-md"
+        >
+          {isMobileMenuOpen ? (
+            <XIcon className="w-6 h-6 "  color="black" />
+          ) : (
+            <MenuIcon className="w-6 h-6 " color="black" />
+          )}
+        </button>
       </div>
-      {!location && (
-        <>
-          {/* Mobile Menu Toggle Icon (Hamburger / Close) */}
-          {/* This icon is ONLY visible on screens smaller than 'lg' */}
-          <div className="lg:hidden z-50">
-            {" "}
-            {/* z-50 ensures icon is above the mobile menu overlay */}
-            {isMobileMenuOpen ? (
-              <XIcon
-                className="cursor-pointer"
-                onClick={toggleMobileMenu}
-                size={28}
-              />
-            ) : (
-              <MenuIcon
-                className="cursor-pointer"
-                onClick={toggleMobileMenu}
-                size={28}
-              />
+
+      {/* Sidebar for Desktop */}
+      <div className={`
+        hidden lg:flex flex-col h-screen bg-white border-r border-gray-200
+        fixed left-0 top-0 z-40 transition-all duration-300 ease-in-out
+        ${isSidebarCollapsed ? 'w-20' : 'w-64'}
+      `}>
+        {/* Sidebar Header */}
+        <div className="p-6 border-b border-gray-200">
+          <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
+            <div className="p-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-800">
+              <span className="text-lg font-bold text-white">S</span>
+            </div>
+            {!isSidebarCollapsed && (
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">SafiPro</h1>
+                <p className="text-xs text-gray-500">Laundry Management</p>
+              </div>
             )}
           </div>
+        </div>
 
-          {/* --- Desktop Navigation Menu (Original, Unchanged) --- */}
-          {/* This menu is hidden by default and becomes flex ONLY on 'lg' screens and above */}
-          <div className="w-[40%] hidden lg:flex justify-evenly items-center">
-            {list.map((item) => (
-              <div key={item.value}>
-                <Link to={item.value}>{item.label}</Link>
+        {/* User Profile */}
+        <div className={`p-6 border-b border-gray-200 ${isSidebarCollapsed ? 'text-center' : ''}`}>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-blue-100 to-blue-200">
+              <User className="w-5 h-5 text-blue-600" />
+            </div>
+            {!isSidebarCollapsed && (
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-gray-900 truncate">{user.first_name || "User"}</h3>
+                <p className="text-xs text-gray-500 truncate">
+                  {user.role === "super_admin" ? "Super Admin" : "Branch Manager"}
+                </p>
               </div>
-            ))}
-            <button onClick={logOut}>Logout</button>
+            )}
           </div>
+        </div>
 
-          {/* --- Mobile-Specific Navigation Menu (New) --- */}
-          {/*
-        This menu is ONLY visible on screens smaller than 'lg'.
-        It will slide in from the right when toggled open.
-      */}
-          <div
+        {/* Navigation Items */}
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.value 
+            
+            return (
+              <Link
+                key={item.value}
+                to={item.value}
+                className={`
+                  flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
+                  ${isActive 
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                    : 'text-gray-700 hover:bg-gray-50'
+                  }
+                  ${isSidebarCollapsed ? 'justify-center' : ''}
+                `}
+              >
+                <Icon className={`w-5 h-5 ${isActive ? 'text-blue-600' : 'text-gray-500'}`} />
+                {!isSidebarCollapsed && (
+                  <span className="font-medium">{item.label}</span>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Sidebar Footer */}
+        <div className="p-4 space-y-2 border-t border-gray-200">
+          {/* Notifications */}
+          <button className={`
+            flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 w-full
+            ${isSidebarCollapsed ? 'justify-center' : ''}
+          `}>
+            <Bell className="w-5 h-5 text-gray-500" />
+            {!isSidebarCollapsed && (
+              <span className="font-medium">Notifications</span>
+            )}
+            {!isSidebarCollapsed && (
+              <span className="flex items-center justify-center w-5 h-5 ml-auto text-xs text-white bg-red-500 rounded-full">
+                3
+              </span>
+            )}
+          </button>
+
+          {/* Help & Support */}
+          <button className={`
+            flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 w-full
+            ${isSidebarCollapsed ? 'justify-center' : ''}
+          `}>
+            <HelpCircle className="w-5 h-5 text-gray-500" />
+            {!isSidebarCollapsed && <span className="font-medium">Help</span>}
+          </button>
+
+          {/* Logout Button */}
+          <button
+            onClick={logOut}
             className={`
-          // Control visibility based on state for mobile, and hide on large screens
-          ${isMobileMenuOpen ? "flex" : "hidden"}
-          lg:hidden
-
-          // Mobile-specific layout and positioning (full screen overlay)
-          flex-col // Stack items vertically
-           top-0 right-0 h-full w-full max-w-xs sm:max-w-sm // Full height, fixed to right, limited width
-          bg-white shadow-lg p-6 space-y-6 z-40 // Styling: background, shadow, padding, vertical spacing, z-index
-
-          // Slide-in/out animation for mobile
-          transform transition-transform duration-300 ease-in-out
-          ${
-            isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-          } // Slide in/out effect
-        `}
+              flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 w-full
+              ${isSidebarCollapsed ? 'justify-center' : ''}
+            `}
           >
-            {/* Close button inside the mobile menu (for better mobile UX) */}
-            <div className="flex justify-end mb-6">
-              <XIcon
-                className="cursor-pointer"
-                onClick={toggleMobileMenu}
-                size={28}
-              />
+            <LogOut className="w-5 h-5" />
+            {!isSidebarCollapsed && <span className="font-medium">Logout</span>}
+          </button>
+
+          {/* Collapse Toggle Button */}
+          <button
+            onClick={toggleSidebar}
+            className="absolute -right-3 top-1/2 transform -translate-y-1/2 bg-white border border-gray-200 rounded-full p-1.5 shadow-sm hover:shadow-md"
+          >
+            {isSidebarCollapsed ? (
+              <ChevronRight className="w-4 h-4 text-gray-600" />
+            ) : (
+              <ChevronLeft className="w-4 h-4 text-gray-600" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Navigation Menu */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          {/* Overlay */}
+          <div 
+            className="absolute inset-0 bg-black bg-opacity-50"
+            onClick={toggleMobileMenu}
+          />
+          
+          {/* Mobile Sidebar */}
+          <div className="absolute top-0 left-0 w-64 h-full bg-white shadow-xl">
+            {/* Mobile Header */}
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-800">
+                    <span className="text-lg font-bold text-white">S</span>
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-bold text-gray-900">SafiPro</h1>
+                    <p className="text-xs text-gray-500">Laundry Management</p>
+                  </div>
+                </div>
+                <button onClick={toggleMobileMenu}>
+                  <XIcon className="w-6 h-6" />
+                </button>
+              </div>
             </div>
 
-            {list.map((item) => (
-              <div key={item.value}>
-                <Link
-                  to={item.value}
-                  className="text-lg text-gray-800 hover:text-[#535bf2] block py-2" // Added block and py-2 for better touch targets on mobile
-                  onClick={toggleMobileMenu} // Close mobile menu when a link is clicked
-                >
-                  {item.label}
-                </Link>
+            {/* User Profile */}
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-blue-100 to-blue-200">
+                  <User className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-gray-900 truncate">{user.first_name || "User"}</h3>
+                  <p className="text-xs text-gray-500 truncate">
+                    {user.role === "super_admin" ? "Super Admin" : "Branch Manager"}
+                  </p>
+                </div>
               </div>
-            ))}
-            <button
-              onClick={() => {
-                logOut();
+            </div>
 
-                toggleMobileMenu();
-              }} // Close mobile menu on logout, then logout
-              className="bg-[#535bf2] text-white py-2 px-4 rounded-md hover:bg-[#434bcf] mt-4"
-            >
-              Logout
-            </button>
+            {/* Mobile Navigation Items */}
+            <nav className="p-4 space-y-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.value;
+                
+                return (
+                  <Link
+                    key={item.value}
+                    to={item.value}
+                    onClick={toggleMobileMenu}
+                    className={`
+                      flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
+                      ${isActive 
+                        ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                        : 'text-gray-700 hover:bg-gray-50'
+                      }
+                    `}
+                  >
+                    <Icon className={`w-5 h-5 ${isActive ? 'text-blue-600' : 'text-gray-500'}`} />
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Mobile Footer */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2 border-t border-gray-200">
+              {/* <button className="flex items-center w-full gap-3 px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-50">
+                <Bell className="w-5 h-5 text-gray-500" />
+                <span className="font-medium">Notifications</span>
+                <span className="flex items-center justify-center w-5 h-5 ml-auto text-xs text-white bg-red-500 rounded-full">
+                  3
+                </span>
+              </button> */}
+
+              {/* <button className="flex items-center w-full gap-3 px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-50">
+                <HelpCircle className="w-5 h-5 text-gray-500" />
+                <span className="font-medium">Help & Support</span>
+              </button> */}
+
+              <button
+                onClick={() => {
+                  toggleMobileMenu();
+                  logOut();
+                }}
+                className="flex items-center w-full gap-3 px-4 py-3 text-red-600 rounded-lg hover:bg-red-50"
+              >
+                <LogOut className="w-5 h-5" />
+                <span className="font-medium">Logout</span>
+              </button>
+            </div>
           </div>
-
-          {/* Mobile Menu Overlay */}
-          {/* Visible only when the mobile menu is open and on screens smaller than 'lg' */}
-          {isMobileMenuOpen && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-              onClick={toggleMobileMenu} // Clicking overlay closes the menu
-            ></div>
-          )}
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

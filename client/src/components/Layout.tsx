@@ -10,9 +10,9 @@ import { USER_ROLES } from "../types";
 const Layout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const user = useSelector((state: RootState) => state.user.value);
   const location = useLocation();
+
   // Only run the query if user has a token
   const { data } = useGetauthuserQuery(undefined, {
     skip: !user.token,
@@ -42,7 +42,8 @@ const Layout = () => {
     ) {
       navigate("/subscriptionRequired");
     }
-  }, [user.token, location.pathname, navigate]);
+  }, [user.token, location.pathname, navigate, user.role, user.subscription.status]);
+
   const logOut = () => {
     dispatch(logout());
     persistor.purge();
@@ -50,14 +51,36 @@ const Layout = () => {
       navigate("/auth");
     }, 1500);
   };
+
+  if (location.pathname === "/confirmation") {
+    return <Outlet />;
+  }
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-50">
+      {/* Sidebar Navigation */}
       {user.subscription.status === "active" ? (
         <Nav />
       ) : (
-        <button onClick={logOut}>Log out</button>
+        <div className="p-4">
+          <button 
+            onClick={logOut}
+            className="px-4 py-2 text-red-600 rounded-lg hover:bg-red-50"
+          >
+            Log out
+          </button>
+        </div>
       )}
-      <Outlet />
+      
+      {/* Main Content Area */}
+      <div className={`
+        transition-all duration-300 ease-in-out
+        lg:pl-64 /* Full sidebar width */
+      `}>
+        <div className="p-6">
+          <Outlet />
+        </div>
+      </div>
     </div>
   );
 };

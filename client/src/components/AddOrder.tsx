@@ -18,13 +18,11 @@ import {
   Truck,
   CreditCard,
   CheckCircle,
-  AlertCircle,
   FileText,
   Loader2,
   Building,
   Plus,
   ShoppingBag,
-  Tag,
   Clock,
 } from "lucide-react";
 
@@ -41,7 +39,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
     phone_number: "",
     delivery_method: "pickup",
     items_description: "",
-    service_type: "wash_only",
+    service_type: "Wash Only",
     pickup_date: "",
     amount: 0,
     payment_status: "pending",
@@ -50,6 +48,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
     is_completed: false,
     notes: "",
   });
+  const [submitForm, setsubmitForm] = useState(false)
 
   const [activeBranch, setactiveBranch] = useState(
     user.role === USER_ROLES.SUPER_ADMIN ? "" : user.branches[0]?.branch_id || ""
@@ -95,8 +94,8 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   }, [allBranchesResp]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+        e.preventDefault();
+    if(!submitForm ) return
     if (!formData.phone_number) {
       toast.error("Phone number is required");
       return;
@@ -124,7 +123,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
           phone_number: "",
           delivery_method: "pickup",
           items_description: "",
-          service_type: "wash_only",
+          service_type: "Wash Only",
           pickup_date: "",
           amount: 0,
           payment_status: "pending",
@@ -147,19 +146,20 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
     }
   };
 
+
+
   const serviceTypes = [
-    { value: "wash_only", label: "Wash Only" },
-    { value: "dry_cleaning", label: "Dry Cleaning" },
-    { value: "ironing", label: "Ironing" },
-    { value: "wash_fold", label: "Wash & Fold" },
-    { value: "full_service", label: "Full Service" },
-    { value: "wash_iron", label: "Wash & Iron" },
+    { value: "Wash Only", label: "Wash Only" },
+    { value: "Dry Cleaning", label: "Dry Cleaning" },
+    { value: "Ironing", label: "Ironing" },
+    { value: "Wash & Fold", label: "Wash & Fold" },
+    { value: "Full Service", label: "Full Service" },
+    { value: "Wash & Iron", label: "Wash & Iron" },
   ];
 
   const deliveryMethods = [
     { value: "pickup", label: "Customer Pickup" },
     { value: "delivery", label: "Home Delivery" },
-    { value: "store_dropoff", label: "Store Drop-off" },
   ];
 
   const paymentMethods = [
@@ -170,11 +170,13 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   ];
 
   const nextStep = () => {
-    if (currentStep < 3) setCurrentStep(currentStep + 1);
+    if (currentStep < 3) setCurrentStep((prev)=> prev + 1 );
   };
 
   const prevStep = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
+    if (currentStep > 1) setCurrentStep((prev=> prev-1 ));
+        
+
   };
 
   return (
@@ -540,6 +542,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
               ) : (
                 <button
                   type="submit"
+                  onClick={()=>setsubmitForm(true)}
                   disabled={createloading}
                   className="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-700 rounded-lg hover:from-green-700 hover:to-green-800 disabled:opacity-50"
                 >

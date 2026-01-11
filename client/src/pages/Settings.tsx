@@ -9,16 +9,8 @@ import {
   Shield,
   Users,
   Bell,
-  Globe,
-  Database,
-  Key,
-  LogOut,
   CreditCard,
-  FileText,
   HelpCircle,
-  Mail,
-  Smartphone,
-  Palette,
 } from "lucide-react";
 
 const Settings = () => {
@@ -27,27 +19,27 @@ const Settings = () => {
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User, available: true },
-    { id: "security", label: "Security", icon: Shield, available: true },
-    { id: "notifications", label: "Notifications", icon: Bell, available: true },
+    { id: "security", label: "Security", icon: Shield, available: false },
+    { id: "notifications", label: "Notifications", icon: Bell, available: false },
     { id: "system", label: "System", icon: SettingsIcon, available: user.role === USER_ROLES.SUPER_ADMIN },
-    { id: "billing", label: "Billing", icon: CreditCard, available: user.role === USER_ROLES.SUPER_ADMIN },
+    { id: "billing", label: "Billing", icon: CreditCard, available: false  },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
               <p className="text-gray-600">Manage your account and system preferences</p>
             </div>
             <div className="flex items-center gap-3">
               <div className="text-sm text-gray-500">
-                Logged in as <span className="font-medium text-gray-900">{user.name}</span>
+                Logged in as <span className="font-medium text-gray-900">{user.first_name}</span>
               </div>
-              <div className="px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+              <div className="px-3 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full">
                 {user.role === USER_ROLES.SUPER_ADMIN ? "Super Admin" : "Branch Manager"}
               </div>
             </div>
@@ -56,13 +48,13 @@ const Settings = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl">
               <div className="p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Settings Menu</h2>
+                <h2 className="mb-4 text-lg font-semibold text-gray-900">Settings Menu</h2>
                 <nav className="space-y-1">
                   {tabs
                     .filter(tab => tab.available)
@@ -88,21 +80,21 @@ const Settings = () => {
 
               {/* Quick Stats */}
               <div className="p-6 border-t border-gray-200">
-                <h3 className="text-sm font-medium text-gray-700 mb-3">Account Summary</h3>
+                <h3 className="mb-3 text-sm font-medium text-gray-700">Account Summary</h3>
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Branches</span>
                     <span className="text-sm font-medium text-gray-900">
                       {user.branches?.length || 0}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Active Since</span>
                     <span className="text-sm font-medium text-gray-900">
-                      {new Date(user.createdAt || Date.now()).toLocaleDateString('en-KE', { month: 'short', year: 'numeric' })}
+                      {new Date(user.createdAt ).toLocaleDateString('en-KE', { month: 'short', year: 'numeric' })}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Plan</span>
                     <span className="text-sm font-medium text-green-600">Pro</span>
                   </div>
@@ -121,7 +113,7 @@ const Settings = () => {
 
           {/* Main Content Area */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
               {/* Tab Content Header */}
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center gap-3">
@@ -145,37 +137,12 @@ const Settings = () => {
 
                 {activeTab === "system" && user.role === USER_ROLES.SUPER_ADMIN && (
                   <div className="space-y-8">
-                    {/* System Overview */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                      <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900">System Status</h3>
-                            <p className="text-sm text-gray-600 mt-1">All systems operational</p>
-                          </div>
-                          <div className="p-3 bg-green-100 rounded-lg">
-                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-xl p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900">Storage</h3>
-                            <p className="text-sm text-gray-600 mt-1">2.5 GB of 10 GB used</p>
-                          </div>
-                          <div className="p-3 bg-purple-100 rounded-lg">
-                            <Database className="w-6 h-6 text-purple-600" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+             
 
                     {/* Staff Management */}
-                    <div className="border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="overflow-hidden border border-gray-200 rounded-xl">
                       <div className="p-6 border-b border-gray-200 bg-gray-50">
-                        <div className="flex justify-between items-center">
+                        <div className="flex items-center justify-between">
                           <div>
                             <h3 className="text-lg font-semibold text-gray-900">Staff Management</h3>
                             <p className="text-sm text-gray-600">Add and manage system users</p>
@@ -197,8 +164,8 @@ const Settings = () => {
                     </div>
 
                     {/* System Preferences */}
-                    <div className="border border-gray-200 rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">System Preferences</h3>
+                    <div className="p-6 border border-gray-200 rounded-xl">
+                      <h3 className="mb-4 text-lg font-semibold text-gray-900">System Preferences</h3>
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <div>
@@ -221,17 +188,6 @@ const Settings = () => {
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                           </label>
                         </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-medium text-gray-900">Maintenance Mode</p>
-                            <p className="text-sm text-gray-600">Temporarily disable system access</p>
-                          </div>
-                          <label className="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" className="sr-only peer" />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                          </label>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -239,11 +195,11 @@ const Settings = () => {
 
                 {activeTab === "security" && (
                   <div className="space-y-6">
-                    <div className="border border-gray-200 rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Security Settings</h3>
+                    <div className="p-6 border border-gray-200 rounded-xl">
+                      <h3 className="mb-4 text-lg font-semibold text-gray-900">Security Settings</h3>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Change Password</label>
+                          <label className="block mb-2 text-sm font-medium text-gray-700">Change Password</label>
                           <div className="space-y-3">
                             <input
                               type="password"
@@ -261,26 +217,26 @@ const Settings = () => {
                               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             />
                           </div>
-                          <button className="mt-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg">
+                          <button className="px-4 py-2 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
                             Update Password
                           </button>
                         </div>
                         
                         <div className="pt-4 border-t border-gray-200">
-                          <h4 className="text-sm font-medium text-gray-900 mb-3">Two-Factor Authentication</h4>
+                          <h4 className="mb-3 text-sm font-medium text-gray-900">Two-Factor Authentication</h4>
                           <div className="flex items-center justify-between">
                             <div>
                               <p className="text-sm text-gray-600">Add an extra layer of security to your account</p>
                             </div>
-                            <button className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg">
+                            <button className="px-4 py-2 text-sm font-medium text-blue-600 rounded-lg bg-blue-50 hover:bg-blue-100">
                               Enable 2FA
                             </button>
                           </div>
                         </div>
                         
                         <div className="pt-4 border-t border-gray-200">
-                          <h4 className="text-sm font-medium text-gray-900 mb-3">Session Management</h4>
-                          <button className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg">
+                          <h4 className="mb-3 text-sm font-medium text-gray-900">Session Management</h4>
+                          <button className="px-4 py-2 text-sm font-medium text-red-600 rounded-lg bg-red-50 hover:bg-red-100">
                             Log out from all devices
                           </button>
                         </div>
@@ -291,50 +247,50 @@ const Settings = () => {
 
                 {activeTab === "notifications" && (
                   <div className="space-y-6">
-                    <div className="border border-gray-200 rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Notification Preferences</h3>
+                    <div className="p-6 border border-gray-200 rounded-xl">
+                      <h3 className="mb-4 text-lg font-semibold text-gray-900">Notification Preferences</h3>
                       <div className="space-y-6">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900 mb-3">Email Notifications</h4>
+                          <h4 className="mb-3 text-sm font-medium text-gray-900">Email Notifications</h4>
                           <div className="space-y-3">
                             <label className="flex items-center gap-3">
-                              <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" defaultChecked />
+                              <input type="checkbox" className="text-blue-600 border-gray-300 rounded focus:ring-blue-500" defaultChecked />
                               <span className="text-sm text-gray-700">Order updates</span>
                             </label>
                             <label className="flex items-center gap-3">
-                              <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" defaultChecked />
+                              <input type="checkbox" className="text-blue-600 border-gray-300 rounded focus:ring-blue-500" defaultChecked />
                               <span className="text-sm text-gray-700">Payment notifications</span>
                             </label>
                             <label className="flex items-center gap-3">
-                              <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                              <input type="checkbox" className="text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
                               <span className="text-sm text-gray-700">Marketing emails</span>
                             </label>
                           </div>
                         </div>
                         
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900 mb-3">SMS Notifications</h4>
+                          <h4 className="mb-3 text-sm font-medium text-gray-900">SMS Notifications</h4>
                           <div className="space-y-3">
                             <label className="flex items-center gap-3">
-                              <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" defaultChecked />
+                              <input type="checkbox" className="text-blue-600 border-gray-300 rounded focus:ring-blue-500" defaultChecked />
                               <span className="text-sm text-gray-700">Order ready alerts</span>
                             </label>
                             <label className="flex items-center gap-3">
-                              <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                              <input type="checkbox" className="text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
                               <span className="text-sm text-gray-700">Promotional messages</span>
                             </label>
                           </div>
                         </div>
                         
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900 mb-3">Push Notifications</h4>
+                          <h4 className="mb-3 text-sm font-medium text-gray-900">Push Notifications</h4>
                           <div className="space-y-3">
                             <label className="flex items-center gap-3">
-                              <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" defaultChecked />
+                              <input type="checkbox" className="text-blue-600 border-gray-300 rounded focus:ring-blue-500" defaultChecked />
                               <span className="text-sm text-gray-700">New orders</span>
                             </label>
                             <label className="flex items-center gap-3">
-                              <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" defaultChecked />
+                              <input type="checkbox" className="text-blue-600 border-gray-300 rounded focus:ring-blue-500" defaultChecked />
                               <span className="text-sm text-gray-700">Low stock alerts</span>
                             </label>
                           </div>
@@ -346,23 +302,23 @@ const Settings = () => {
 
                 {activeTab === "billing" && user.role === USER_ROLES.SUPER_ADMIN && (
                   <div className="space-y-6">
-                    <div className="border border-gray-200 rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Billing Information</h3>
+                    <div className="p-6 border border-gray-200 rounded-xl">
+                      <h3 className="mb-4 text-lg font-semibold text-gray-900">Billing Information</h3>
                       <div className="space-y-4">
-                        <div className="p-4 bg-gray-50 rounded-lg">
+                        <div className="p-4 rounded-lg bg-gray-50">
                           <div className="flex items-center justify-between">
                             <div>
                               <p className="font-medium text-gray-900">Current Plan</p>
                               <p className="text-sm text-gray-600">Pro Plan - KES 1,000/month</p>
                             </div>
-                            <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
+                            <span className="px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">
                               Active
                             </span>
                           </div>
                         </div>
                         
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900 mb-3">Payment Method</h4>
+                          <h4 className="mb-3 text-sm font-medium text-gray-900">Payment Method</h4>
                           <div className="p-4 border border-gray-200 rounded-lg">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
@@ -380,13 +336,13 @@ const Settings = () => {
                         </div>
                         
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900 mb-3">Billing History</h4>
+                          <h4 className="mb-3 text-sm font-medium text-gray-900">Billing History</h4>
                           <div className="space-y-2">
-                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
                               <span className="text-sm text-gray-700">December 2023</span>
                               <span className="text-sm font-medium text-gray-900">KES 1,000</span>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
                               <span className="text-sm text-gray-700">November 2023</span>
                               <span className="text-sm font-medium text-gray-900">KES 1,000</span>
                             </div>

@@ -241,6 +241,7 @@ export const laundryApi = createApi({
           total_orders: number;
           completed_orders: number;
           total_revenue: number;
+          pending_orders:number;
         };
       },
       string

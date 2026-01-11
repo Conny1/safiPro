@@ -3,7 +3,7 @@ export type addOrder = {
   name: string;
   email: string;
   phone_number: string;
-  delivery_method: "Pickup" | "Customer drop-off";
+  delivery_method: "pickup" | "delivery";
   items_description: string;
   service_type:
     | "Wash Only"
@@ -17,8 +17,9 @@ export type addOrder = {
   amount: number;
   payment_status: "pending" | "paid";
   payment_method: "cash" | "M-Pesa" | "card";
-  status: "pending" | "in-progress" | "completed";
+  status?:"pending"|"processing"|"washing"|"drying"|"ironing"|"ready"| "completed"| "delivered"|"cancelled"
   is_completed: boolean;
+  address?:string;
   notes: string;
 };
 
@@ -32,7 +33,7 @@ export type Order = {
   amount?: number;
   payment_status?: "pending" | "paid";
   payment_method?: "cash" | "M-Pesa" | "card";
-  status?: "pending" | "in-progress" | "completed";
+  status?:"pending"|"processing"|"washing"|"drying"|"ironing"|"ready"| "completed"| "delivered"|"cancelled"
   order_date?: string; // ISO date string e.g. "2025-06-04"
   pickup_date?: string; // ISO date string
   service_type?:
@@ -43,9 +44,11 @@ export type Order = {
     | "Full Service"
     | "Wash & Iron";
   items_description?: string;
-  delivery_method?: "Pickup" | "Customer drop-off";
+  delivery_method?:  "pickup" | "delivery"
   is_completed?: boolean;
   notes?: string;
+  address?:string;
+  createdAt?:string
 };
 
 // types.ts
@@ -97,6 +100,7 @@ export type user = {
     role: Role;
   }[];
   super_admin_id?: string;
+  createdAt?:string;
 };
 
 export type updatestaff = {

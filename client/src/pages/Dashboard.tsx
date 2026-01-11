@@ -11,12 +11,9 @@ import {
   Clock,
   AlertCircle,
   ChevronRight,
-  Users,
   Building,
-  Calendar,
   Download,
-  Filter,
-  Search,
+
   RefreshCw,
 } from "lucide-react";
 import AddBranchModal from "../components/NewBranch";
@@ -40,9 +37,7 @@ const Dashboard = () => {
   );
   const [lisbranchesModal, setlisbranchesModal] = useState(false);
   const [recentOrders, setrecentOrders] = useState<Order[] | []>([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [dateRange, setDateRange] = useState("today");
   
   const [findAndFilterOrder, { isLoading: findloading }] =
     useFindAndFilterOrderMutation();
@@ -64,7 +59,6 @@ const Dashboard = () => {
     {
       title: "Total Orders",
       value: dashboard_analysis?.data.total_orders || 0,
-      change: "+12%",
       trend: "up",
       icon: ShoppingCart,
       color: "blue",
@@ -72,7 +66,6 @@ const Dashboard = () => {
     {
       title: "Completed",
       value: dashboard_analysis?.data.completed_orders || 0,
-      change: "+8%",
       trend: "up",
       icon: CheckCircle,
       color: "green",
@@ -80,7 +73,6 @@ const Dashboard = () => {
     {
       title: "Pending",
       value: dashboard_analysis?.data.pending_orders || 0,
-      change: "-3%",
       trend: "down",
       icon: Clock,
       color: "yellow",
@@ -88,7 +80,6 @@ const Dashboard = () => {
     {
       title: "Total Revenue",
       value: `KES ${dashboard_analysis?.data.total_revenue?.toLocaleString() || "0"}`,
-      change: "+15%",
       trend: "up",
       icon: DollarSign,
       color: "purple",
@@ -157,22 +148,15 @@ const Dashboard = () => {
       .then((resp) => {
         if (resp.data?.status === 200) {
           const orders = resp.data.data.results;
-          if (searchTerm) {
-            const filtered = orders.filter(order =>
-              order.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              order.order_no?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-              order.phone_number?.includes(searchTerm)
-            );
-            setrecentOrders(filtered);
-          } else {
+          
             setrecentOrders(orders);
-          }
+          
         }
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [activeBranch, statusFilter, searchTerm]);
+  }, [activeBranch, statusFilter]);
 
   const colorClasses = {
     blue: { bg: "bg-blue-50", text: "text-blue-600", border: "border-blue-200" },
@@ -181,6 +165,8 @@ const Dashboard = () => {
     yellow: { bg: "bg-yellow-50", text: "text-yellow-600", border: "border-yellow-200" },
     gray: { bg: "bg-gray-50", text: "text-gray-600", border: "border-gray-200" },
   };
+    const statusOptions = ["pending", "processing","washing","drying","ironing","ready", "completed", "delivered","cancelled"]
+
 
   const handleRefresh = () => {
     refetchDashboard();
@@ -200,7 +186,7 @@ const Dashboard = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-gray-600">
-            Welcome back, {user.name || "User"}! Here's what's happening today.
+            Welcome back, {user.first_name || "User"}! Here's what's happening today.
           </p>
         </div>
         
@@ -253,12 +239,7 @@ const Dashboard = () => {
                   <Icon className={`w-6 h-6 ${colors.text}`} />
                 </div>
               </div>
-              <div className="flex items-center gap-2 mt-4">
-                <span className={`text-sm font-medium ${stat.trend === "up" ? "text-green-600" : "text-red-600"}`}>
-                  {stat.change}
-                </span>
-                <span className="text-sm text-gray-500">from last month</span>
-              </div>
+            
             </div>
           );
         })}
@@ -274,39 +255,23 @@ const Dashboard = () => {
             </div>
             
             <div className="flex flex-col w-full gap-3 sm:flex-row lg:w-auto">
-              <div className="relative">
-                <Search className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
-                <input
-                  type="text"
-                  placeholder="Search orders..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
+          
               
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
+                                <option value="all">All Status</option>
+
+                {
+                  statusOptions.map((item)=>     <option key={item} value={item}>{item} </option>
+                  )
+                }
+              
               </select>
               
-              <select
-                value={dateRange}
-                onChange={(e) => setDateRange(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="today">Today</option>
-                <option value="week">This Week</option>
-                <option value="month">This Month</option>
-                <option value="year">This Year</option>
-              </select>
+          
             </div>
           </div>
         </div>
@@ -347,7 +312,7 @@ const Dashboard = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className="font-medium text-gray-900">
-                          KES {item.total_amount?.toLocaleString() || "0"}
+                          KES {item.amount?.toLocaleString() || "0"}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -387,9 +352,9 @@ const Dashboard = () => {
         
         <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
           <p className="text-sm text-gray-600">
-            Showing {recentOrders.length} of {dashboard_analysis?.data.total_orders || 0} total orders
+            Showing {recentOrders.length}  most recent orders
           </p>
-          <Link to="/orders">
+          <Link to="/order">
             <button className="font-medium text-blue-600 hover:text-blue-700">
               View All Orders
             </button>
@@ -468,18 +433,7 @@ const Dashboard = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4 mt-6">
-              <div className="p-4 rounded-lg bg-blue-50">
-                <p className="text-sm font-medium text-blue-600">Avg. Order Value</p>
-                <p className="text-2xl font-bold text-gray-900">KES 1,250</p>
-                <p className="text-sm text-green-600">+5.2% from last month</p>
-              </div>
-              <div className="p-4 rounded-lg bg-green-50">
-                <p className="text-sm font-medium text-green-600">Completion Rate</p>
-                <p className="text-2xl font-bold text-gray-900">94%</p>
-                <p className="text-sm text-green-600">+2.1% from last month</p>
-              </div>
-            </div>
+          
           </div>
         </div>
       </div>
@@ -508,14 +462,14 @@ const Dashboard = () => {
                   <h3 className="font-medium text-gray-900">{branch.name}</h3>
                 </div>
                 <div className="space-y-2">
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <span className="text-sm text-gray-600">Today's Orders</span>
                     <span className="font-medium">12</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600">Revenue</span>
                     <span className="font-medium">KES 15,000</span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600">Status</span>
                     <span className="inline-flex items-center gap-1 text-sm text-green-600">
@@ -530,11 +484,12 @@ const Dashboard = () => {
           
           {allBranches.length > 3 && (
             <div className="mt-6 text-center">
-              <Link to="/branches">
-                <button className="font-medium text-blue-600 hover:text-blue-700">
+                <button 
+                onClick={()=> setbranchModal(true) }
+                className="font-medium text-blue-600 hover:text-blue-700">
                   View All {allBranches.length} Branches
                 </button>
-              </Link>
+              
             </div>
           )}
         </div>

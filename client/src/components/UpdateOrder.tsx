@@ -13,7 +13,6 @@ import {
   Truck,
   CreditCard,
   CheckCircle,
-  AlertCircle,
   FileText,
   Loader2,
   Tag,
@@ -37,7 +36,7 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
     phone_number: orderData.phone_number!,
     delivery_method: orderData.delivery_method || "pickup",
     items_description: orderData.items_description || "",
-    service_type: orderData.service_type || "wash_only",
+    service_type: orderData.service_type || "Wash Only",
     pickup_date: orderData.pickup_date?.split("T")[0] || "",
     amount: orderData.amount!,
     payment_status: orderData.payment_status || "pending",
@@ -81,7 +80,6 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
       const result = await updateOrder({ 
         ...formData, 
         _id: orderData._id,
-        branch_id: orderData.branch_id
       });
       
       if (result.data?.status === 200) {
@@ -106,7 +104,7 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
       phone_number: orderData.phone_number!,
       delivery_method: orderData.delivery_method || "pickup",
       items_description: orderData.items_description || "",
-      service_type: orderData.service_type || "wash_only",
+      service_type: orderData.service_type || "Wash Only",
       pickup_date: orderData.pickup_date?.split("T")[0] || "",
       amount: orderData.amount!,
       payment_status: orderData.payment_status || "pending",
@@ -118,26 +116,25 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
     toast.info("Form reset to original values");
   };
 
+
   const serviceTypes = [
-    { value: "wash_only", label: "Wash Only" },
-    { value: "dry_cleaning", label: "Dry Cleaning" },
-    { value: "ironing", label: "Ironing" },
-    { value: "wash_fold", label: "Wash & Fold" },
-    { value: "full_service", label: "Full Service" },
-    { value: "wash_iron", label: "Wash & Iron" },
+    { value: "Wash Only", label: "Wash Only" },
+    { value: "Dry Cleaning", label: "Dry Cleaning" },
+    { value: "Ironing", label: "Ironing" },
+    { value: "Wash & Fold", label: "Wash & Fold" },
+    { value: "Full Service", label: "Full Service" },
+    { value: "Wash & Iron", label: "Wash & Iron" },
   ];
 
   const deliveryMethods = [
     { value: "pickup", label: "Customer Pickup" },
     { value: "delivery", label: "Home Delivery" },
-    { value: "store_dropoff", label: "Store Drop-off" },
   ];
 
   const paymentMethods = [
     { value: "cash", label: "Cash" },
     { value: "mpesa", label: "M-Pesa" },
-    { value: "card", label: "Card" },
-    { value: "bank_transfer", label: "Bank Transfer" },
+  
   ];
 
   const statusOptions = [
@@ -173,20 +170,20 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
           </div>
           <button
             onClick={() => setupdateModal(false)}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 text-gray-400 transition-colors rounded-lg hover:text-gray-600 hover:bg-gray-100"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 px-6 pb-6">
+        <form onSubmit={handleSubmit} className="flex-1 px-6 pb-6 overflow-y-auto">
           {/* Order Info Summary */}
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="p-4 mb-6 border border-blue-200 rounded-lg bg-blue-50">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-blue-700">Current Order Status</p>
                 <div className="flex items-center gap-3 mt-1">
-                  <span className="px-3 py-1 bg-white border border-blue-200 rounded-full text-sm font-medium text-blue-700">
+                  <span className="px-3 py-1 text-sm font-medium text-blue-700 bg-white border border-blue-200 rounded-full">
                     {orderData.status || "pending"}
                   </span>
                   <span className="text-sm text-gray-600">
@@ -207,17 +204,17 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
 
           {/* Customer Information */}
           <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="flex items-center gap-2 mb-4 text-lg font-semibold text-gray-900">
               <User className="w-5 h-5 text-gray-500" />
               Customer Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Customer Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <User className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <input
                     name="name"
                     value={formData.name}
@@ -228,11 +225,11 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Mail className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <input
                     name="email"
                     type="email"
@@ -244,11 +241,11 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
                 </div>
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Phone Number *
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Phone className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <input
                     name="phone_number"
                     required
@@ -264,17 +261,17 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
 
           {/* Order Details */}
           <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="flex items-center gap-2 mb-4 text-lg font-semibold text-gray-900">
               <Package className="w-5 h-5 text-gray-500" />
               Order Details
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Pickup/Delivery Date *
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Calendar className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <input
                     name="pickup_date"
                     type="date"
@@ -286,11 +283,11 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Amount (KES) *
                 </label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <DollarSign className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <input
                     name="amount"
                     type="number"
@@ -305,11 +302,11 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Service Type
                 </label>
                 <div className="relative">
-                  <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Tag className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <select
                     name="service_type"
                     value={formData.service_type}
@@ -325,11 +322,11 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Delivery Method
                 </label>
                 <div className="relative">
-                  <Truck className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Truck className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <select
                     name="delivery_method"
                     value={formData.delivery_method}
@@ -345,11 +342,11 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
                 </div>
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Items Description *
                 </label>
                 <div className="relative">
-                  <ShoppingBag className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <ShoppingBag className="absolute w-4 h-4 text-gray-400 left-3 top-3" />
                   <textarea
                     name="items_description"
                     required
@@ -366,17 +363,17 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
 
           {/* Payment & Status */}
           <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="flex items-center gap-2 mb-4 text-lg font-semibold text-gray-900">
               <CreditCard className="w-5 h-5 text-gray-500" />
               Payment & Status
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Payment Method
                 </label>
                 <div className="relative">
-                  <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <CreditCard className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <select
                     name="payment_method"
                     value={formData.payment_method}
@@ -392,11 +389,11 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Payment Status
                 </label>
                 <div className="relative">
-                  <CheckCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <CheckCircle className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <select
                     name="payment_status"
                     value={formData.payment_status}
@@ -412,11 +409,11 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Order Status
                 </label>
                 <div className="relative">
-                  <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Clock className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <select
                     name="status"
                     value={formData.status}
@@ -435,11 +432,11 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
           </div>
 
           {/* Advanced Options */}
-          <div className="mb-8 border-t border-gray-200 pt-6">
+          <div className="pt-6 mb-8 border-t border-gray-200">
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 mb-4"
+              className="flex items-center gap-2 mb-4 text-sm font-medium text-gray-700 hover:text-gray-900"
             >
               {showAdvanced ? "Hide" : "Show"} Advanced Options
               <Plus className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-45' : ''}`} />
@@ -447,30 +444,30 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
 
             {showAdvanced && (
               <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
-                    <label className="flex items-center gap-2 text-sm text-gray-700 mb-2">
+                    <label className="flex items-center gap-2 mb-2 text-sm text-gray-700">
                       <input
                         type="checkbox"
                         name="is_completed"
                         checked={formData.is_completed}
                         onChange={handleChange}
-                        className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
                       Mark order as completed
                     </label>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="mt-1 text-xs text-gray-500">
                       Automatically sets status to completed
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block mb-2 text-sm font-medium text-gray-700">
                     Additional Notes
                   </label>
                   <div className="relative">
-                    <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                    <FileText className="absolute w-4 h-4 text-gray-400 left-3 top-3" />
                     <textarea
                       name="notes"
                       value={formData.notes}
