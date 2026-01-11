@@ -483,7 +483,7 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-between pt-6 border-t border-gray-200">
+          <div className="flex flex-wrap justify-between gap-2 pt-6 border-t border-gray-200">
             <button
               type="button"
               onClick={() => setupdateModal(false)}

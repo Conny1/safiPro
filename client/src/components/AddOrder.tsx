@@ -182,7 +182,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       <ToastContainer />
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
@@ -199,7 +199,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
 
         {/* Progress Steps */}
         <div className="px-6 pt-6">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8 overflow-auto ">
             {[1, 2, 3].map((step) => (
               <div key={step} className="flex items-center">
                 <div
@@ -509,7 +509,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
           )}
 
           {/* Navigation Buttons */}
-          <div className="flex justify-between pt-8">
+          <div className="flex flex-wrap justify-between gap-2 pt-8 ">
             <div>
               {currentStep > 1 && (
                 <button
