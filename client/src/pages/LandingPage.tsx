@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
 import type { RootState } from "../redux/store";
 import laundryImage from "/laundry-illustration.jpg";
-import { CheckCircle, BarChart3, Users, CreditCard, Building, Bell } from "lucide-react"; // Install lucide-react for icons
+import { CheckCircle, BarChart3,  CreditCard, Building, Bell } from "lucide-react"; // Install lucide-react for icons
 
 const LandingPage = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -58,11 +58,6 @@ const LandingPage = () => {
       icon: <Building className="w-6 h-6" />,
       title: "Branch Management",
       desc: "Seamlessly manage multiple outlets and staff roles from a centralized dashboard.",
-    },
-    {
-      icon: <Users className="w-6 h-6" />,
-      title: "Customer CRM",
-      desc: "Maintain detailed customer histories, preferences, and communication logs.",
     },
     {
       icon: <Bell className="w-6 h-6" />,
@@ -234,7 +229,7 @@ const LandingPage = () => {
               
               <div className="p-8">
                 <div className="flex items-baseline">
-                  <span className="text-4xl font-bold text-gray-900">KES 1,000</span>
+                  <span className="text-4xl font-bold text-gray-900">KES 950</span>
                   <span className="ml-2 text-lg text-gray-600">/month</span>
                 </div>
                 
