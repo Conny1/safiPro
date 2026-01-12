@@ -1,8 +1,9 @@
 const DB_NAME = "SafiProOrdersDB";
 const DB_VERSION = 1;
 const STORE_NAME = "orders";
-// const BASE_URL = "http://localhost:8000"; // <-- hardcode public API URL server
-const BASE_URL ="https://safipro-ffs2.onrender.com"; // <-- hardcode public API URL server
+// const BASE_URL = "http://localhost:8000";
+const BASE_URL ="https://safipro-ffs2.onrender.com"; 
+const CACHE_NAME = "app-cache-v1"
 
 
 // -----------------------------
@@ -51,6 +52,15 @@ async function deleteOrder(id) {
 // -----------------------------
 // Background Sync
 // -----------------------------
+
+self.addEventListener("install", event => {
+  event.waitUntil(self.skipWaiting()); // activate immediately
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil(self.clients.claim()); // take control of pages immediately
+});
+
 self.addEventListener("sync", (event) => {
   if (event.tag === "persist-to-database") {
     event.waitUntil(syncOrders());
