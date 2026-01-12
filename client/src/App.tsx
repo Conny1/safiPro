@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router";
 import {
   Auth,
   Dashboard,
+  ExpenseManager,
   LandingPpage,
   OrderDetails,
   Orders,
@@ -33,6 +34,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/order" element={<Orders />} />
           <Route path="/orders/:id" element={<OrderDetails />} />
+          <Route path="/expense" element={<ExpenseManager />} />
         </Route>
       </Routes>
     </div>

@@ -135,7 +135,7 @@ export const USER_ROLES = {
 
 export type PaymentStatus = "pending" | "completed" | "failed";
 export type PaymentState = "active" | "expired" | "cancelled";
-export type PaymentMethod = "mpesa" | "card";
+export type PaymentMethod = "mpesa" | "card" | "cash" | "bank" ;
 
 export type Payment = {
   _id: string;
@@ -154,3 +154,55 @@ export type mobilePayments = {
   user_id: string;
   amount: number;
 };
+
+export interface Expense {
+  id: number;
+  description: string;
+  amount: number;
+  category: ExpenseCategory;
+  date: string;
+  paymentMethod: PaymentMethod;
+  notes?: string;
+}
+
+export type ExpenseCategory = 
+  | 'supplies' 
+  | 'maintenance' 
+  | 'rent' 
+  | 'utilities' 
+  | 'salaries' 
+  | 'other';
+
+
+
+export interface CategoryInfo {
+  id: ExpenseCategory;
+  label: string;
+  icon: React.ReactNode;
+  color: string;
+}
+
+export interface PaymentMethodInfo {
+  label: string;
+  color: string;
+}
+
+export interface ExpenseFormData {
+  description: string;
+  amount: string;
+  category: ExpenseCategory;
+  date: string;
+  paymentMethod: PaymentMethod;
+  notes: string;
+}
+
+export interface ExpenseFormErrors {
+  description?: string;
+  amount?: string;
+  date?: string;
+}
+
+export interface DateFilter {
+  from: string;
+  to: string;
+}

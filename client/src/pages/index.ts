@@ -8,3 +8,4 @@ export { default as PaymentConfirmation } from "./PaymentConfirmation";
 export { default as LandingPpage } from "./LandingPage";
 export { default as SubscriptionRequired } from "./SubscriptionRequired";
 export { default as ResetPassword } from "./ResetPassword";
+export { default as ExpenseManager } from "./ExpenseManager";
