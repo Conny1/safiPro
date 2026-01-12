@@ -24,16 +24,19 @@ import {
   useGetOrderDashbardAnalysisQuery,
 } from "../redux/apislice";
 import { USER_ROLES, type Branch, type Order } from "../types";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import useNetworkStatus from "../hooks/useNetworkStatus";
 import { useOrderDB } from "../hooks/useOrderDB";
+import { updatebranchData } from "../redux/branchSlice";
 
 const Dashboard = () => {
   // check connection
   const { isOnline } = useNetworkStatus();
   const { getOrders: getOfflineOrders, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
+  const offlineBranchData = useSelector((state:RootState)=>state.branch.value)
+  const dispatch = useDispatch()
   const [branchModal, setbranchModal] = useState(false);
   const [activeBranch, setactiveBranch] = useState(
     user.role === USER_ROLES.SUPER_ADMIN ? "" : user?.branches[0]?.branch_id
@@ -47,7 +50,7 @@ const Dashboard = () => {
 
   const { data: allBranchesResp, refetch: refetchBranches } =
     useGetBranchNamesByuserIdQuery(user._id);
-  const [allBranches, setallBranches] = useState<Branch[] | []>([]);
+  const [allBranches, setallBranches] = useState<Branch[] | []>(offlineBranchData);
   const { data: dashboard_analysis, refetch: refetchDashboard } =
     useGetOrderDashbardAnalysisQuery(activeBranch);
 
@@ -148,8 +151,10 @@ const Dashboard = () => {
   useEffect(() => {
     if (allBranchesResp && "data" in allBranchesResp) {
       setallBranches(allBranchesResp.data);
-      if (!activeBranch && allBranchesResp.data.length > 0) {
-        setactiveBranch(allBranchesResp.data[0]._id as string);
+      dispatch(updatebranchData( allBranchesResp.data ) )
+      if (!activeBranch && (allBranchesResp.data.length > 0 || offlineBranchData.length > 0) ) {
+        let id =allBranchesResp.data[0]._id as string || offlineBranchData[0]._id 
+        setactiveBranch(id);
       }
     }
   }, [allBranchesResp]);
@@ -278,7 +283,7 @@ const Dashboard = () => {
                 onChange={(e) => setactiveBranch(e.target.value)}
                 className="pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
               >
-                <option value="">All Branches</option>
+                <option value="">Select Branch</option>
                 {allBranches.map((b) => (
                   <option key={b._id} value={b._id}>
                     {b.name}

@@ -4,6 +4,7 @@ import storage from "redux-persist/lib/storage";
 import { laundryApi } from "./apislice";
 import userReducer from "./userSlice";
 import networkReducer from "./networkSlice";
+import branchReducer from "./branchSlice";
 
 // Persist Config
 const persistConfig = {
@@ -16,6 +17,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   user: userReducer,
   network:networkReducer,
+  branch:branchReducer,
   [laundryApi.reducerPath]: laundryApi.reducer,
 });
 

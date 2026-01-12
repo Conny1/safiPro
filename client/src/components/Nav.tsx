@@ -12,8 +12,6 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
-  Bell,
-  HelpCircle
 } from "lucide-react";
 import { logout } from "../redux/userSlice";
 import { persistor } from "../redux/store";
@@ -155,7 +153,7 @@ const Nav = () => {
         {/* Sidebar Footer */}
         <div className="p-4 space-y-2 border-t border-gray-200">
           {/* Notifications */}
-          <button className={`
+          {/* <button className={`
             flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 w-full
             ${isSidebarCollapsed ? 'justify-center' : ''}
           `}>
@@ -168,16 +166,16 @@ const Nav = () => {
                 3
               </span>
             )}
-          </button>
+          </button> */}
 
           {/* Help & Support */}
-          <button className={`
+          {/* <button className={`
             flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 w-full
             ${isSidebarCollapsed ? 'justify-center' : ''}
           `}>
             <HelpCircle className="w-5 h-5 text-gray-500" />
             {!isSidebarCollapsed && <span className="font-medium">Help</span>}
-          </button>
+          </button> */}
 
           {/* Logout Button */}
           <button

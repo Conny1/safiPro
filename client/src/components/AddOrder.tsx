@@ -5,7 +5,7 @@ import {
   useGetBranchNamesByuserIdQuery,
 } from "../redux/apislice";
 import { toast, ToastContainer } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import {
   X,
@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { useOrderDB } from "../hooks/useOrderDB";
 import useNetworkStatus from "../hooks/useNetworkStatus";
+import { updatebranchData } from "../redux/branchSlice";
 
 type Props = {
   setaddModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -37,6 +38,8 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   const { isOnline } = useNetworkStatus();
   const { saveOrder:saveOrderWhileOffiline, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
+    const offlineBranchData = useSelector((state:RootState)=>state.branch.value)
+  
   const [formData, setFormData] = useState<addOrder>({
     name: "",
     email: "",
@@ -65,10 +68,10 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
     skip: user.role !== USER_ROLES.SUPER_ADMIN,
   });
 
-  const [allBranches, setallBranches] = useState<Branch[] | []>([]);
+  const [allBranches, setallBranches] = useState<Branch[] | []>(offlineBranchData);
   const [currentStep, setCurrentStep] = useState(1);
   const [showAdvanced, setShowAdvanced] = useState(false);
-
+const dispatch = useDispatch()
   const [createNewOrder, { isLoading: createloading }] =
     useCreateNewOrderMutation();
 
@@ -92,10 +95,12 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   };
 
   useEffect(() => {
-    if (allBranchesResp && "data" in allBranchesResp) {
+  if (allBranchesResp && "data" in allBranchesResp) {
       setallBranches(allBranchesResp.data);
-      if (!activeBranch && allBranchesResp.data[0]?._id) {
-        setactiveBranch(allBranchesResp.data[0]._id);
+      dispatch(updatebranchData( allBranchesResp.data ) )
+      if (!activeBranch && (allBranchesResp.data.length > 0 || offlineBranchData.length > 0) ) {
+        let id =allBranchesResp.data[0]._id as string || offlineBranchData[0]._id 
+        setactiveBranch(id);
       }
     }
   }, [allBranchesResp, isReady]);
