@@ -10,7 +10,7 @@ import branchReducer from "./branchSlice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["user"], // Only persist specific reducers (e.g., userReducer)
+  whitelist: ["user", "branch"], // Only persist specific reducers (e.g., userReducer)
 };
 
 // Combine all reducers

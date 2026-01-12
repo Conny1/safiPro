@@ -35,8 +35,10 @@ const Dashboard = () => {
   const { isOnline } = useNetworkStatus();
   const { getOrders: getOfflineOrders, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
-  const offlineBranchData = useSelector((state:RootState)=>state.branch.value)
-  const dispatch = useDispatch()
+  const offlineBranchData = useSelector(
+    (state: RootState) => state.branch.value
+  );
+  const dispatch = useDispatch();
   const [branchModal, setbranchModal] = useState(false);
   const [activeBranch, setactiveBranch] = useState(
     user.role === USER_ROLES.SUPER_ADMIN ? "" : user?.branches[0]?.branch_id
@@ -50,7 +52,9 @@ const Dashboard = () => {
 
   const { data: allBranchesResp, refetch: refetchBranches } =
     useGetBranchNamesByuserIdQuery(user._id);
-  const [allBranches, setallBranches] = useState<Branch[] | []>(offlineBranchData);
+  const [allBranches, setallBranches] = useState<Branch[] | []>(
+    offlineBranchData
+  );
   const { data: dashboard_analysis, refetch: refetchDashboard } =
     useGetOrderDashbardAnalysisQuery(activeBranch);
 
@@ -150,10 +154,17 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (allBranchesResp && "data" in allBranchesResp) {
-      setallBranches(allBranchesResp.data);
-      dispatch(updatebranchData( allBranchesResp.data ) )
-      if (!activeBranch && (allBranchesResp.data.length > 0 || offlineBranchData.length > 0) ) {
-        let id =allBranchesResp.data[0]._id as string || offlineBranchData[0]._id 
+      if (allBranchesResp.data.length > 0) {
+        setallBranches(allBranchesResp.data);
+        dispatch(updatebranchData(allBranchesResp.data));
+      }
+
+      if (
+        !activeBranch &&
+        (allBranchesResp.data.length > 0 || offlineBranchData.length > 0)
+      ) {
+        let id =
+          (allBranchesResp.data[0]._id as string) || offlineBranchData[0]._id;
         setactiveBranch(id);
       }
     }
