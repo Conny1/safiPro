@@ -53,9 +53,10 @@ async function deleteOrder(id) {
 // Background Sync
 // -----------------------------
 
-self.addEventListener("install", event => {
-  event.waitUntil(self.skipWaiting()); // activate immediately
-});
+self.addEventListener("install", () => {
+  console.log("[SW] Install");
+  self.skipWaiting(); // activate imme
+  });
 
 self.addEventListener("activate", event => {
   event.waitUntil(self.clients.claim()); // take control of pages immediately
