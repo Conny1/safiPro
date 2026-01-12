@@ -1,4 +1,4 @@
-import React, { useState, type ReactNode } from "react";
+import React, { useEffect, useState, type ReactNode } from "react";
 import { useNavigate, useParams } from "react-router";
 import {
   useDeleteOrderMutation,
@@ -29,6 +29,9 @@ import {
   MoreVertical,
   Loader2,
 } from "lucide-react";
+import { useOrderDB } from "../hooks/useOrderDB";
+import useNetworkStatus from "../hooks/useNetworkStatus";
+import type { Order } from "../types";
 
 const StatusBadge = ({ status }: { status: string }) => {
   const config = {
@@ -110,13 +113,31 @@ const DetailItem = ({
 );
 
 const OrderDetails = () => {
+ const { isOnline } = useNetworkStatus();
+  const { getOrder:getOrderWhileOffline, isReady } = useOrderDB();
   const [updateModal, setupdateModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { id } = useParams();
   const { data, isLoading, refetch } = useGetOrderByIdQuery(id as string);
   const [deleteOrder, { isLoading: deleteLoading }] = useDeleteOrderMutation();
   const navigate = useNavigate();
-  const order = data?.data;
+const [order, setorder] = useState <Order> ()
+  useEffect(() => {
+  if(!isOnline && id){
+    console.log("workking")
+     getOrderWhileOffline(id).then(resp=>{
+      const data = resp.data
+      if(resp.status === 200){
+      setorder(data as Order)
+      }
+
+    })
+  }else{
+    setorder(data?.data)
+  }
+
+}, [isReady, isLoading])
+
 
   if (isLoading) {
     return (
@@ -135,7 +156,7 @@ const OrderDetails = () => {
         <AlertCircle className="w-16 h-16 mb-4 text-gray-300" />
         <h2 className="mb-2 text-xl font-semibold text-gray-900">
           Order Not Found
-        </h2>
+        </h2> 
         <p className="mb-6 text-gray-600">
           The order you're looking for doesn't exist.
         </p>

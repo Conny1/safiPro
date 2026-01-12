@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import type {  Order } from "../types";
+import React, { useEffect, useState } from "react";
+import type { Order } from "../types";
 import { useUpdateOrderMutation } from "../redux/apislice";
 import { toast, ToastContainer } from "react-toastify";
 import {
@@ -22,6 +22,8 @@ import {
   Plus,
   ShoppingBag,
 } from "lucide-react";
+import useNetworkStatus from "../hooks/useNetworkStatus";
+import { useOrderDB } from "../hooks/useOrderDB";
 
 type Props = {
   setupdateModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,6 +32,8 @@ type Props = {
 };
 
 const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
+  const { isOnline } = useNetworkStatus();
+  const { updateOrder: updateOrderWhileOffline, isReady } = useOrderDB();
   const [formData, setFormData] = useState<Order>({
     name: orderData.name || "",
     email: orderData.email || "",
@@ -44,11 +48,15 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
     status: orderData.status || "pending",
     is_completed: orderData.is_completed || false,
     notes: orderData.notes || "",
-    
   });
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [updateOrder, { isLoading: updateloading }] = useUpdateOrderMutation();
+useEffect(() => {
+  // update online offline mode
+  console.log(isOnline, "isOffline")
+}, [isReady])
+
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -62,7 +70,7 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
         : type === "number"
         ? parseFloat(value) || 0
         : value;
-    
+
     setFormData((prev) => ({
       ...prev,
       [name]: val,
@@ -71,19 +79,30 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.phone_number) {
       toast.error("Phone number is required");
       return;
     }
 
     try {
-      const result = await updateOrder({ 
-        ...formData, 
-        _id: orderData._id,
-      });
-      
-      if (result.data?.status === 200) {
+      let status
+      if (isOnline) {
+        const result = await updateOrder({
+          ...formData,
+          _id: orderData._id,
+        });
+        status = result.data?.status
+      } else {
+        console.log("updatingOfline data")
+        const result = await updateOrderWhileOffline(orderData._id as string ,{
+          ...formData,
+          _id: orderData._id,
+        });
+        status = result.status
+      }
+
+      if ( status && status === 200) {
         toast.success("Order updated successfully!");
         setTimeout(() => {
           setupdateModal(false);
@@ -117,7 +136,6 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
     toast.info("Form reset to original values");
   };
 
-
   const serviceTypes = [
     { value: "Wash Only", label: "Wash Only" },
     { value: "Dry Cleaning", label: "Dry Cleaning" },
@@ -135,7 +153,6 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
   const paymentMethods = [
     { value: "cash", label: "Cash" },
     { value: "mpesa", label: "M-Pesa" },
-  
   ];
 
   const statusOptions = [
@@ -165,9 +182,7 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Update Order</h2>
-            <p className="text-gray-600">
-              Editing order #{orderData.order_no}
-            </p>
+            <p className="text-gray-600">Editing order #{orderData.order_no}</p>
           </div>
           <button
             onClick={() => setupdateModal(false)}
@@ -177,18 +192,26 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 px-6 pb-6 overflow-y-auto">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 px-6 pb-6 overflow-y-auto"
+        >
           {/* Order Info Summary */}
           <div className="p-4 mb-6 border border-blue-200 rounded-lg bg-blue-50">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-700">Current Order Status</p>
+                <p className="text-sm font-medium text-blue-700">
+                  Current Order Status
+                </p>
                 <div className="flex items-center gap-3 mt-1">
                   <span className="px-3 py-1 text-sm font-medium text-blue-700 bg-white border border-blue-200 rounded-full">
                     {orderData.status || "pending"}
                   </span>
                   <span className="text-sm text-gray-600">
-                    Created on {new Date(orderData.createdAt || orderData.order_date || "").toLocaleDateString()}
+                    Created on{" "}
+                    {new Date(
+                      orderData.createdAt || orderData.order_date || ""
+                    ).toLocaleDateString()}
                   </span>
                 </div>
               </div>
@@ -440,7 +463,11 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
               className="flex items-center gap-2 mb-4 text-sm font-medium text-gray-700 hover:text-gray-900"
             >
               {showAdvanced ? "Hide" : "Show"} Advanced Options
-              <Plus className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-45' : ''}`} />
+              <Plus
+                className={`w-4 h-4 transition-transform ${
+                  showAdvanced ? "rotate-45" : ""
+                }`}
+              />
             </button>
 
             {showAdvanced && (

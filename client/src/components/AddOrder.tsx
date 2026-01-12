@@ -25,6 +25,8 @@ import {
   ShoppingBag,
   Clock,
 } from "lucide-react";
+import { useOrderDB } from "../hooks/useOrderDB";
+import useNetworkStatus from "../hooks/useNetworkStatus";
 
 type Props = {
   setaddModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,6 +34,8 @@ type Props = {
 };
 
 const AddOrder = ({ setaddModal, onSuccess }: Props) => {
+  const { isOnline } = useNetworkStatus();
+  const { saveOrder:saveOrderWhileOffiline, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
   const [formData, setFormData] = useState<addOrder>({
     name: "",
@@ -47,18 +51,20 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
     status: "pending",
     is_completed: false,
     notes: "",
-    address:"",
+    address: "",
   });
-  const [submitForm, setsubmitForm] = useState(false)
+  const [submitForm, setsubmitForm] = useState(false);
 
   const [activeBranch, setactiveBranch] = useState(
-    user.role === USER_ROLES.SUPER_ADMIN ? "" : user.branches[0]?.branch_id || ""
+    user.role === USER_ROLES.SUPER_ADMIN
+      ? ""
+      : user.branches[0]?.branch_id || ""
   );
-  
+
   const { data: allBranchesResp } = useGetBranchNamesByuserIdQuery(user._id, {
     skip: user.role !== USER_ROLES.SUPER_ADMIN,
   });
-  
+
   const [allBranches, setallBranches] = useState<Branch[] | []>([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -78,7 +84,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
         : type === "number"
         ? parseFloat(value) || 0
         : value;
-    
+
     setFormData((prev) => ({
       ...prev,
       [name]: val,
@@ -92,37 +98,51 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
         setactiveBranch(allBranchesResp.data[0]._id);
       }
     }
-  }, [allBranchesResp]);
+  }, [allBranchesResp, isReady]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-    if(!submitForm ) return
+    e.preventDefault();
+    if (!submitForm) return;
     if (!formData.phone_number) {
       toast.error("Phone number is required");
       return;
     }
-    
+
     if (!activeBranch) {
       toast.error("Please select a branch");
       return;
     }
 
     try {
-      const result = await createNewOrder({
+      let status;
+      if(isOnline) {
+           const result = await createNewOrder({
         ...formData,
         branch_id: activeBranch,
         order_date: new Date().toISOString().split("T")[0],
       });
+       status = result.data?.status;
+       console.log("online save")
+      }else {
+     const      result = await saveOrderWhileOffiline({
+        ...formData,
+        branch_id: activeBranch,
+        order_date: new Date().toISOString().split("T")[0],
+      });
+      status = result.status
+      console.log("offline save")
+      }
+   
 
-      if (result.data?.status === 200) {
-        toast.success("Order created successfully!");
-        
+      if ( status && status === 200) {
+        toast.success(`Order created successfully!`);
+
         // Reset form
         setFormData({
           name: "",
           email: "",
           phone_number: "",
-          delivery_method: "pickup",
+          delivery_method: "pickup", 
           items_description: "",
           service_type: "Wash Only",
           pickup_date: "",
@@ -132,10 +152,10 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
           status: "pending",
           is_completed: false,
           notes: "",
-          address:"",
-          branch_id:""
+          address: "",
+          branch_id: "",
         });
-        
+
         setTimeout(() => {
           setaddModal(false);
           onSuccess?.();
@@ -148,8 +168,6 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
       console.error(error);
     }
   };
-
-
 
   const serviceTypes = [
     { value: "Wash Only", label: "Wash Only" },
@@ -168,16 +186,14 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   const paymentMethods = [
     { value: "cash", label: "Cash" },
     { value: "mpesa", label: "M-Pesa" },
-      ];
+  ];
 
   const nextStep = () => {
-    if (currentStep < 3) setCurrentStep((prev)=> prev + 1 );
+    if (currentStep < 3) setCurrentStep((prev) => prev + 1);
   };
 
   const prevStep = () => {
-    if (currentStep > 1) setCurrentStep((prev=> prev-1 ));
-        
-
+    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
   };
 
   return (
@@ -187,7 +203,9 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Create New Order</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Create New Order
+            </h2>
             <p className="text-gray-600">Fill in the order details below</p>
           </div>
           <button
@@ -213,7 +231,11 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                         : "bg-gray-200 text-gray-500"
                     }`}
                 >
-                  {step < currentStep ? <CheckCircle className="w-5 h-5" /> : step}
+                  {step < currentStep ? (
+                    <CheckCircle className="w-5 h-5" />
+                  ) : (
+                    step
+                  )}
                 </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-gray-900">
@@ -234,7 +256,10 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 px-6 pb-6 overflow-y-auto">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 px-6 pb-6 overflow-y-auto"
+        >
           {/* Branch Selection */}
           {user.role === USER_ROLES.SUPER_ADMIN && (
             <div className="mb-6">
@@ -468,7 +493,11 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                   className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900"
                 >
                   {showAdvanced ? "Hide" : "Show"} Advanced Options
-                  <Plus className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-45' : ''}`} />
+                  <Plus
+                    className={`w-4 h-4 transition-transform ${
+                      showAdvanced ? "rotate-45" : ""
+                    }`}
+                  />
                 </button>
 
                 {showAdvanced && (
@@ -543,7 +572,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
               ) : (
                 <button
                   type="submit"
-                  onClick={()=>setsubmitForm(true)}
+                  onClick={() => setsubmitForm(true)}
                   disabled={createloading}
                   className="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-700 rounded-lg hover:from-green-700 hover:to-green-800 disabled:opacity-50"
                 >
@@ -562,9 +591,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
 
           {/* Step Indicator */}
           <div className="mt-4 text-center">
-            <p className="text-sm text-gray-500">
-              Step {currentStep} of 3
-            </p>
+            <p className="text-sm text-gray-500">Step {currentStep} of 3</p>
           </div>
         </form>
       </div>

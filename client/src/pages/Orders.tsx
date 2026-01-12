@@ -28,8 +28,13 @@ import {
   ChevronDown,
   X,
 } from "lucide-react";
+import useNetworkStatus from "../hooks/useNetworkStatus";
+import { useOrderDB } from "../hooks/useOrderDB";
 
 const Orders = () => {
+  // check connection
+   const {isOnline} = useNetworkStatus()
+   const {getOrders:getOfflineOrders, isReady} = useOrderDB()
   const user = useSelector((state: RootState) => state.user.value);
   const [addModal, setaddModal] = useState(false);
   const [orders, setorders] = useState<Order[] | []>([]);
@@ -87,7 +92,9 @@ const Orders = () => {
     if (branchFilter !== "all" && user.branches.length > 1) {
       filters.match_values.branch_id = branchFilter;
     }
-
+// confirm connection B4 fetching The data.
+if(isOnline){
+  console.log("online mode")
     findAndFilterOrder(filters)
       .then((resp) => {
         if (resp.data?.status === 200) {
@@ -105,11 +112,34 @@ const Orders = () => {
       .catch((err) => {
         console.log(err);
       });
+}else{
+  console.log("offline mode")
+  // while offline fetch local data
+  getOfflineOrders(filters).then((resp) => {
+        if (resp?.status === 200) {
+          setorders(resp?.data.results as Order[]);
+          setpaginationdata({
+            page: resp.data.page || 1,
+            limit: resp.data.limit || 10,
+            totalPages: resp.data.totalPages || 0,
+            totalResults: resp.data.totalResults || 0,
+          });
+        } else {
+          setorders([]);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+}
+  
   };
 
   useEffect(() => {
+    
     fetchOrders();
-  }, [paginationdata.page, statusFilter, dateFilter, branchFilter, searchTerm]);
+  }, [paginationdata.page, statusFilter, dateFilter, branchFilter, searchTerm, isReady]);
 
   const statusConfig = {
     completed: { color: "text-green-700", bg: "bg-green-50", border: "border-green-200", icon: CheckCircle },

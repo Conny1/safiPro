@@ -12,6 +12,7 @@ export function useOrderDB() {
     const init = async () => {
       try {
         await orderDB.init();
+        console.log("connected to idb")
         setIsReady(true);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to initialize database');
@@ -82,7 +83,7 @@ return {
   // UPDATE: Partial update
   const updateOrder = useCallback(async (id: string, updates: Partial<Order>) => {
     if (!isReady) throw new Error('Database not ready');
-    const updatedData = await orderDB.updateOrder(id, updates);
+    const updatedData = await orderDB.updateOrder(id, {...updates, sync_status:"pending"});
     return {
         status:200,
         data:updatedData

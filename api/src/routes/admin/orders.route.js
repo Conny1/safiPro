@@ -10,6 +10,15 @@ const { verifyTokens } = require("../../middlewares/verifyTokens");
 
 const route = express.Router();
 
+// background sync api
+
+route.post(
+  "/sync",
+  validate(orderValidation.createOrder),
+  orderController.addNewOrder
+);
+
+
 route.use(verifyTokens);
 route.use(subscriptionValidation);
 

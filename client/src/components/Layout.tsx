@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useGetauthuserQuery } from "../redux/apislice";
 import { logout, updateUserData } from "../redux/userSlice";
 import { USER_ROLES } from "../types";
+import { registerServiceWorker } from "../utils/serviceWorkerConnection";
 
 const Layout = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,11 @@ const Layout = () => {
   const { data } = useGetauthuserQuery(undefined, {
     skip: !user.token,
   });
+  // service worker registration
+  useEffect(() => {
+  registerServiceWorker();
+}, []);
+
 
   useEffect(() => {
     if (data && "data" in data && user.token) {
