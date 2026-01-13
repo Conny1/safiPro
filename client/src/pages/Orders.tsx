@@ -516,12 +516,12 @@ if(isOnline){
       {addModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden">
-            <AddOrder setaddModal={setaddModal} />
+            <AddOrder setaddModal={setaddModal} onSuccess={()=>{fetchOrders()}}  />
           </div>
         </div>
       )}
 
-      {/* Bulk Actions (when orders are selected) */}
+      {/* Bulk Actions (when orders are selected)
       {selectedOrders.length > 0 && (
         <div className="fixed flex items-center gap-4 px-6 py-3 text-white transform -translate-x-1/2 bg-gray-900 rounded-lg shadow-xl bottom-6 left-1/2">
           <span className="font-medium">{selectedOrders.length} orders selected</span>
@@ -543,7 +543,7 @@ if(isOnline){
             </button>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

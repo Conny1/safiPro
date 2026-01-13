@@ -89,7 +89,7 @@ const dashboardanalysis = async (id) => {
         completed_orders: [
           { $match: { status: "completed" } },
           { $count: "count" },
-        ],
+        ], 
         pending_orders: [
           { $match: { status: "pending" } },
           { $count: "count" },
