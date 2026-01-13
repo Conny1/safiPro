@@ -44,8 +44,8 @@ const findandfilter = async (filter, options) => {
   }
   return branch;
 };
-const getBranchByUserid = async (user_id) => {
-  const branch = await Branch.find({ user_id, is_deleted: false });
+const getBranchByBusiness_id = async (business_id) => {
+  const branch = await Branch.find({ business_id, is_deleted: false });
   if (!branch || branch.length === 0) {
     throw createError(404, "Branch not found.");
   }
@@ -73,7 +73,7 @@ module.exports = {
   addNewBranch,
   updateBranch,
   deleteBranch,
-  getBranchByUserid,
+  getBranchByBusiness_id,
   getBranchByid,
   findandfilter,
 };

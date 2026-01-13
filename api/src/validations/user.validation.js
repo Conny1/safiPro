@@ -35,7 +35,6 @@ const createStaff = {
   body: Joi.object().keys({
     first_name: Joi.string().alphanum().required(),
     last_name: Joi.string().alphanum().required(),
-    super_admin_id: Joi.string().custom(objectId).required(),
     role: Joi.string()
       .valid("Super Admin", "Admin", "Branch Manager", "Staff")
       .required(),
@@ -112,7 +111,6 @@ const updateUser = {
           .required(),
       })
     ),
-    super_admin_id: Joi.string().custom(objectId),
     _id: Joi.string().custom(objectId),
     role: Joi.string().valid("Super Admin", "Admin", "Branch Manager", "Staff"),
   }),

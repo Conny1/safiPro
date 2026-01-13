@@ -4,6 +4,7 @@ const branchRoute = require("./branch.route");
 const userRoute = require("./user.route");
 const paymentRoute = require("./payment.route");
 const notificationRoute = require("./notification.route");
+const expenseRoute = require("./expense.route");
 
 const router = express.Router();
 
@@ -11,6 +12,10 @@ let routes = [
   {
     path: "/orders",
     route: orderRoute,
+  },
+    {
+    path: "/expense",
+    route: expenseRoute,
   },
   {
     path: "/branch",

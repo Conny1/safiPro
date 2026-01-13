@@ -18,18 +18,15 @@ const checkSubscription = cron.schedule(
     if (expiredPayments && expiredPayments.length !== 0) {
       await Promise.all(
         expiredPayments.map(async (item) => {
-          let user_id = item.user_id;
-          if (user_id) {
+          let business_id = item.business_id;
+          if (business_id) {
             return Promise.all([
-              User.findByIdAndUpdate(new ObjectId(user_id), {
-                $set: { subscription: "inactive" },
-              }),
               User.updateMany(
-                { super_admin_id: new ObjectId(user_id) },
+                { business_id: new ObjectId(business_id) },
                 { $set: { subscription: "inactive" } }
               ),
               Payment.findOneAndUpdate(
-                { user_id: new ObjectId(user_id) },
+                { business_id: new ObjectId(business_id) },
                 {
                   $set: { status: "expired" },
                 }

@@ -78,7 +78,6 @@ export type createAccount = {
     branch_id: string;
     role: Role;
   }[];
-  super_admin_id?: string;
 };
 
 export type login = {
@@ -99,7 +98,6 @@ export type user = {
     branch_id: string;
     role: Role;
   }[];
-  super_admin_id?: string;
   createdAt?:string;
 };
 
@@ -156,7 +154,16 @@ export type mobilePayments = {
 };
 
 export interface Expense {
-  id: number;
+  _id: string;
+  description: string;
+  amount: number;
+  category: ExpenseCategory;
+  date: string;
+  paymentMethod: PaymentMethod;
+  notes?: string;
+}
+
+export interface addExpenseType {
   description: string;
   amount: number;
   category: ExpenseCategory;

@@ -4,11 +4,9 @@ import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
 import {
   useCreateStaffAccountMutation,
-  useGetBranchNamesByuserIdQuery,
+  useGetBranchNamesByBusinessQuery,
 } from "../redux/apislice";
 import { roles, type createAccount } from "../types";
-import { useSelector } from "react-redux";
-import type { RootState } from "../redux/store";
 
 const schema = Yup.object({
   first_name: Yup.string().required("First name is required"),
@@ -26,8 +24,7 @@ const schema = Yup.object({
 
 const AddNewUser = () => {
   const [createStaffAccount, { isLoading }] = useCreateStaffAccountMutation();
-  const user = useSelector((state: RootState) => state.user.value);
-  const { data: branchesResp } = useGetBranchNamesByuserIdQuery(user._id);
+  const { data: branchesResp } = useGetBranchNamesByBusinessQuery();
   const branches = branchesResp?.data;
   const {
     register,
@@ -45,7 +42,6 @@ const AddNewUser = () => {
       const resp = await createStaffAccount({
         ...userData,
         branches: [{ branch_id, role: data.role }],
-        super_admin_id: user._id,
       });
       if (resp.data?.status === 200) {
         toast.success("User created successfully!");
@@ -67,7 +63,7 @@ const AddNewUser = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-md mx-auto bg-white p-6 rounded-md shadow space-y-4"
+      className="w-full max-w-md p-6 mx-auto space-y-4 bg-white rounded-md shadow"
     >
       <ToastContainer />
       <h2 className="text-xl font-bold">Add New User</h2>
@@ -76,53 +72,53 @@ const AddNewUser = () => {
         type="text"
         placeholder="First Name"
         {...register("first_name")}
-        className="w-full border px-3 py-2 rounded"
+        className="w-full px-3 py-2 border rounded"
       />
       {errors.first_name && (
-        <p className="text-red-500 text-sm">{errors.first_name.message}</p>
+        <p className="text-sm text-red-500">{errors.first_name.message}</p>
       )}
 
       <input
         type="text"
         placeholder="Last Name"
         {...register("last_name")}
-        className="w-full border px-3 py-2 rounded"
+        className="w-full px-3 py-2 border rounded"
       />
       {errors.last_name && (
-        <p className="text-red-500 text-sm">{errors.last_name.message}</p>
+        <p className="text-sm text-red-500">{errors.last_name.message}</p>
       )}
 
       <input
         type="email"
         placeholder="Email"
         {...register("email")}
-        className="w-full border px-3 py-2 rounded"
+        className="w-full px-3 py-2 border rounded"
       />
       {errors.email && (
-        <p className="text-red-500 text-sm">{errors.email.message}</p>
+        <p className="text-sm text-red-500">{errors.email.message}</p>
       )}
 
       <input
         type="password"
         placeholder="Password"
         {...register("password")}
-        className="w-full border px-3 py-2 rounded"
+        className="w-full px-3 py-2 border rounded"
       />
       {errors.password && (
-        <p className="text-red-500 text-sm">{errors.password.message}</p>
+        <p className="text-sm text-red-500">{errors.password.message}</p>
       )}
 
       <input
         type="password"
         placeholder="Repeat Password"
         {...register("repeat_password")}
-        className="w-full border px-3 py-2 rounded"
+        className="w-full px-3 py-2 border rounded"
       />
       {errors.repeat_password && (
-        <p className="text-red-500 text-sm">{errors.repeat_password.message}</p>
+        <p className="text-sm text-red-500">{errors.repeat_password.message}</p>
       )}
 
-      <select {...register("role")} className="w-full border px-3 py-2 rounded">
+      <select {...register("role")} className="w-full px-3 py-2 border rounded">
         <option value="">Select Role</option>
         {roles.map((role) => (
           <option key={role} value={role}>
@@ -131,12 +127,12 @@ const AddNewUser = () => {
         ))}
       </select>
       {errors.role && (
-        <p className="text-red-500 text-sm">{errors.role.message}</p>
+        <p className="text-sm text-red-500">{errors.role.message}</p>
       )}
 
       <select
         {...register("branch_id")}
-        className="w-full border px-3 py-2 rounded"
+        className="w-full px-3 py-2 border rounded"
       >
         <option value="">Select Branch</option>
         {branches?.map((b) => (
@@ -146,13 +142,13 @@ const AddNewUser = () => {
         ))}
       </select>
       {errors.branch_id && (
-        <p className="text-red-500 text-sm">{errors.branch_id.message}</p>
+        <p className="text-sm text-red-500">{errors.branch_id.message}</p>
       )}
 
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        className="w-full py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
       >
         {isLoading ? "Creating..." : "Add User"}
       </button>

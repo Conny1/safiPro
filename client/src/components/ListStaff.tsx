@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { useFindAndFilterUserMutation } from "../redux/apislice";
 import type { pagination, user } from "../types";
-import { useSelector } from "react-redux";
-import type { RootState } from "../redux/store";
+
 import { UpdateStaff } from ".";
 
 const ListStaff = () => {
-  const user = useSelector((state: RootState) => state.user.value);
   const [staff, setstaff] = useState<user[] | []>([]);
   const [editmodal, seteditmodal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<user | null>(null);
@@ -20,7 +18,7 @@ const ListStaff = () => {
     useFindAndFilterUserMutation();
   const fetchBranches = () => {
     findAndFilterUser({
-      match_values: { super_admin_id: user._id },
+      match_values: { },
       sortBy: "_id:-1",
       limit: 10,
       page: paginationdata.page,
@@ -48,21 +46,21 @@ const ListStaff = () => {
   return (
     <div className="p-6 space-y-8">
       {editmodal && (
-        <div className=" ">
+        <div className="">
           <UpdateStaff userToEdit={selectedUser} seteditmodal={seteditmodal} />
         </div>
       )}
       <div className="overflow-x-scroll">
         <div className=" min-w-[700px] bg-white shadow-md rounded-lg   ">
-          <table className=" bg-grey-light flex flex-col items-center   w-full">
+          <table className="flex flex-col items-center w-full bg-grey-light">
             <thead className="bg-[#535bf2] flex text-white w-full">
               <tr className="flex w-full mb-4">
-                <th className="p-4 w-1/4">Name.</th>
-                <th className="p-4 w-1/4">email</th>
+                <th className="w-1/4 p-4">Name.</th>
+                <th className="w-1/4 p-4">email</th>
 
-                {/* <th className="p-4 w-1/4">Phone number</th> */}
-                <th className="p-4 w-1/4">role</th>
-                <th className="p-4 w-1/4">-</th>
+                {/* <th className="w-1/4 p-4">Phone number</th> */}
+                <th className="w-1/4 p-4">role</th>
+                <th className="w-1/4 p-4">-</th>
               </tr>
             </thead>
             {findloading ? (
@@ -70,14 +68,14 @@ const ListStaff = () => {
             ) : (
               <tbody className="  max-h-[50vh] bg-grey-light flex flex-col items-center  w-full">
                 {staff.map((item) => (
-                  <tr key={item._id} className="flex w-full  mb-4">
-                    <td className="p-4 w-1/4">
+                  <tr key={item._id} className="flex w-full mb-4">
+                    <td className="w-1/4 p-4">
                       {item.first_name + " "} {item.last_name}{" "}
                     </td>
-                    <td className="p-4 w-1/4  ">{item.email || "-"}</td>
-                    <td className="p-4 w-1/4">{item.role}</td>
+                    <td className="w-1/4 p-4 ">{item.email || "-"}</td>
+                    <td className="w-1/4 p-4">{item.role}</td>
 
-                    <td className="p-4 w-1/4">
+                    <td className="w-1/4 p-4">
                       <button
                         onClick={() => {
                           setSelectedUser(item);
@@ -88,7 +86,7 @@ const ListStaff = () => {
                       </button>
                     </td>
                     {/* {editmodal && (
-                      <div className="absolute inset-0 bg-black flex items-center justify-center lg:top-0 lg:bg-black">
+                      <div className="absolute inset-0 flex items-center justify-center bg-black lg:top-0 lg:bg-black">
                         <UpdateStaff
                           seteditmodal={seteditmodal}
                           userToEdit={item}
@@ -102,7 +100,7 @@ const ListStaff = () => {
           </table>
         </div>
       </div>
-      <div className=" flex justify-between items-center px-4 py-3">
+      <div className="flex items-center justify-between px-4 py-3 ">
         <div className="text-sm text-slate-500">
           Showing <b>{paginationdata.page} </b> of {paginationdata.totalPages}
         </div>
@@ -115,7 +113,7 @@ const ListStaff = () => {
                 page: prev.page === 1 ? 1 : prev.page - 1,
               }));
             }}
-            className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease"
+            className="px-3 py-1 text-sm font-normal transition duration-200 bg-white border rounded min-w-9 min-h-9 text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 ease"
           >
             Prev
           </button>
@@ -128,7 +126,7 @@ const ListStaff = () => {
                 page: prev.page < prev.totalPages ? prev.page + 1 : prev.page,
               }));
             }}
-            className="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease"
+            className="px-3 py-1 text-sm font-normal transition duration-200 bg-white border rounded min-w-9 min-h-9 text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 ease"
           >
             Next
           </button>

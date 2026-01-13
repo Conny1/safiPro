@@ -31,7 +31,7 @@ const Payments = () => {
   const navigate = useNavigate();
   const fetchPayments = () => {
     findAndFilterPayment({
-      match_values: { user_id: user._id },
+      match_values: {  },
       sortBy: "_id:-1",
       limit: paginationdata.limit,
       page: paginationdata.page,
@@ -86,8 +86,8 @@ const Payments = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 relative">
-      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 space-y-6">
+    <div className="relative min-h-screen p-6 bg-gray-50">
+      <div className="max-w-4xl p-6 mx-auto space-y-6 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-blue-800">Payments & Billing</h2>
 
         <div className="space-y-2">
@@ -97,7 +97,7 @@ const Payments = () => {
           <p className="text-gray-500">KES 1,000 / month</p>
         </div>
 
-        <div className="bg-blue-50 p-4 rounded-md text-blue-800 text-sm">
+        <div className="p-4 text-sm text-blue-800 rounded-md bg-blue-50">
           <p>
             Your subscription allows up to <strong>5 branches</strong> and
             <strong> unlimited orders</strong>. You can upgrade anytime for more
@@ -106,16 +106,16 @@ const Payments = () => {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-2">Payment Options</h3>
+          <h3 className="mb-2 text-lg font-semibold">Payment Options</h3>
           {user.subscription.status === "active" ? (
-            <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md">
+            <button className="w-full py-2 text-white bg-green-600 rounded-md hover:bg-green-700">
               Active
             </button>
           ) : (
             <div className="space-y-4">
               <button
                 onClick={() => setShowMpesaModal(true)}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md mb-5"
+                className="w-full py-2 mb-5 text-white bg-green-600 rounded-md hover:bg-green-700"
               >
                 Pay with M-PESA
               </button>
@@ -124,14 +124,14 @@ const Payments = () => {
                 target="_blank"
                 className="mt-10"
               >
-                <button className="w-full border border-blue-600 text-blue-600 py-2 rounded-md hover:bg-blue-50">
+                <button className="w-full py-2 text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50">
                   Pay with Card
                 </button>
               </a>
             </div>
           )}
         </div>
-        <h3 className="text-lg font-semibold mb-2">Payment History</h3>
+        <h3 className="mb-2 text-lg font-semibold">Payment History</h3>
         <div className="overflow-scroll">
           <div className="h-[50vh] min-w-96   ">
             <table className="w-full text-left border-collapse ">
@@ -161,7 +161,7 @@ const Payments = () => {
                       <td className="p-2 text-sm">
                         KES {item.amount.toLocaleString()}
                       </td>
-                      <td className="p-2 text-sm text-green-600 font-medium">
+                      <td className="p-2 text-sm font-medium text-green-600">
                         {item.payment_status}
                       </td>
                       <td
@@ -183,8 +183,8 @@ const Payments = () => {
       </div>
 
       {showMpesaModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-sm space-y-4 shadow-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="w-full max-w-sm p-6 space-y-4 bg-white rounded-lg shadow-lg">
             <h3 className="text-xl font-semibold text-blue-800">
               Enter Phone Number
             </h3>
@@ -193,7 +193,7 @@ const Payments = () => {
               value={phoneInput}
               onChange={(e) => setPhoneInput(e.target.value)}
               placeholder="07XXXXXXXX"
-              className="w-full border border-gray-300 px-4 py-2 rounded-md"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
             />
             <div className="flex justify-end space-x-2">
               <button
@@ -205,7 +205,7 @@ const Payments = () => {
               <button
                 disabled={mobileLoading}
                 onClick={handleMpesaSubmit}
-                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+                className="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700"
               >
                 {mobileLoading ? "Loading..." : "Continue"}
               </button>

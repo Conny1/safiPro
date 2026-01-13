@@ -5,8 +5,6 @@ import {
   useFindAndFilterBranchMutation,
   useUpdateBranchMutation,
 } from "../redux/apislice";
-import { useSelector } from "react-redux";
-import type { RootState } from "../redux/store";
 import { toast } from "react-toastify";
 import {
   Building,
@@ -33,9 +31,7 @@ const Listbranches = ({ setlisbranchesModal }: Props) => {
   const [editedBranch, setEditedBranch] = useState<Partial<Branch> | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [filterStatus] = useState("all");
-  
-  const user = useSelector((state: RootState) => state.user.value);
-  const [paginationdata, setpaginationdata] = useState<pagination>({
+    const [paginationdata, setpaginationdata] = useState<pagination>({
     page: 1,
     limit: 10,
     totalPages: 0,
@@ -51,7 +47,7 @@ const Listbranches = ({ setlisbranchesModal }: Props) => {
 
   const fetchBranches = () => {
     const filters: any = {
-      match_values: { user_id: user._id },
+      match_values: {  },
       sortBy: "_id:-1",
       limit: paginationdata.limit,
       page: paginationdata.page,

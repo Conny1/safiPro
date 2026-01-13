@@ -14,9 +14,10 @@ interface ExpenseFormProps {
   onSave: (expenseData: Omit<Expense, 'id'>) => void;
   onCancel: () => void;
   categories: CategoryInfo[];
+  isLoading:boolean
 }
 
-const ExpenseForm: React.FC<ExpenseFormProps> = ({ expense, onSave, onCancel, categories }) => {
+const ExpenseForm: React.FC<ExpenseFormProps> = ({ isLoading, expense, onSave, onCancel, categories }) => {
   const [formData, setFormData] = useState<ExpenseFormData>({
     description: '',
     amount: '',
@@ -229,7 +230,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expense, onSave, onCancel, ca
       {/* Info Alert for Editing */}
       {expense && (
         <div className="px-4 py-3 text-blue-700 border border-blue-200 rounded-lg bg-blue-50">
-          Editing expense #{expense.id} created on {expense.date}
+          Editing expense #{expense._id} created on {expense.date}
         </div>
       )}
 
@@ -244,12 +245,13 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expense, onSave, onCancel, ca
           Cancel
         </button>
         <button
+          disabled = {isLoading }
           type="submit"
           className="flex items-center justify-center flex-1 gap-2 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg"
           style={{ backgroundColor: getCategoryColor(formData.category) }}
         >
           <Save className="w-4 h-4" />
-          {expense ? 'Update Expense' : 'Save Expense'}
+           { !isLoading? expense ? 'Update Expense' : 'Save Expense' : "Loading..."}
         </button>
       </div>
     </form>

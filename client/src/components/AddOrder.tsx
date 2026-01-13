@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { USER_ROLES, type addOrder, type Branch } from "../types";
 import {
   useCreateNewOrderMutation,
-  useGetBranchNamesByuserIdQuery,
+  useGetBranchNamesByBusinessQuery,
 } from "../redux/apislice";
 import { toast, ToastContainer } from "react-toastify";
 import {  useSelector } from "react-redux";
@@ -63,7 +63,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
       : user.branches[0]?.branch_id || ""
   );
 
-  const { data: allBranchesResp } = useGetBranchNamesByuserIdQuery(user._id, {
+  const { data: allBranchesResp } = useGetBranchNamesByBusinessQuery( undefined, {
     skip: user.role !== USER_ROLES.SUPER_ADMIN,
   });
 

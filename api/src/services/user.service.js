@@ -19,8 +19,8 @@ const createUser = async (body) => {
     ); // 30 days in milliseconds
 
     const payment = new Payment({
-      user_id: new ObjectId(user._id),
-      amount: 1000,
+      business_id: new ObjectId(user.business_id),
+      amount: 900,
       payment_method: "free",
       payment_status: "free",
       status: "active",
@@ -67,10 +67,7 @@ const login = async (body) => {
   }
   const token = jwt.sign(
     {
-      email: user.email,
       _id: user._id,
-      role: user.role,
-      subscription: { status: user.subscription },
     },
     process.env.JWT_KEY
   );

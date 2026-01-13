@@ -1,11 +1,14 @@
 const Joi = require("joi");
 const { objectId } = require("../utils");
 
-const addNewBranch = {
+const addNewExpense = {
   body: Joi.object().keys({
-    user_id: Joi.string().custom(objectId).required(),
-    name: Joi.string().lowercase().required(),
-    location: Joi.string().lowercase().default("").allow(null),
+    description: Joi.string().required(),
+    amount: Joi.number().required(),
+    date: Joi.string().required(),
+    category: Joi.string().required(),
+    paymentMethod: Joi.string().required(),
+    notes:Joi.string().allow(null, "")
   }),
 };
 
@@ -19,18 +22,22 @@ const findandfilter = {
   }),
 };
 
-const getBranchByid = {
+const getExpenseByid = {
   params: Joi.object().keys({
     id: Joi.string().custom(objectId).required(),
   }),
 };
 
-const updateBranch = {
+const updateExpense = {
   body: Joi.object().keys({
-    name: Joi.string().lowercase(),
-    location: Joi.string().lowercase(),
-    user_id: Joi.string().custom(objectId).required(),
-    _id: Joi.string().custom(objectId).required(),
+        description: Joi.string(),
+    amount: Joi.number(),
+    date: Joi.string(),
+    category: Joi.string(),
+    paymentMethod: Joi.string(),
+    notes:Joi.string().allow(null, ""),
+    business_id: Joi.string().custom(objectId),
+    _id: Joi.string().custom(objectId),
     __v: Joi.number().optional(),
     is_deleted: Joi.boolean(),
   }),
@@ -39,7 +46,7 @@ const updateBranch = {
   }),
 };
 
-const deleteBranch = {
+const deleteExpense = {
   params: Joi.object().keys({
     id: Joi.string().custom(objectId).required(),
   }),
@@ -48,9 +55,9 @@ const deleteBranch = {
 
 
 module.exports = {
-  addNewBranch,
-  deleteBranch,
-  getBranchByid,
+  addNewExpense,
+  deleteExpense,
+  getExpenseByid,
   findandfilter,
-  updateBranch,
+  updateExpense,
 };

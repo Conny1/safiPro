@@ -45,10 +45,9 @@ route.delete(
 );
 
 route.get(
-  "/branch/:user_id",
+  "/list/business/",
   roleValidation,
-  validate(branchValidation.getBranchByUserid),
-  branchController.getBranchByUserid
+  branchController.getBranchByBusiness_id
 );
 
 module.exports = route;

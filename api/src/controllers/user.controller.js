@@ -1,10 +1,15 @@
 const { createError } = require("../configs/errorConfig");
 const { pick } = require("../middlewares/validation");
+const { Business } = require("../models");
 const { userService } = require("../services");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 const createUser = async (req, resp, next) => {
   try {
+    // update to servixe after mvp.
+    const business = new Business({ name: req.body.email });
+    const savedBusiness = await business.save();
+    req.body.business_id = savedBusiness._id;
     const user = await userService.createUser(req.body);
     resp
       .status(200)
@@ -16,7 +21,7 @@ const createUser = async (req, resp, next) => {
 
 const adminCreateEmployee = async (req, resp, next) => {
   try {
-    const user = await userService.adminCreateEmployee(req.body);
+    const user = await userService.adminCreateEmployee({business_id:req.user.business_id,...req.body});
 
     resp
       .status(200)
@@ -73,7 +78,7 @@ const getauthUser = async (req, resp, next) => {
 
 const findandfilter = async (req, resp, next) => {
   try {
-    let filter = { is_deleted: false };
+    let filter = { is_deleted: false, role:"Staff", business_id:new ObjectId(req.user.business_id )};
 
     for (key in req.body.match_values) {
       if (req.body.match_values[key] || req.body.match_values[key] === "") {

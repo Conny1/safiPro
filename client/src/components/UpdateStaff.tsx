@@ -5,12 +5,10 @@ import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
 import {
   useDeleteUserMutation,
-  useGetBranchNamesByuserIdQuery,
+  useGetBranchNamesByBusinessQuery,
   useUpdateuserMutation,
 } from "../redux/apislice";
 import { roles, type updatestaff, type user } from "../types";
-import { useSelector } from "react-redux";
-import type { RootState } from "../redux/store";
 
 type EditStaffProps = {
   userToEdit: user | null;
@@ -27,9 +25,8 @@ const schema = Yup.object({
 
 const EditStaff = ({ userToEdit, seteditmodal }: EditStaffProps) => {
   const [updateuser, { isLoading }] = useUpdateuserMutation();
-  const user = useSelector((state: RootState) => state.user.value);
   const [deleteUser, { isLoading: deleteLoading }] = useDeleteUserMutation();
-  const { data: branchesResp } = useGetBranchNamesByuserIdQuery(user._id);
+  const { data: branchesResp } = useGetBranchNamesByBusinessQuery();
   const branches = branchesResp?.data || [];
 
   const {
@@ -66,7 +63,7 @@ const EditStaff = ({ userToEdit, seteditmodal }: EditStaffProps) => {
         _id: userToEdit?._id,
         ...others,
         branches: [{ branch_id: data.branch_id, role: data.role }],
-        super_admin_id: user._id,
+    
       });
       if (resp.data?.status === 200) {
         toast.success("User updated successfully!");
@@ -82,10 +79,10 @@ const EditStaff = ({ userToEdit, seteditmodal }: EditStaffProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-md mx-auto bg-white p-6 rounded-md shadow space-y-4"
+        className="w-full max-w-md p-6 mx-auto space-y-4 bg-white rounded-md shadow"
       >
         <ToastContainer />
         <h2 className="text-xl font-bold">Edit Staff Member</h2>
@@ -94,35 +91,35 @@ const EditStaff = ({ userToEdit, seteditmodal }: EditStaffProps) => {
           type="text"
           placeholder="First Name"
           {...register("first_name")}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full px-3 py-2 border rounded"
         />
         {errors.first_name && (
-          <p className="text-red-500 text-sm">{errors.first_name.message}</p>
+          <p className="text-sm text-red-500">{errors.first_name.message}</p>
         )}
 
         <input
           type="text"
           placeholder="Last Name"
           {...register("last_name")}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full px-3 py-2 border rounded"
         />
         {errors.last_name && (
-          <p className="text-red-500 text-sm">{errors.last_name.message}</p>
+          <p className="text-sm text-red-500">{errors.last_name.message}</p>
         )}
 
         <input
           type="email"
           placeholder="Email"
           {...register("email")}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full px-3 py-2 border rounded"
         />
         {errors.email && (
-          <p className="text-red-500 text-sm">{errors.email.message}</p>
+          <p className="text-sm text-red-500">{errors.email.message}</p>
         )}
 
         <select
           {...register("role")}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full px-3 py-2 border rounded"
         >
           <option value="">Select Role</option>
           {roles.map((role) => (
@@ -132,12 +129,12 @@ const EditStaff = ({ userToEdit, seteditmodal }: EditStaffProps) => {
           ))}
         </select>
         {errors.role && (
-          <p className="text-red-500 text-sm">{errors.role.message}</p>
+          <p className="text-sm text-red-500">{errors.role.message}</p>
         )}
 
         <select
           {...register("branch_id")}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full px-3 py-2 border rounded"
         >
           <option value="">Select Branch</option>
           {branches.map((b) => (
@@ -147,7 +144,7 @@ const EditStaff = ({ userToEdit, seteditmodal }: EditStaffProps) => {
           ))}
         </select>
         {errors.branch_id && (
-          <p className="text-red-500 text-sm">{errors.branch_id.message}</p>
+          <p className="text-sm text-red-500">{errors.branch_id.message}</p>
         )}
         <div className="flex justify-evenly gap-3.5">
           <button
@@ -162,21 +159,21 @@ const EditStaff = ({ userToEdit, seteditmodal }: EditStaffProps) => {
                 }
               });
             }}
-            className="px-4 py-1 rounded bg-red-600 "
+            className="px-4 py-1 bg-red-600 rounded "
           >
             {deleteLoading ? "Loading..." : "Delete"}
           </button>
           <button
             type="button"
             onClick={() => seteditmodal(false)}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+            className="w-full py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+            className="w-full py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
           >
             {isLoading ? "Updating..." : "Update User"}
           </button>

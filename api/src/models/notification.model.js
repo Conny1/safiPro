@@ -14,6 +14,11 @@ const notificationSchema = mongoose.Schema(
       ref: "User",
       default: null,
     },
+    business_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Business",
+      default: null,
+    },
     type: {
       type: String,
       enum: ["email", "SMS", "whatsapp"],

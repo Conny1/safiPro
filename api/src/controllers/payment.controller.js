@@ -19,7 +19,7 @@ const createPayment = async (req, resp, next) => {
 
 const findAndFilterPayments = async (req, res, next) => {
   try {
-    let filter = {};
+    let filter = { business_id:req.user.business_id };
 
     for (const key in req.body.match_values) {
       const value = req.body.match_values[key];
@@ -64,7 +64,7 @@ const findAndFilterPayments = async (req, res, next) => {
 
 const mobileMoneyPayment = async (req, resp, next) => {
   try {
-    const payment = await paymentService.mobileMoneyPayment(req.body);
+    const payment = await paymentService.mobileMoneyPayment({ business_id:req.user.business_id,  ...req.body});
     resp.status(200).json({ status: 200, data: payment });
   } catch (error) {
     return next(createError(error.status || 500, error.message));

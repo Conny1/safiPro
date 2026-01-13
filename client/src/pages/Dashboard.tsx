@@ -20,7 +20,9 @@ import { Listbranches } from "../components";
 import { ToastContainer } from "react-toastify";
 import {
   useFindAndFilterOrderMutation,
-  useGetBranchNamesByuserIdQuery,
+  
+  useGetBranchNamesByBusinessQuery,
+  
   useGetOrderDashbardAnalysisQuery,
 } from "../redux/apislice";
 import { USER_ROLES, type Branch, type Order } from "../types";
@@ -51,7 +53,7 @@ const Dashboard = () => {
     useFindAndFilterOrderMutation();
 
   const { data: allBranchesResp, refetch: refetchBranches } =
-    useGetBranchNamesByuserIdQuery(user._id);
+    useGetBranchNamesByBusinessQuery();
   const [allBranches, setallBranches] = useState<Branch[] | []>(
     offlineBranchData
   );

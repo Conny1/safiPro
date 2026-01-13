@@ -40,7 +40,7 @@ const Settings = () => {
                 Logged in as <span className="font-medium text-gray-900">{user.first_name}</span>
               </div>
               <div className="px-3 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full">
-                {user.role === USER_ROLES.SUPER_ADMIN ? "Super Admin" : "Branch Manager"}
+                {user.role }
               </div>
             </div>
           </div>

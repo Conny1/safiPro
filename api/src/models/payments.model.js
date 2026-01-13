@@ -4,7 +4,7 @@ const deletion = require("./plugins/deletion.plugin");
 
 const paymentSchema = new Schema(
   {
-    user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    business_id: { type: Schema.Types.ObjectId, ref: "Business", required: true },
 
     amount: { type: Number, required: true }, // Total paid
 

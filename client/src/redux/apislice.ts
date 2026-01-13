@@ -1,9 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type {
+  addExpenseType,
   addOrder,
   Branch,
   createAccount,
   createBranch,
+  Expense,
   findandfilter,
   login,
   mobilePayments,
@@ -27,7 +29,7 @@ export const laundryApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["User", "Order", "Branch"],
+  tagTypes: ["User", "Order", "Branch", "Expense"],
   endpoints: (build) => ({
     createAccount: build.mutation<
       {
@@ -179,11 +181,11 @@ export const laundryApi = createApi({
       }),
     }),
 
-    getBranchNamesByuserId: build.query<
+    getBranchNamesByBusiness: build.query<
       { status: Number; data: Branch[] },
-      string
+      void
     >({
-      query: (id) => `/admin/branch/branch/${id}`,
+      query: () => `/admin/branch/list/business`,
       providesTags: ["Branch"],
     }),
     deleteBranch: build.mutation<
@@ -317,11 +319,68 @@ export const laundryApi = createApi({
         body,
       }),
     }),
+
+    // Expenses
+
+    addnewExpense: build.mutation<
+      {
+        status: Number;
+      },
+      addExpenseType
+    >({
+      query: (body) => ({
+        url: "/admin/expense",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Expense"],
+    }),
+
+    updateExpense: build.mutation<
+      {
+        status: Number;
+        data: Expense;
+      },
+       Partial<Expense>
+    >({
+      query: (body) => ({
+        url: `/admin/expense/${body?._id  }`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["Expense"],
+    }),
+
+    findAndFilterExpense: build.mutation<
+      {
+        status: Number;
+        data: { results: Expense[] } & pagination;
+      },
+      findandfilter
+    >({
+      query: (body) => ({
+        url: "/admin/expense/findandfilter",
+        method: "POST",
+        body,
+      }),
+    }),
+
+    deleteExpense: build.mutation<
+      {
+        status: Number;
+      },
+      string
+    >({
+      query: (id) => ({
+        url: `/admin/expense/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Expense"],
+    }),
+
   }),
 });
 
-// Export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
 export const {
   useCreateAccountMutation,
   useGetauthuserQuery,
@@ -335,7 +394,7 @@ export const {
   useFindAndFilterOrderMutation,
   useGetOrderByIdQuery,
   useUpdateOrderMutation,
-  useGetBranchNamesByuserIdQuery,
+  useGetBranchNamesByBusinessQuery,
   useCreateStaffAccountMutation,
   useFindAndFilterUserMutation,
   useDeleteBranchMutation,
@@ -346,4 +405,9 @@ export const {
   useGetOrderDashbardAnalysisQuery,
   useSendResetLinkEmailMutation,
   useResetPasswordMutation,
+  // expense
+  useAddnewExpenseMutation,
+  useUpdateExpenseMutation,
+  useFindAndFilterExpenseMutation,
+  useDeleteExpenseMutation
 } = laundryApi;

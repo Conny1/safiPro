@@ -12,9 +12,10 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    super_admin_id: {
+    business_id: {
       type: mongoose.Schema.Types.ObjectId,
-      default: null,
+      required:true,
+      ref:"Business"
     },
     email: {
       type: String,

@@ -43,6 +43,7 @@ const ROUTES = {
   STAFF: "/admin/user/create-staff",
   USER: "/admin/user",
   PAYMENT: "/admin/payment",
+  EXPENSE: "/admin/expense",
 };
 
 // Define route + method combinations per role
@@ -53,10 +54,12 @@ const ROUTE_PERMISSIONS = {
     { path: ROUTES.STAFF, methods: ["POST"] },
     { path: ROUTES.USER, methods: ["GET", "PUT", "DELETE", "POST"] },
     { path: ROUTES.PAYMENT, methods: ["GET", "PUT", "DELETE", "POST"] },
+    { path: ROUTES.EXPENSE, methods: ["GET", "PUT", "DELETE", "POST"] },
   ],
   [USER_ROLES.STAFF]: [
     { path: ROUTES.ORDER, methods: ["GET", "POST", "PUT"] },
     { path: ROUTES.STAFF, methods: ["PUT"] },
+    { path: ROUTES.EXPENSE, methods: ["GET", "PUT", "DELETE", "POST"] },
   ],
 };
 
@@ -79,7 +82,7 @@ const roleValidation = (req, res, next) => {
 };
 
 const subscriptionValidation = async (req, res, next) => {
-  const user = await User.findById(new ObjectId(req.user._id));
+  const user = req.user;
 
   if (!user) {
     return res

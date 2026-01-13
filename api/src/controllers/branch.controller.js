@@ -5,7 +5,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 
 const addNewBranch = async (req, resp, next) => {
   try {
-    const branch = await branchService.addNewBranch(req.body);
+    const branch = await branchService.addNewBranch({ business_id:req.user.business_id, ...req.body});
     resp
       .status(200)
       .json({ status: 200, data: { message: "New branch added" } });
@@ -25,7 +25,7 @@ const updateBranch = async (req, resp, next) => {
 
 const findandfilter = async (req, resp, next) => {
   try {
-    let filter = { is_deleted: false };
+    let filter = { is_deleted: false, business_id:req.user.business_id};
 
     for (key in req.body.match_values) {
       if (req.body.match_values[key] || req.body.match_values[key] === "") {
@@ -56,9 +56,9 @@ const findandfilter = async (req, resp, next) => {
   }
 };
 
-const getBranchByUserid = async (req, resp, next) => {
+const getBranchByBusiness_id = async (req, resp, next) => {
   try {
-    const branch = await branchService.getBranchByUserid(req.params.user_id);
+    const branch = await branchService.getBranchByBusiness_id(req.user.business_id);
 
     resp.status(200).json({ status: 200, data: branch });
   } catch (error) {
@@ -90,7 +90,7 @@ module.exports = {
   addNewBranch,
   updateBranch,
   deleteBranch,
-  getBranchByUserid,
+  getBranchByBusiness_id,
   getBranchByid,
   findandfilter,
 };
