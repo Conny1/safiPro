@@ -65,7 +65,6 @@ const resetPassword = async (req, resp, next) => {
 const getauthUser = async (req, resp, next) => {
   try {
     const user = await userService.getauthUser(req.user._id);
-    console.log(user);
 
     resp
       .set("Cache-Control", "no-store")

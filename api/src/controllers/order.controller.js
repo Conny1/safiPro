@@ -55,7 +55,7 @@ const getOrderByBranchid = async (req, resp, next) => {
         },
       ];
     }
-    console.log(filter);
+  
     const order = await orderService.getOrderByBranchid(filter, options);
 
     resp.status(200).json({ status: 200, data: order });

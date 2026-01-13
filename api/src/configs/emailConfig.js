@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 
 const emailConnect = async () => {
   // let testAccount = await nodemailer.createTestAccount();
-  console.log(process.env.SMTP_USER_URL);
+  // console.log(process.env.SMTP_USER_URL);
   let emailTransporter = nodemailer.createTransport({
     host: process.env.SMTP_USER_URL,
     port: 587,

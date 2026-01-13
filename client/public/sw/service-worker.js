@@ -1,8 +1,8 @@
 const DB_NAME = "SafiProOrdersDB";
 const DB_VERSION = 1;
 const STORE_NAME = "orders";
-const BASE_URL = "http://localhost:8000";
-// const BASE_URL ="https://safipro-ffs2.onrender.com"; 
+// const BASE_URL = "http://localhost:8000";
+const BASE_URL ="http://safipro.analysisease.com/"; 
 const CACHE_NAME = "app-cache-v1"
 
 
