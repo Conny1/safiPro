@@ -229,7 +229,7 @@ const LandingPage = () => {
               
               <div className="p-8">
                 <div className="flex items-baseline">
-                  <span className="text-4xl font-bold text-gray-900">KES 950</span>
+                  <span className="text-4xl font-bold text-gray-900">KES 900</span>
                   <span className="ml-2 text-lg text-gray-600">/month</span>
                 </div>
                 

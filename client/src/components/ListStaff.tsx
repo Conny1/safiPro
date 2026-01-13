@@ -16,7 +16,7 @@ const ListStaff = () => {
   });
   const [findAndFilterUser, { isLoading: findloading }] =
     useFindAndFilterUserMutation();
-  const fetchBranches = () => {
+  const fetchUsers = () => {
     findAndFilterUser({
       match_values: { },
       sortBy: "_id:-1",
@@ -40,7 +40,7 @@ const ListStaff = () => {
       });
   };
   useEffect(() => {
-    fetchBranches();
+    fetchUsers();
   }, [paginationdata.page, editmodal]);
 
   return (
