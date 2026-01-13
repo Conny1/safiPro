@@ -58,7 +58,7 @@ const Dashboard = () => {
     offlineBranchData
   );
   const { data: dashboard_analysis, refetch: refetchDashboard } =
-    useGetOrderDashbardAnalysisQuery(activeBranch);
+    useGetOrderDashbardAnalysisQuery(activeBranch, { skip:!activeBranch } );
 
   // Status colors mapping
   const statusConfig = {

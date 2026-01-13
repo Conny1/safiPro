@@ -14,7 +14,7 @@ const Payments = () => {
   const [payments, setpayments] = useState<Payment[] | []>([]);
   const [showMpesaModal, setShowMpesaModal] = useState(false);
   const [phoneInput, setPhoneInput] = useState("");
-  const [amount] = useState(1000);
+  const [amount] = useState(900);
   // const [formattedPhone, setFormattedPhone] = useState("");
 
   const [findAndFilterPayment, { isLoading: findLoading }] =

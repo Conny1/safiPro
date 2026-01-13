@@ -18,6 +18,7 @@ import { logout } from "../redux/userSlice";
 import { persistor } from "../redux/store";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
+import { updatebranchData } from "../redux/branchSlice";
 
 const Nav = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -58,6 +59,7 @@ const Nav = () => {
 
   const logOut = () => {
     dispatch(logout());
+    dispatch(updatebranchData([]))
     persistor.purge();
     setTimeout(() => {
       navigate("/auth");
