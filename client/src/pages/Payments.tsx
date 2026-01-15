@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
+import { OfflineMode } from "../components";
 
 const Payments = () => {
   const user = useSelector((state: RootState) => state.user.value);
@@ -86,7 +87,8 @@ const Payments = () => {
   };
 
   return (
-    <div className="relative min-h-screen p-6 bg-gray-50">
+    <OfflineMode>
+          <div className="relative min-h-screen p-6 bg-gray-50">
       <div className="max-w-4xl p-6 mx-auto space-y-6 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-blue-800">Payments & Billing</h2>
 
@@ -94,7 +96,7 @@ const Payments = () => {
           <p className="text-gray-700">
             You are currently on the <strong>Basic Plan</strong>.
           </p>
-          <p className="text-gray-500">KES 1,000 / month</p>
+          <p className="text-gray-500">KES 900 / month</p>
         </div>
 
         <div className="p-4 text-sm text-blue-800 rounded-md bg-blue-50">
@@ -214,6 +216,8 @@ const Payments = () => {
         </div>
       )}
     </div>
+    </OfflineMode>
+
   );
 };
 

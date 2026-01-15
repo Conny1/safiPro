@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import AddBranchModal from "../components/NewBranch";
 import { Link } from "react-router";
-import { Listbranches } from "../components";
+import { Listbranches, OfflineMode } from "../components";
 import { ToastContainer } from "react-toastify";
 import {
   useFindAndFilterOrderMutation,
@@ -308,8 +308,8 @@ const Dashboard = () => {
           )}
         </div>
       </div>
-
-      {/* Stats Grid */}
+<OfflineMode>
+        {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, i) => {
           const Icon = stat.icon;
@@ -337,6 +337,8 @@ const Dashboard = () => {
           );
         })}
       </div>
+</OfflineMode>
+
 
       {/* Recent Orders Section */}
       <div className="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
@@ -486,7 +488,8 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Quick Actions & Charts Row */}
+<OfflineMode>
+        {/* Quick Actions & Charts Row */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Quick Actions */}
         <div className="lg:col-span-1">
@@ -634,6 +637,10 @@ const Dashboard = () => {
           )}
         </div>
       )}
+</OfflineMode>
+
+
+
     </div>
   );
 };

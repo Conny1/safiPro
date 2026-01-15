@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AddnewUser, ListStaff, Profile } from "../components";
+import { AddnewUser, ListStaff, OfflineMode, Profile } from "../components";
 import { USER_ROLES } from "../types";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
@@ -26,7 +26,8 @@ const Settings = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <OfflineMode>
+          <div className="min-h-screen bg-gray-50">
       
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
@@ -359,6 +360,8 @@ const Settings = () => {
         </div>
       </div>
     </div>
+    </OfflineMode>
+
   );
 };
 

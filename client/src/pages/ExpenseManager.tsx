@@ -26,7 +26,7 @@ import type {
   pagination,
   addExpenseType,
 } from "../types";
-import { ExpenseForm } from "../components";
+import { ExpenseForm, OfflineMode } from "../components";
 import {
   useAddnewExpenseMutation,
   useDeleteExpenseMutation,
@@ -233,7 +233,8 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
   // };
 
   return (
-    <div className="p-4 mx-auto ">
+    <OfflineMode>
+         <div className="p-4 mx-auto ">
       {/* Header */}
       <ToastContainer/>
       <div className="flex flex-col items-start justify-between gap-4 mb-6 sm:flex-row sm:items-center">
@@ -564,6 +565,8 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
         </div>
       )}
     </div>
+    </OfflineMode>
+ 
   );
 };
 
