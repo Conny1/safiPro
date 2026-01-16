@@ -1,17 +1,10 @@
 import { precacheAndRoute } from 'workbox-precaching';
 
 // Fallback if __WB_MANIFEST is undefined in dev
-
+precacheAndRoute(self.__WB_MANIFEST || []);
 
 precacheAndRoute([{ url: "/index.html", revision: null }]); // ensures index.html is cached
 
-
-const DB_NAME = "SafiProOrdersDB";
-const DB_VERSION = 1;
-const STORE_NAME = "orders";
-// const BASE_URL = "http://localhost:8000";
-const BASE_URL ="https://safipro.analysisease.com"; 
-const CACHE_NAME = "app-cache-v1"
 
 self.addEventListener("fetch", (event) => {
   if (event.request.mode === "navigate") {
@@ -23,6 +16,13 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
+
+const DB_NAME = "SafiProOrdersDB";
+const DB_VERSION = 1;
+const STORE_NAME = "orders";
+// const BASE_URL = "http://localhost:8000";
+const BASE_URL ="https://safipro.analysisease.com"; 
+const CACHE_NAME = "app-cache-v1"
 
 // -----------------------------
 // IndexedDB helpers
@@ -116,6 +116,3 @@ async function syncOrders() {
     }
   }
 }
-
-
-precacheAndRoute(self.__WB_MANIFEST || []);
