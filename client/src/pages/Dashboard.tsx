@@ -54,7 +54,7 @@ const Dashboard = () => {
 
   const { data: allBranchesResp, refetch: refetchBranches } =
     useGetBranchNamesByBusinessQuery();
-  const [allBranches, setallBranches] = useState<Branch[] | []>([]);
+  const [allBranches, setallBranches] = useState<Branch[] | []>(offlineBranchData || []);
   const { data: dashboard_analysis, refetch: refetchDashboard } =
     useGetOrderDashbardAnalysisQuery(activeBranch, { skip:!activeBranch } );
 
