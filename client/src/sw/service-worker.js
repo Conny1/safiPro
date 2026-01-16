@@ -1,14 +1,13 @@
-import { precacheAndRoute } from 'workbox-precaching';
+import { precacheAndRoute } from "workbox-precaching";
 
 // Fallback if __WB_MANIFEST is undefined in dev
-
 
 const DB_NAME = "SafiProOrdersDB";
 const DB_VERSION = 1;
 const STORE_NAME = "orders";
 // const BASE_URL = "http://localhost:8000";
-const BASE_URL ="https://safipro.analysisease.com"; 
-const CACHE_NAME = "app-cache-v1"
+const BASE_URL = "https://safipro.analysisease.com";
+const CACHE_NAME = "app-cache-v1";
 
 // -----------------------------
 // IndexedDB helpers
@@ -60,15 +59,14 @@ async function deleteOrder(id) {
 self.addEventListener("install", () => {
   console.log("[SW] Install");
   self.skipWaiting(); // activate imme
-  });
+});
 
-self.addEventListener("activate", event => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim()); // take control of pages immediately
 });
 // 🔴 THIS LINE IS REQUIRED
 // precacheAndRoute(self.__WB_MANIFEST);
 precacheAndRoute(self.__WB_MANIFEST || []);
-
 
 self.addEventListener("sync", (event) => {
   if (event.tag === "persist-to-database") {
@@ -89,18 +87,18 @@ async function syncOrders() {
       sync_status,
       ...body
     } = order;
-    const response = await fetch(`${BASE_URL}/admin/orders/sync`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    try {
+      const response = await fetch(`${BASE_URL}/admin/orders/sync`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
-    if (!response.ok) {
-      // Force retry later
-      throw new Error("Network sync failed");
-    }
-    if (response.ok) {
-      await deleteOrder(order._id);
+      if (response.ok) {
+        await deleteOrder(order._id);
+      }
+    } catch (error) {
+      console.error("Failed to sync order", order._id, err);
     }
   }
 }

@@ -17,6 +17,22 @@ const Layout = () => {
   const { data } = useGetauthuserQuery(undefined, {
     skip: !user.token,
   });
+  // service  worker EVENT registration
+  useEffect(() => {
+    // e.g., when saving an order offline
+    async function registerSync() {
+      if ("serviceWorker" in navigator && "SyncManager" in window) {
+        const registration = await navigator.serviceWorker.ready;
+        try {
+          await registration.sync.register("persist-to-database");
+          console.log("Background sync registered");
+        } catch (err) {
+          console.error("Failed to register background sync:", err);
+        }
+      }
+    }
+    registerSync()
+  }, []);
 
   useEffect(() => {
     if (data && "data" in data && user.token) {
@@ -42,7 +58,13 @@ const Layout = () => {
     ) {
       navigate("/subscriptionRequired");
     }
-  }, [user.token, location.pathname, navigate, user.role, user.subscription.status]);
+  }, [
+    user.token,
+    location.pathname,
+    navigate,
+    user.role,
+    user.subscription.status,
+  ]);
 
   const logOut = () => {
     dispatch(logout());
@@ -63,7 +85,7 @@ const Layout = () => {
         <Nav />
       ) : (
         <div className="p-4">
-          <button 
+          <button
             onClick={logOut}
             className="px-4 py-2 text-red-600 rounded-lg hover:bg-red-50"
           >
@@ -71,12 +93,14 @@ const Layout = () => {
           </button>
         </div>
       )}
-      
+
       {/* Main Content Area */}
-      <div className={`
+      <div
+        className={`
         transition-all duration-300 ease-in-out
         lg:pl-64 /* Full sidebar width */
-      `}>
+      `}
+      >
         <div className="p-6">
           <Outlet />
         </div>
