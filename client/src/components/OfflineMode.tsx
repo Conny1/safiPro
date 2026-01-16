@@ -14,13 +14,13 @@ const OfflineMode = ({ children }: Props) => {
   }
 
   return (
-    <div className="relative z-50 " >
+    <div className="relative">
       {/* Blurred content */}
       <div className="pointer-events-none blur-sm">
         {children}
       </div>
       
-      {/* Overlay with message */} 
+      {/* Overlay with message */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="max-w-md p-3 mx-4 border border-gray-200 shadow-2xl bg-white/90 backdrop-blur-sm rounded-xl">
           <div className="text-center">
