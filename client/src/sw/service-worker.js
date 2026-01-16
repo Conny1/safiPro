@@ -3,19 +3,6 @@ import { precacheAndRoute } from 'workbox-precaching';
 // Fallback if __WB_MANIFEST is undefined in dev
 precacheAndRoute(self.__WB_MANIFEST || []);
 
-precacheAndRoute([{ url: "/index.html", revision: null }]); // ensures index.html is cached
-
-
-self.addEventListener("fetch", (event) => {
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      caches.match("/index.html").then((cachedResponse) => {
-        return cachedResponse || fetch("/index.html");
-      })
-    );
-  }
-});
-
 
 const DB_NAME = "SafiProOrdersDB";
 const DB_VERSION = 1;
