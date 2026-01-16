@@ -1,7 +1,6 @@
 import { precacheAndRoute } from 'workbox-precaching';
 
 // Fallback if __WB_MANIFEST is undefined in dev
-precacheAndRoute(self.__WB_MANIFEST || []);
 
 
 const DB_NAME = "SafiProOrdersDB";
@@ -68,6 +67,8 @@ self.addEventListener("activate", event => {
 });
 // 🔴 THIS LINE IS REQUIRED
 // precacheAndRoute(self.__WB_MANIFEST);
+precacheAndRoute(self.__WB_MANIFEST || []);
+
 
 self.addEventListener("sync", (event) => {
   if (event.tag === "persist-to-database") {
