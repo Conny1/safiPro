@@ -14,7 +14,7 @@ export default defineConfig({
       registerType: "autoUpdate", // handles update checking
       devOptions:{enabled:true, type:"module" },
       workbox:{
-        navigateFallback:"index.html"
+        navigateFallback:"/index.html"
       },
       includeAssets: ["favicon.svg", "robots.txt", "apple-touch-icon.png"],
       manifest: {
