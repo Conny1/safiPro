@@ -7,13 +7,17 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      strategies:"injectManifest",
-      injectRegister:"auto",
-      srcDir:"src/sw",
-      filename:"service-worker.js",
+      strategies: "injectManifest",
+      injectRegister: "auto",
+      srcDir: "src/sw",
+      filename: "service-worker.js",
       registerType: "autoUpdate", // handles update checking
-      devOptions:{enabled:true, type:"module" },
+      devOptions: { enabled: true, type: "module" },
       includeAssets: ["favicon.svg", "robots.txt", "apple-touch-icon.png"],
+      workbox: {
+        navigateFallback: "/index.html",
+        navigateFallbackAllowlist: [/^\/$/],
+      },
       manifest: {
         id: "/dashboard",
         name: "SafiPro",

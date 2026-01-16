@@ -1,6 +1,20 @@
 import { precacheAndRoute } from "workbox-precaching";
+import { registerRoute } from 'workbox-routing';
+import { NetworkFirst } from 'workbox-strategies';
+
 
 // Fallback if __WB_MANIFEST is undefined in dev
+// 🔴 THIS LINE IS REQUIRED
+// precacheAndRoute(self.__WB_MANIFEST);
+precacheAndRoute(self.__WB_MANIFEST || []);
+
+registerRoute(
+  ({ request }) => request.mode === 'navigate',
+  new NetworkFirst({
+    cacheName: 'navigation-cache',
+    networkTimeoutSeconds: 3,
+  })
+);
 
 const DB_NAME = "SafiProOrdersDB";
 const DB_VERSION = 1;
@@ -64,9 +78,7 @@ self.addEventListener("install", () => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim()); // take control of pages immediately
 });
-// 🔴 THIS LINE IS REQUIRED
-// precacheAndRoute(self.__WB_MANIFEST);
-precacheAndRoute(self.__WB_MANIFEST || []);
+
 
 self.addEventListener("sync", (event) => {
   if (event.tag === "persist-to-database") {
@@ -97,7 +109,7 @@ async function syncOrders() {
       if (response.ok) {
         await deleteOrder(order._id);
       }
-    } catch (error) {
+    } catch (err) {
       console.error("Failed to sync order", order._id, err);
     }
   }
