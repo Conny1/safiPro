@@ -1,7 +1,9 @@
 import { precacheAndRoute } from 'workbox-precaching';
 
-const manifest = self.__WB_MANIFEST || [];
-precacheAndRoute(manifest);
+// Fallback if __WB_MANIFEST is undefined in dev
+precacheAndRoute(self.__WB_MANIFEST || []);
+
+precacheAndRoute([{ url: "/index.html", revision: null }]); // ensures index.html is cached
 
 
 const DB_NAME = "SafiProOrdersDB";
@@ -10,6 +12,16 @@ const STORE_NAME = "orders";
 // const BASE_URL = "http://localhost:8000";
 const BASE_URL ="https://safipro.analysisease.com"; 
 const CACHE_NAME = "app-cache-v1"
+
+self.addEventListener("fetch", (event) => {
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      caches.match("/index.html").then((cachedResponse) => {
+        return cachedResponse || fetch("/index.html");
+      })
+    );
+  }
+});
 
 
 // -----------------------------

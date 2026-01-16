@@ -13,6 +13,9 @@ export default defineConfig({
       filename:"service-worker.js",
       registerType: "autoUpdate", // handles update checking
       devOptions:{enabled:true, type:"module" },
+      workbox:{
+        navigateFallback:"index.html"
+      },
       includeAssets: ["favicon.svg", "robots.txt", "apple-touch-icon.png"],
       manifest: {
         id: "/dashboard",
