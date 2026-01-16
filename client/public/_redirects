@@ -1,1 +1,3 @@
-/*    /index.html   200
+/service-worker.js   /service-worker.js   200
+/workbox-*           /workbox-$1           200
+/*                   /index.html          200

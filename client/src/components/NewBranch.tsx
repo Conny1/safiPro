@@ -27,7 +27,7 @@ const AddBranchModal = ({ setbranchModal }: Props) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-10">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h3 className="text-lg font-semibold mb-4">Add New Branch</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
