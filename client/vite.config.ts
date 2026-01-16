@@ -7,7 +7,12 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies:"injectManifest",
+      injectRegister:"auto",
+      srcDir:"src/sw",
+      filename:"service-worker.js",
       registerType: "autoUpdate", // handles update checking
+      devOptions:{enabled:true, type:"module" },
       includeAssets: ["favicon.svg", "robots.txt", "apple-touch-icon.png"],
       manifest: {
         id: "/dashboard",

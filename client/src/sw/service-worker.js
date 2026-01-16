@@ -1,3 +1,9 @@
+import { precacheAndRoute } from 'workbox-precaching';
+
+const manifest = self.__WB_MANIFEST || [];
+precacheAndRoute(manifest);
+
+
 const DB_NAME = "SafiProOrdersDB";
 const DB_VERSION = 1;
 const STORE_NAME = "orders";
@@ -61,6 +67,8 @@ self.addEventListener("install", () => {
 self.addEventListener("activate", event => {
   event.waitUntil(self.clients.claim()); // take control of pages immediately
 });
+// 🔴 THIS LINE IS REQUIRED
+// precacheAndRoute(self.__WB_MANIFEST);
 
 self.addEventListener("sync", (event) => {
   if (event.tag === "persist-to-database") {

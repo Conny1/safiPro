@@ -41,7 +41,7 @@ const Dashboard = () => {
     (state: RootState) => state.branch.value
   );
   const dispatch = useDispatch();
-  const [branchModal, setbranchModal] = useState(false);
+  const [branchModal, setbranchModal] = useState(true);
   const [activeBranch, setactiveBranch] = useState(
     user.role === USER_ROLES.SUPER_ADMIN ? "" : user?.branches[0]?.branch_id
   );
@@ -54,9 +54,7 @@ const Dashboard = () => {
 
   const { data: allBranchesResp, refetch: refetchBranches } =
     useGetBranchNamesByBusinessQuery();
-  const [allBranches, setallBranches] = useState<Branch[] | []>(
-    offlineBranchData
-  );
+  const [allBranches, setallBranches] = useState<Branch[] | []>([]);
   const { data: dashboard_analysis, refetch: refetchDashboard } =
     useGetOrderDashbardAnalysisQuery(activeBranch, { skip:!activeBranch } );
 
@@ -159,6 +157,7 @@ const Dashboard = () => {
       if (allBranchesResp.data.length > 0) {
         setallBranches(allBranchesResp.data);
         dispatch(updatebranchData(allBranchesResp.data));
+        setbranchModal(false)
       }
 
       if (
@@ -168,6 +167,7 @@ const Dashboard = () => {
         let id =
           (allBranchesResp.data[0]._id as string) || offlineBranchData[0]._id;
         setactiveBranch(id);
+        setbranchModal(false)
       }
     }
   }, [allBranchesResp]);
@@ -206,11 +206,9 @@ const Dashboard = () => {
         .then((resp) => {
           if (resp?.status === 200) {
             setrecentOrders(resp?.data.results as Order[]);
-          } else {
-            setrecentOrders([]);
-          }
+          } 
         })
-        .catch((err) => {
+        .catch((err) => {    
           console.log(err);
         });
     }

@@ -5,6 +5,8 @@ import { laundryApi } from "./apislice";
 import userReducer from "./userSlice";
 import networkReducer from "./networkSlice";
 import branchReducer from "./branchSlice";
+import type { Action } from "@reduxjs/toolkit";
+
 
 // Persist Config
 const persistConfig = {
@@ -14,12 +16,20 @@ const persistConfig = {
 };
 
 // Combine all reducers
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
   user: userReducer,
   network:networkReducer,
   branch:branchReducer,
   [laundryApi.reducerPath]: laundryApi.reducer,
 });
+ type StateType = ReturnType<typeof appReducer>;
+
+const rootReducer = (state:StateType | undefined, action:Action )=>{
+  if(action.type === "RESET_APP"){
+    state = undefined;
+  }
+  return appReducer(state, action)
+}
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

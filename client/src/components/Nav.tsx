@@ -15,7 +15,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { logout } from "../redux/userSlice";
-import { persistor } from "../redux/store";
+import store, { persistor } from "../redux/store";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { updatebranchData } from "../redux/branchSlice";
@@ -25,6 +25,7 @@ const Nav = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const location = useLocation()
   const user = useSelector((state: RootState) => state.user.value);
+  
 
   const navItems = [
     {
@@ -57,10 +58,11 @@ const Nav = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const logOut = () => {
+  const logOut = async () => {
     dispatch(logout());
     dispatch(updatebranchData([]))
-    persistor.purge();
+    store.dispatch({ type: "RESET_APP" });
+    await persistor.purge();
     setTimeout(() => {
       navigate("/auth");
     }, 1500);
@@ -122,8 +124,8 @@ const Nav = () => {
             {!isSidebarCollapsed && (
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-gray-900 truncate">{user.first_name || "User"}</h3>
-                <p className="text-xs text-gray-500 truncate">
-                  {user.role === "super_admin" ? "Super Admin" : "Branch Manager"}
+                <p className="text-xs text-gray-500 capitalize truncate">
+                 {user.role}
                 </p>
               </div>
             )}
@@ -187,7 +189,7 @@ const Nav = () => {
 
           {/* Logout Button */}
           <button
-            onClick={logOut}
+            onClick={ async ()=>await logOut()}
             className={`
               flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 w-full
               ${isSidebarCollapsed ? 'justify-center' : ''}
@@ -297,9 +299,9 @@ const Nav = () => {
               </button> */}
 
               <button
-                onClick={() => {
+                onClick={async() => {
                   toggleMobileMenu();
-                  logOut();
+                  await logOut();
                 }}
                 className="flex items-center w-full gap-3 px-4 py-3 text-red-600 rounded-lg hover:bg-red-50"
               >

@@ -5,7 +5,7 @@ import {
   useGetBranchNamesByBusinessQuery,
 } from "../redux/apislice";
 import { toast, ToastContainer } from "react-toastify";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import {
   X,
@@ -35,10 +35,12 @@ type Props = {
 
 const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   const { isOnline } = useNetworkStatus();
-  const { saveOrder:saveOrderWhileOffiline, isReady } = useOrderDB();
+  const { saveOrder: saveOrderWhileOffiline, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
-    const offlineBranchData = useSelector((state:RootState)=>state.branch.value)
-  
+  const offlineBranchData = useSelector(
+    (state: RootState) => state.branch.value
+  );
+
   const [formData, setFormData] = useState<addOrder>({
     name: "",
     email: "",
@@ -63,11 +65,16 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
       : user.branches[0]?.branch_id || ""
   );
 
-  const { data: allBranchesResp } = useGetBranchNamesByBusinessQuery( undefined, {
-    skip: user.role !== USER_ROLES.SUPER_ADMIN,
-  });
+  const { data: allBranchesResp } = useGetBranchNamesByBusinessQuery(
+    undefined,
+    {
+      skip: user.role !== USER_ROLES.SUPER_ADMIN,
+    }
+  );
 
-  const [allBranches, setallBranches] = useState<Branch[] | []>(offlineBranchData);
+  const [allBranches, setallBranches] = useState<Branch[] | []>(
+    offlineBranchData
+  );
   const [currentStep, setCurrentStep] = useState(1);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [createNewOrder, { isLoading: createloading }] =
@@ -93,11 +100,15 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   };
 
   useEffect(() => {
-  if (allBranchesResp && "data" in allBranchesResp) {
+    if (allBranchesResp && "data" in allBranchesResp) {
       setallBranches(allBranchesResp.data);
       // dispatch(updatebranchData( allBranchesResp.data ) )
-      if (!activeBranch && (allBranchesResp.data.length > 0 || offlineBranchData.length > 0) ) {
-        let id =allBranchesResp.data[0]._id as string || offlineBranchData[0]._id 
+      if (
+        !activeBranch &&
+        (allBranchesResp.data.length > 0 || offlineBranchData.length > 0)
+      ) {
+        let id =
+          (allBranchesResp.data[0]._id as string) || offlineBranchData[0]._id;
         setactiveBranch(id);
       }
     }
@@ -118,26 +129,25 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
 
     try {
       let status;
-      if(isOnline) {
-           const result = await createNewOrder({
-        ...formData,
-        branch_id: activeBranch,
-        order_date: new Date().toISOString().split("T")[0],
-      });
-       status = result.data?.status;
-       console.log("online save")
-      }else {
-     const      result = await saveOrderWhileOffiline({
-        ...formData,
-        branch_id: activeBranch,
-        order_date: new Date().toISOString().split("T")[0],
-      });
-      status = result.status
-      console.log("offline save")
+      if (isOnline) {
+        const result = await createNewOrder({
+          ...formData,
+          branch_id: activeBranch,
+          order_date: new Date().toISOString().split("T")[0],
+        });
+        status = result.data?.status;
+        console.log("online save");
+      } else {
+        const result = await saveOrderWhileOffiline({
+          ...formData,
+          branch_id: activeBranch,
+          order_date: new Date().toISOString().split("T")[0],
+        });
+        status = result.status;
+        console.log("offline save");
       }
-   
 
-      if ( status && status === 200) {
+      if (status && status === 200) {
         toast.success(`Order created successfully!`);
 
         // Reset form
@@ -145,7 +155,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
           name: "",
           email: "",
           phone_number: "",
-          delivery_method: "pickup", 
+          delivery_method: "pickup",
           items_description: "",
           service_type: "Wash Only",
           pickup_date: "",
@@ -158,10 +168,9 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
           address: "",
           branch_id: "",
         });
-
+        onSuccess?.();
         setTimeout(() => {
           setaddModal(false);
-          onSuccess?.();
         }, 1500);
       } else {
         toast.error("Failed to create order. Please try again.");
