@@ -19,6 +19,8 @@ import {
   X,
   Loader2,
 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { updatebranchData } from "../redux/branchSlice";
 
 type Props = {
   setlisbranchesModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -37,6 +39,7 @@ const Listbranches = ({ setlisbranchesModal }: Props) => {
     totalPages: 0,
     totalResults: 0,
   });
+  const dispatch = useDispatch();
 
   const [findAndFilterBranch, { isLoading: fetchloading }] =
     useFindAndFilterBranchMutation();
@@ -62,12 +65,14 @@ const Listbranches = ({ setlisbranchesModal }: Props) => {
       .then((resp) => {
         if (resp.data?.status === 200) {
           setLocalBranches(resp.data.data.results);
+          dispatch(updatebranchData(resp.data.data.results))
           setpaginationdata({
             page: resp.data.data.page || 1,
             limit: resp.data.data.limit || 10,
             totalPages: resp.data.data.totalPages || 0,
             totalResults: resp.data.data.totalResults || 0,
           });
+
         } else {
           setLocalBranches([]);
         }

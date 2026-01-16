@@ -251,7 +251,7 @@ const Nav = () => {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-gray-900 truncate">{user.first_name || "User"}</h3>
                   <p className="text-xs text-gray-500 truncate">
-                    {user.role === "super_admin" ? "Super Admin" : "Branch Manager"}
+                    {user.role}
                   </p>
                 </div>
               </div>
