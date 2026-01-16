@@ -1,7 +1,7 @@
 import { precacheAndRoute } from 'workbox-precaching';
 
 // Fallback if __WB_MANIFEST is undefined in dev
-precacheAndRoute(self.__WB_MANIFEST || []);
+
 
 precacheAndRoute([{ url: "/index.html", revision: null }]); // ensures index.html is cached
 
@@ -116,3 +116,6 @@ async function syncOrders() {
     }
   }
 }
+
+
+precacheAndRoute(self.__WB_MANIFEST || []);
