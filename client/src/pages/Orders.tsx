@@ -33,8 +33,8 @@ import { useOrderDB } from "../hooks/useOrderDB";
 
 const Orders = () => {
   // check connection
-   const {isOnline} = useNetworkStatus()
-   const {getOrders:getOfflineOrders, isReady} = useOrderDB()
+  const { isOnline } = useNetworkStatus();
+  const { getOrders: getOfflineOrders, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
   const [addModal, setaddModal] = useState(false);
   const [orders, setorders] = useState<Order[] | []>([]);
@@ -44,7 +44,7 @@ const Orders = () => {
   const [branchFilter, setBranchFilter] = useState("all");
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
-  
+
   const [paginationdata, setpaginationdata] = useState<pagination>({
     page: 1,
     limit: 10,
@@ -71,8 +71,8 @@ const Orders = () => {
     if (dateFilter !== "all") {
       const now = new Date();
       let startDate = new Date();
-      
-      switch(dateFilter) {
+
+      switch (dateFilter) {
         case "today":
           startDate.setHours(0, 0, 0, 0);
           break;
@@ -83,7 +83,7 @@ const Orders = () => {
           startDate.setMonth(now.getMonth() - 1);
           break;
       }
-      
+
       if (dateFilter !== "all") {
         filters.match_values.createdAt = { $gte: startDate.toISOString() };
       }
@@ -92,71 +92,99 @@ const Orders = () => {
     if (branchFilter !== "all" && user.branches.length > 1) {
       filters.match_values.branch_id = branchFilter;
     }
-// confirm connection B4 fetching The data.
-if(isOnline){
-  console.log("online mode")
-    findAndFilterOrder(filters)
-      .then((resp) => {
-        if (resp.data?.status === 200) {
-          setorders(resp.data.data.results);
-          setpaginationdata({
-            page: resp.data.data.page || 1,
-            limit: resp.data.data.limit || 10,
-            totalPages: resp.data.data.totalPages || 0,
-            totalResults: resp.data.data.totalResults || 0,
-          });
-        } else {
-          setorders([]);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-}else{
-  console.log("offline mode")
-  // while offline fetch local data
-  getOfflineOrders(filters).then((resp) => {
-        if (resp?.status === 200) {
-          setorders(resp?.data.results as Order[]);
-          setpaginationdata({
-            page: resp.data.page || 1,
-            limit: resp.data.limit || 10,
-            totalPages: resp.data.totalPages || 0,
-            totalResults: resp.data.totalResults || 0,
-          });
-        } else {
-          setorders([]);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-}
-  
+    // confirm connection B4 fetching The data.
+    if (isOnline) {
+      console.log("online mode");
+      findAndFilterOrder(filters)
+        .then((resp) => {
+          if (resp.data?.status === 200) {
+            setorders(resp.data.data.results);
+            setpaginationdata({
+              page: resp.data.data.page || 1,
+              limit: resp.data.data.limit || 10,
+              totalPages: resp.data.data.totalPages || 0,
+              totalResults: resp.data.data.totalResults || 0,
+            });
+          } else {
+            setorders([]);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      console.log("offline mode");
+      // while offline fetch local data
+      getOfflineOrders(filters)
+        .then((resp) => {
+          if (resp?.status === 200) {
+            setorders(resp?.data.results as Order[]);
+            setpaginationdata({
+              page: resp.data.page || 1,
+              limit: resp.data.limit || 10,
+              totalPages: resp.data.totalPages || 0,
+              totalResults: resp.data.totalResults || 0,
+            });
+          } else {
+            setorders([]);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   useEffect(() => {
-    
     fetchOrders();
-  }, [paginationdata.page, statusFilter, dateFilter, branchFilter, searchTerm, isReady]);
+  }, [
+    paginationdata.page,
+    paginationdata.limit,
+    statusFilter,
+    dateFilter,
+    branchFilter,
+    searchTerm,
+    isReady,
+  ]);
 
   const statusConfig = {
-    completed: { color: "text-green-700", bg: "bg-green-50", border: "border-green-200", icon: CheckCircle },
-    pending: { color: "text-yellow-700", bg: "bg-yellow-50", border: "border-yellow-200", icon: Clock },
-    "in-progress": { color: "text-blue-700", bg: "bg-blue-50", border: "border-blue-200", icon: TrendingUp },
-    cancelled: { color: "text-red-700", bg: "bg-red-50", border: "border-red-200", icon: AlertCircle },
+    completed: {
+      color: "text-green-700",
+      bg: "bg-green-50",
+      border: "border-green-200",
+      icon: CheckCircle,
+    },
+    pending: {
+      color: "text-yellow-700",
+      bg: "bg-yellow-50",
+      border: "border-yellow-200",
+      icon: Clock,
+    },
+    "in-progress": {
+      color: "text-blue-700",
+      bg: "bg-blue-50",
+      border: "border-blue-200",
+      icon: TrendingUp,
+    },
+    cancelled: {
+      color: "text-red-700",
+      bg: "bg-red-50",
+      border: "border-red-200",
+      icon: AlertCircle,
+    },
   };
 
   const getStatusConfig = (status: string) => {
-    return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    return (
+      statusConfig[status as keyof typeof statusConfig] || statusConfig.pending
+    );
   };
 
   const handleSelectOrder = (orderId: string) => {
-    setSelectedOrders(prev =>
+    setSelectedOrders((prev) =>
       prev.includes(orderId)
-        ? prev.filter(id => id !== orderId)
-        : [...prev, orderId]
+        ? prev.filter((id) => id !== orderId)
+        : [...prev, orderId],
     );
   };
 
@@ -164,21 +192,21 @@ if(isOnline){
     if (selectedOrders.length === orders.length) {
       setSelectedOrders([]);
     } else {
-      setSelectedOrders(orders.map(order => order._id as string));
+      setSelectedOrders(orders.map((order) => order._id as string));
     }
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-KE', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
+    return date.toLocaleDateString("en-KE", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
   };
 
   const formatCurrency = (amount: number) => {
-    return `KES ${amount?.toLocaleString('en-KE') || "0"}`;
+    return `KES ${amount?.toLocaleString("en-KE") || "0"}`;
   };
 
   const clearFilters = () => {
@@ -196,7 +224,7 @@ if(isOnline){
           <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
           <p className="text-gray-600">Manage and track all laundry orders</p>
         </div>
-        
+
         <div className="flex flex-wrap gap-3">
           <button
             onClick={fetchOrders}
@@ -205,12 +233,12 @@ if(isOnline){
             <RefreshCw className="w-4 h-4" />
             Refresh
           </button>
-          
+
           <button className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
             <Download className="w-4 h-4" />
             Export
           </button>
-          
+
           <button
             onClick={() => setaddModal(true)}
             className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800"
@@ -220,7 +248,6 @@ if(isOnline){
           </button>
         </div>
       </div>
-
 
       {/* Filters */}
       <div className="p-5 bg-white border border-gray-200 rounded-xl">
@@ -235,7 +262,7 @@ if(isOnline){
               className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          
+
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setShowFilters(!showFilters)}
@@ -243,10 +270,17 @@ if(isOnline){
             >
               <Filter className="w-4 h-4" />
               Filters
-              {showFilters ? <ChevronDown className="w-4 h-4 rotate-180" /> : <ChevronDown className="w-4 h-4" />}
+              {showFilters ? (
+                <ChevronDown className="w-4 h-4 rotate-180" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
             </button>
-            
-            {(searchTerm || statusFilter !== "all" || dateFilter !== "all" || branchFilter !== "all") && (
+
+            {(searchTerm ||
+              statusFilter !== "all" ||
+              dateFilter !== "all" ||
+              branchFilter !== "all") && (
               <button
                 onClick={clearFilters}
                 className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100"
@@ -261,7 +295,9 @@ if(isOnline){
         {showFilters && (
           <div className="grid grid-cols-1 gap-4 pt-4 mt-4 border-t border-gray-200 md:grid-cols-3">
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Status</label>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Status
+              </label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -274,9 +310,11 @@ if(isOnline){
                 <option value="cancelled">Cancelled</option>
               </select>
             </div>
-            
+
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Date Range</label>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Date Range
+              </label>
               <select
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
@@ -288,7 +326,7 @@ if(isOnline){
                 <option value="month">Last 30 Days</option>
               </select>
             </div>
-{/*             
+            {/*             
             {user.branches.length > 1 && (
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-700">Branch</label>
@@ -315,10 +353,12 @@ if(isOnline){
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Order List</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Order List
+              </h2>
               <p className="text-sm text-gray-600">
-                {selectedOrders.length > 0 
-                  ? `${selectedOrders.length} order${selectedOrders.length > 1 ? 's' : ''} selected`
+                {selectedOrders.length > 0
+                  ? `${selectedOrders.length} order${selectedOrders.length > 1 ? "s" : ""} selected`
                   : `${paginationdata.totalResults} total orders`}
               </p>
             </div>
@@ -333,8 +373,12 @@ if(isOnline){
         ) : orders.length === 0 ? (
           <div className="p-12 text-center">
             <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-            <h3 className="mb-2 text-lg font-medium text-gray-900">No orders found</h3>
-            <p className="text-gray-600">Try adjusting your filters or create a new order</p>
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
+              No orders found
+            </h3>
+            <p className="text-gray-600">
+              Try adjusting your filters or create a new order
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -344,31 +388,51 @@ if(isOnline){
                   <th className="px-6 py-3 text-left">
                     <input
                       type="checkbox"
-                      checked={selectedOrders.length === orders.length && orders.length > 0}
+                      checked={
+                        selectedOrders.length === orders.length &&
+                        orders.length > 0
+                      }
                       onChange={handleSelectAll}
                       className="text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Order</th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Customer</th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Amount</th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Date</th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Actions</th>
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                    Order
+                  </th>
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                    Customer
+                  </th>
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                    Amount
+                  </th>
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {orders.map((order) => {
                   const status = getStatusConfig(order.status as string);
                   const StatusIcon = status.icon;
-                  
+
                   return (
-                    <tr key={order._id} className="transition-colors hover:bg-gray-50">
+                    <tr
+                      key={order._id}
+                      className="transition-colors hover:bg-gray-50"
+                    >
                       <td className="px-6 py-4">
                         <input
                           type="checkbox"
                           checked={selectedOrders.includes(order._id as string)}
-                          onChange={() => handleSelectOrder(order._id as string)}
+                          onChange={() =>
+                            handleSelectOrder(order._id as string)
+                          }
                           className="text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
                       </td>
@@ -376,7 +440,9 @@ if(isOnline){
                         <div>
                           <div className="flex items-center gap-2">
                             <Tag className="w-4 h-4 text-gray-400" />
-                            <span className="font-medium text-gray-900">{order.order_no}</span>
+                            <span className="font-medium text-gray-900">
+                              {order.order_no}
+                            </span>
                           </div>
                           {/* {order.items && order.items.length > 0 && (
                             <p className="mt-1 text-xs text-gray-500">
@@ -389,12 +455,16 @@ if(isOnline){
                         <div>
                           <div className="flex items-center gap-2">
                             <User className="w-4 h-4 text-gray-400" />
-                            <span className="font-medium text-gray-900">{order.name || "N/A"}</span>
+                            <span className="font-medium text-gray-900">
+                              {order.name || "N/A"}
+                            </span>
                           </div>
                           {order.phone_number && (
                             <div className="flex items-center gap-2 mt-1">
                               <Phone className="w-3 h-3 text-gray-400" />
-                              <span className="text-sm text-gray-600">{order.phone_number}</span>
+                              <span className="text-sm text-gray-600">
+                                {order.phone_number}
+                              </span>
                             </div>
                           )}
                         </div>
@@ -405,9 +475,13 @@ if(isOnline){
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${status.bg} ${status.border} border`}>
+                        <div
+                          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${status.bg} ${status.border} border`}
+                        >
                           <StatusIcon className="w-4 h-4" />
-                          <span className={`text-sm font-medium capitalize ${status.color}`}>
+                          <span
+                            className={`text-sm font-medium capitalize ${status.color}`}
+                          >
                             {order.status}
                           </span>
                         </div>
@@ -416,7 +490,9 @@ if(isOnline){
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-gray-400" />
                           <span className="text-gray-600">
-                            {formatDate(order.createdAt || new Date().toISOString())}
+                            {formatDate(
+                              order.createdAt || new Date().toISOString(),
+                            )}
                           </span>
                         </div>
                       </td>
@@ -447,60 +523,77 @@ if(isOnline){
             <div className="text-sm text-gray-600">
               Showing {orders.length} of {paginationdata.totalResults} results
             </div>
-            
+
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setpaginationdata(prev => ({
-                  ...prev,
-                  page: Math.max(1, prev.page - 1)
-                }))}
+                onClick={() =>
+                  setpaginationdata((prev) => ({
+                    ...prev,
+                    page: Math.max(1, prev.page - 1),
+                  }))
+                }
                 disabled={paginationdata.page === 1 || fetchloading}
                 className="p-2 text-gray-600 border border-gray-300 rounded-lg hover:text-gray-900 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              
+
               <div className="flex items-center gap-1">
-                {Array.from({ length: Math.min(5, paginationdata.totalPages) }, (_, i) => {
-                  const pageNum = i + 1;
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setpaginationdata(prev => ({ ...prev, page: pageNum }))}
-                      className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors ${
-                        paginationdata.page === pageNum
-                          ? 'bg-blue-600 text-white'
-                          : 'text-gray-600 hover:bg-gray-100'
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
+                {Array.from(
+                  { length: Math.min(5, paginationdata.totalPages) },
+                  (_, i) => {
+                    const pageNum = i + 1;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() =>
+                          setpaginationdata((prev) => ({
+                            ...prev,
+                            page: pageNum,
+                          }))
+                        }
+                        className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors ${
+                          paginationdata.page === pageNum
+                            ? "bg-blue-600 text-white"
+                            : "text-gray-600 hover:bg-gray-100"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  },
+                )}
                 {paginationdata.totalPages > 5 && (
                   <span className="px-2 text-gray-400">...</span>
                 )}
               </div>
-              
+
               <button
-                onClick={() => setpaginationdata(prev => ({
-                  ...prev,
-                  page: Math.min(paginationdata.totalPages, prev.page + 1)
-                }))}
-                disabled={paginationdata.page === paginationdata.totalPages || fetchloading}
+                onClick={() =>
+                  setpaginationdata((prev) => ({
+                    ...prev,
+                    page: Math.min(paginationdata.totalPages, prev.page + 1),
+                  }))
+                }
+                disabled={
+                  paginationdata.page === paginationdata.totalPages ||
+                  fetchloading
+                }
                 className="p-2 text-gray-600 border border-gray-300 rounded-lg hover:text-gray-900 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
-            
+
             <select
               value={paginationdata.limit}
-              onChange={(e) => setpaginationdata(prev => ({
-                ...prev,
-                limit: parseInt(e.target.value),
-                page: 1
-              }))}
+              onChange={(e) =>
+                setpaginationdata((prev) => ({
+                  ...prev,
+                  limit: parseInt(e.target.value),
+                  page: 1,
+                }))
+              }
               className="px-3 py-2 text-sm border border-gray-300 rounded-lg"
             >
               <option value="10">10 per page</option>
@@ -516,7 +609,12 @@ if(isOnline){
       {addModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden">
-            <AddOrder setaddModal={setaddModal} onSuccess={()=>{fetchOrders()}}  />
+            <AddOrder
+              setaddModal={setaddModal}
+              onSuccess={() => {
+                fetchOrders();
+              }}
+            />
           </div>
         </div>
       )}

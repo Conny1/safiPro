@@ -564,6 +564,38 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
           </div>
         </div>
       )}
+            <div className="flex items-center justify-between px-4 py-3 ">
+        <div className="text-sm text-slate-500">
+          Showing <b>{paginationdata.page} </b> of {paginationdata.totalPages}
+        </div>
+        <div className="flex space-x-1">
+          <button
+            onClick={() => {
+              setpaginationdata((prev) => ({
+                ...prev,
+
+                page: prev.page === 1 ? 1 : prev.page - 1,
+              }));
+            }}
+            className="px-3 py-1 text-sm font-normal transition duration-200 bg-white border rounded min-w-9 min-h-9 text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 ease"
+          >
+            Prev
+          </button>
+
+          <button
+            onClick={() => {
+              setpaginationdata((prev) => ({
+                ...prev,
+
+                page: prev.page < prev.totalPages ? prev.page + 1 : prev.page,
+              }));
+            }}
+            className="px-3 py-1 text-sm font-normal transition duration-200 bg-white border rounded min-w-9 min-h-9 text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 ease"
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </div>
     </OfflineMode>
  

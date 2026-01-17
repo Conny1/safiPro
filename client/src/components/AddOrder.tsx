@@ -38,7 +38,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   const { saveOrder: saveOrderWhileOffiline, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
   const offlineBranchData = useSelector(
-    (state: RootState) => state.branch.value
+    (state: RootState) => state.branch.value,
   );
 
   const [formData, setFormData] = useState<addOrder>({
@@ -62,18 +62,18 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   const [activeBranch, setactiveBranch] = useState(
     user.role === USER_ROLES.SUPER_ADMIN
       ? ""
-      : user.branches[0]?.branch_id || ""
+      : user.branches[0]?.branch_id || "",
   );
 
   const { data: allBranchesResp } = useGetBranchNamesByBusinessQuery(
     undefined,
     {
       skip: user.role !== USER_ROLES.SUPER_ADMIN,
-    }
+    },
   );
 
   const [allBranches, setallBranches] = useState<Branch[] | []>(
-    offlineBranchData
+    offlineBranchData,
   );
   const [currentStep, setCurrentStep] = useState(1);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -83,15 +83,15 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
     const val =
       type === "checkbox"
         ? (e.target as HTMLInputElement).checked
         : type === "number"
-        ? parseFloat(value) || 0
-        : value;
+          ? parseFloat(value) || 0
+          : value;
 
     setFormData((prev) => ({
       ...prev,
@@ -117,8 +117,9 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!submitForm) return;
-    if (!formData.phone_number) {
-      toast.error("Phone number is required");
+    if (!formData.phone_number || !formData.name || !formData.pickup_date) {
+      toast.error("Fill all the required fields..");
+
       return;
     }
 
@@ -201,6 +202,26 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   ];
 
   const nextStep = () => {
+    switch (currentStep) {
+      case 1:
+        if (!formData.phone_number || !formData.name) {
+          toast.error("Fill all the required fields..");
+
+          return;
+        }
+        break;
+      case 2:
+        if (!formData.pickup_date) {
+          toast.error("Fill all the required fields..");
+
+          return;
+        }
+        if (!formData.amount) {
+          toast.error("Amount cannot be 0");
+          return;
+        }
+        break;
+    }
     if (currentStep < 3) setCurrentStep((prev) => prev + 1);
   };
 
@@ -239,8 +260,8 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                       step === currentStep
                         ? "bg-blue-600 text-white"
                         : step < currentStep
-                        ? "bg-green-500 text-white"
-                        : "bg-gray-200 text-gray-500"
+                          ? "bg-green-500 text-white"
+                          : "bg-gray-200 text-gray-500"
                     }`}
                 >
                   {step < currentStep ? (
@@ -304,10 +325,14 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-700">
                     <User className="inline w-4 h-4 mr-2" />
-                    Customer Name
+                    Customer Name*{" "}
+                    <span className="text-sm font-bold text-red-600 ">
+                      (required)
+                    </span>
                   </label>
                   <input
                     name="name"
+                    required
                     value={formData.name}
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -331,7 +356,10 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                 <div className="md:col-span-2">
                   <label className="block mb-2 text-sm font-medium text-gray-700">
                     <Phone className="inline w-4 h-4 mr-2" />
-                    Phone Number *
+                    Phone Number *{" "}
+                    <span className="text-sm font-bold text-red-600 ">
+                      (required)
+                    </span>
                   </label>
                   <input
                     name="phone_number"
@@ -353,7 +381,10 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-700">
                     <Calendar className="inline w-4 h-4 mr-2" />
-                    Pickup/Delivery Date *
+                    Pickup/Delivery Date *{" "}
+                    <span className="text-sm font-bold text-red-600 ">
+                      (required)
+                    </span>
                   </label>
                   <input
                     name="pickup_date"
@@ -369,6 +400,9 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                   <label className="block mb-2 text-sm font-medium text-gray-700">
                     <DollarSign className="inline w-4 h-4 mr-2" />
                     Amount (KES) *
+                    <span className="text-sm font-bold text-red-600 ">
+                      (required)
+                    </span>
                   </label>
                   <input
                     name="amount"
@@ -421,11 +455,10 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                 <div className="md:col-span-2">
                   <label className="block mb-2 text-sm font-medium text-gray-700">
                     <ShoppingBag className="inline w-4 h-4 mr-2" />
-                    Items Description *
+                    Items Description
                   </label>
                   <textarea
                     name="items_description"
-                    required
                     value={formData.items_description}
                     onChange={handleChange}
                     rows={3}

@@ -9,7 +9,7 @@ const appRoute = require("./routes");
 dotenv.config();
 app.use(express.json());
 
-const allowedOrigins = [process.env.CLIENT_URL, process.env.PAYSTACK_BASE_URL];
+const allowedOrigins = [process.env.CLIENT_URL, process.env.PAYSTACK_BASE_URL, "http://localhost:4173"];
 
 app.use(
   cors({
