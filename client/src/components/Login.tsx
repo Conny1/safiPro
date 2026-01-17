@@ -58,7 +58,7 @@ const Login = ({ onSwitch, setforgotpassword }: Props) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-sm bg-white p-6 rounded-md shadow-md space-y-4"
+      className="w-full max-w-sm p-6 space-y-4 bg-white rounded-md shadow-md"
     >
       <h2 className="text-xl font-semibold">Login</h2>
 
@@ -67,10 +67,10 @@ const Login = ({ onSwitch, setforgotpassword }: Props) => {
           type="email"
           placeholder="Email"
           {...register("email")}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full px-3 py-2 border rounded"
         />
         {errors.email && (
-          <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+          <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
         )}
       </div>
 
@@ -79,17 +79,17 @@ const Login = ({ onSwitch, setforgotpassword }: Props) => {
           type="password"
           placeholder="Password"
           {...register("password")}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full px-3 py-2 border rounded"
         />
         {errors.password && (
-          <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+          <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
         )}
       </div>
 
       <button
         type="submit"
         disabled={loginloading}
-        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        className="w-full py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
       >
         {loginloading ? "Loading..." : "Login"}
       </button>
@@ -99,14 +99,14 @@ const Login = ({ onSwitch, setforgotpassword }: Props) => {
         <button
           type="button"
           onClick={onSwitch}
-          className="text-White underline"
+          className="font-bold text-blue-600 underline"
         >
           Sign up
         </button>
       </p>
       <p
         onClick={() => setforgotpassword(true)}
-        className="text-sm text-center text-blue-500 underline cursor-pointer "
+        className="text-sm text-center text-blue-600 underline cursor-pointer "
       >
         Forgot password ?
       </p>
