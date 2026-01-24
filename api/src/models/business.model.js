@@ -19,7 +19,7 @@ const businessSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { Timestamp: true }
+  { timestamps: true }
 );
 
 

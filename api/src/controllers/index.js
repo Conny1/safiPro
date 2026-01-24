@@ -4,3 +4,4 @@ module.exports.orderController = require("./order.controller");
 module.exports.paymentController = require("./payment.controller");
 module.exports.notificationController = require("./notification.controller");
 module.exports.expenseController = require("./expense.controller");
+module.exports.analysisController = require("./analysis.controller");

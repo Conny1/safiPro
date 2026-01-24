@@ -37,8 +37,7 @@ const createPayment = async (body) => {
       
     }
     if (
-      data.channel === PAYSTACK_CODES.CARD ||
-      data.charnel === PAYSTACK_CODES.MOBILE
+      data.channel === PAYSTACK_CODES.CARD 
     ) {
       const user = await User.findOne({ email: data.customer.email });
       if (!user) return;
@@ -111,6 +110,7 @@ const mobileMoneyPayment = async (data) => {
     throw createError(500, error);
   }
 };
+
 
 module.exports = {
   createPayment,

@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   DollarSign,
+  ChartBar,
 } from "lucide-react";
 import { logout } from "../redux/userSlice";
 import store, { persistor } from "../redux/store";
@@ -38,16 +39,22 @@ const Nav = () => {
       label: "Orders",
       icon: Package,
     },
+        {
+      value: "/expense",
+      label: "Business expense",
+      icon:   DollarSign  ,
+    },
+        {
+      value: "/analysis",
+      label: "Analysis",
+      icon:   ChartBar  ,
+    },
     {
       value: "/payment",
       label: "Payments",
       icon: CreditCard,
     },
-       {
-      value: "/expense",
-      label: "Business expense",
-      icon:   DollarSign  ,
-    },
+   
     {
       value: "/settings",
       label: "Settings",

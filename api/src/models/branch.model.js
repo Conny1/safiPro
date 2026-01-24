@@ -23,7 +23,7 @@ const brachSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { Timestamp: true }
+  { timestamps: true }
 );
 
 // clientSchema.plugin(toJSON);

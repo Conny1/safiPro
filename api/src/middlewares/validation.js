@@ -44,6 +44,7 @@ const ROUTES = {
   USER: "/admin/user",
   PAYMENT: "/admin/payment",
   EXPENSE: "/admin/expense",
+  ANALYSIS: "/admin/analysis",
 };
 
 // Define route + method combinations per role
@@ -55,11 +56,13 @@ const ROUTE_PERMISSIONS = {
     { path: ROUTES.USER, methods: ["GET", "PUT", "DELETE", "POST"] },
     { path: ROUTES.PAYMENT, methods: ["GET", "PUT", "DELETE", "POST"] },
     { path: ROUTES.EXPENSE, methods: ["GET", "PUT", "DELETE", "POST"] },
+    { path: ROUTES.ANALYSIS, methods: ["GET", "PUT", "DELETE", "POST"] },
   ],
   [USER_ROLES.STAFF]: [
     { path: ROUTES.ORDER, methods: ["GET", "POST", "PUT"] },
     { path: ROUTES.STAFF, methods: ["PUT"] },
     { path: ROUTES.EXPENSE, methods: ["GET", "PUT", "DELETE", "POST"] },
+    { path: ROUTES.ANALYSIS, methods: ["GET", "PUT", "DELETE", "POST"] },
   ],
 };
 

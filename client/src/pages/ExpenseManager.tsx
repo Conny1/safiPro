@@ -234,7 +234,7 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
 
   return (
     <OfflineMode>
-         <div className="p-4 mx-auto ">
+         <div className="p-3 mx-auto ">
       {/* Header */}
       <ToastContainer/>
       <div className="flex flex-col items-start justify-between gap-4 mb-6 sm:flex-row sm:items-center">

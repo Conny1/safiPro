@@ -1,6 +1,7 @@
 import "./App.css";
 import { Route, Routes } from "react-router";
 import {
+  Analysis,
   Auth,
   Dashboard,
   ExpenseManager,
@@ -35,6 +36,7 @@ function App() {
           <Route path="/order" element={<Orders />} />
           <Route path="/orders/:id" element={<OrderDetails />} />
           <Route path="/expense" element={<ExpenseManager />} />
+          <Route path="/analysis" element={<Analysis />} />
         </Route>
       </Routes>
     </div>

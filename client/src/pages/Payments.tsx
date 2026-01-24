@@ -88,8 +88,8 @@ const Payments = () => {
 
   return (
     <OfflineMode>
-          <div className="relative min-h-screen p-6 bg-gray-50">
-      <div className="max-w-4xl p-6 mx-auto space-y-6 bg-white rounded-lg shadow-md">
+          <div className="relative min-h-screen p-3 bg-gray-50">
+      <div className="p-6 mx-auto space-y-6 bg-white rounded-lg shadow-md ">
         <h2 className="text-2xl font-bold text-blue-800">Payments & Billing</h2>
 
         <div className="space-y-2">

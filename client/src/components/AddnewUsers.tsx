@@ -63,7 +63,7 @@ const AddNewUser = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-md p-6 mx-auto space-y-4 bg-white rounded-md shadow"
+      className="w-full max-w-md p-1 mx-auto space-y-4 bg-white rounded-md shadow"
     >
       <ToastContainer />
       <h2 className="text-xl font-bold">Add New User</h2>

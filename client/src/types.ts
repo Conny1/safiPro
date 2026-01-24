@@ -1,3 +1,5 @@
+export type OrderStatus = "pending"|"processing"|"washing"|"drying"|"ironing"|"ready"| "completed"| "delivered"|"cancelled"
+
 export type addOrder = {
   branch_id?: string;
   name: string;
@@ -17,7 +19,7 @@ export type addOrder = {
   amount: number;
   payment_status: "pending" | "paid";
   payment_method: "cash" | "mpesa" ;
-  status:"pending"|"processing"|"washing"|"drying"|"ironing"|"ready"| "completed"| "delivered"|"cancelled"
+  status:OrderStatus
   is_completed: boolean;
   address:string;
   notes: string;
@@ -33,7 +35,7 @@ export type Order = {
   amount?: number;
   payment_status?: "pending" | "paid";
   payment_method?: "cash" | "mpesa";
-  status?:"pending"|"processing"|"washing"|"drying"|"ironing"|"ready"| "completed"| "delivered"|"cancelled"
+  status?:OrderStatus
   order_date?: string; // ISO date string e.g. "2025-06-04"
   pickup_date?: string; // ISO date string
   service_type?:
@@ -154,6 +156,7 @@ export type mobilePayments = {
 };
 
 export interface Expense {
+  branch_id:string,
   _id: string;
   description: string;
   amount: number;
@@ -212,4 +215,63 @@ export interface ExpenseFormErrors {
 export interface DateFilter {
   from: string;
   to: string;
+}
+// analysis types
+
+
+export type DateFilterType = 
+  | 'today' 
+  | 'yesterday' 
+  | 'thisWeek' 
+  | 'thisMonth' 
+  | 'lastMonth' 
+  | 'custom';
+
+  export interface FilterState {
+  dateFilter: DateFilterType;
+  customStart?: string;
+  customEnd?: string;
+  branchId?: string;
+  serviceType?: Order['service_type'];
+}
+
+
+
+
+export type ServiceType = 
+  | 'Wash Only' 
+  | 'Dry Cleaning' 
+  | 'Ironing' 
+  | 'Wash & Fold' 
+  | 'Full Service' 
+  | 'Wash & Iron';
+
+
+
+// The exact type returned by getCompleteAnalysisData
+export interface AnalysisData {
+  totalRevenue: number;
+  totalOrders: number;
+  totalExpenses: number;
+  netProfit: number;
+  ordersByStatus: {
+    pending: number;
+    processing: number;
+    washing: number;
+    drying: number;
+    ironing: number;
+    ready: number;
+    completed: number;
+    delivered: number;
+    cancelled: number;
+  };
+  summary: {
+    averageOrderValue: number;
+    completionRate: number;
+    pendingPayments: number;
+    topServiceType: ServiceType;
+    paidOrders: number;
+    cashOrders: number;
+    mpesaOrders: number;
+  };
 }

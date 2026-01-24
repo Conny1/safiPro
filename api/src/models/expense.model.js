@@ -10,6 +10,11 @@ const expenseSchema = new mongoose.Schema(
       ref: "Business",
       required: true,
     },
+    branch_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Branch",
+      required: true,
+    },
     amount: {
       type: Number,
       required: true,

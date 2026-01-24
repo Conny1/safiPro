@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type {
   addExpenseType,
   addOrder,
+  AnalysisData,
   Branch,
   createAccount,
   createBranch,
@@ -243,7 +244,7 @@ export const laundryApi = createApi({
           total_orders: number;
           completed_orders: number;
           total_revenue: number;
-          pending_orders:number;
+          pending_orders: number;
         };
       },
       string
@@ -341,10 +342,10 @@ export const laundryApi = createApi({
         status: Number;
         data: Expense;
       },
-       Partial<Expense>
+      Partial<Expense>
     >({
       query: (body) => ({
-        url: `/admin/expense/${body?._id  }`,
+        url: `/admin/expense/${body?._id}`,
         method: "PUT",
         body,
       }),
@@ -377,7 +378,19 @@ export const laundryApi = createApi({
       }),
       invalidatesTags: ["Expense"],
     }),
-
+    // analysis
+    getcompleteAnalysis: build.query<
+      {
+        status: Number;
+        data: AnalysisData;
+      },
+      string
+    >({
+      query: (query: string) => ({
+        url: `/admin/analysis/complete?${query}`,
+      }),
+      providesTags: ["Expense", "Order"],
+    }),
   }),
 });
 
@@ -409,5 +422,7 @@ export const {
   useAddnewExpenseMutation,
   useUpdateExpenseMutation,
   useFindAndFilterExpenseMutation,
-  useDeleteExpenseMutation
+  useDeleteExpenseMutation,
+  // analysis
+useGetcompleteAnalysisQuery
 } = laundryApi;

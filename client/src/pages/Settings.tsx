@@ -31,7 +31,7 @@ const Settings = () => {
       
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="px-3 py-6 mx-auto sm:px-6 lg:px-8">
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
@@ -50,7 +50,7 @@ const Settings = () => {
       </div>
 
       {/* Main Content */}
-      <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div className="px-3 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
@@ -157,7 +157,7 @@ const Settings = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="p-6">
+                      <div >
                         <AddnewUser />
                         <div className="mt-8">
                           <ListStaff />

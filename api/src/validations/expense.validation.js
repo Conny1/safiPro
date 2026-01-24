@@ -4,6 +4,7 @@ const { objectId } = require("../utils");
 const addNewExpense = {
   body: Joi.object().keys({
     description: Joi.string().required(),
+    branch_id:Joi.string().custom(objectId).required(),
     amount: Joi.number().required(),
     date: Joi.string().required(),
     category: Joi.string().required(),

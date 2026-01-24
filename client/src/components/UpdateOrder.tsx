@@ -367,13 +367,12 @@ useEffect(() => {
               </div>
               <div className="md:col-span-2">
                 <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Items Description *
+                  Items Description 
                 </label>
                 <div className="relative">
                   <ShoppingBag className="absolute w-4 h-4 text-gray-400 left-3 top-3" />
                   <textarea
                     name="items_description"
-                    required
                     value={formData.items_description}
                     onChange={handleChange}
                     rows={3}

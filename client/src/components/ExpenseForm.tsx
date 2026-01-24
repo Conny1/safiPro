@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Save, X, DollarSign, Calendar, CreditCard } from 'lucide-react';
-import type { 
-  Expense, 
-  ExpenseFormData, 
-  ExpenseFormErrors, 
-  ExpenseCategory, 
-  CategoryInfo,
-  PaymentMethod 
+import { Save, X, DollarSign, Calendar, CreditCard, Building } from 'lucide-react';
+import { 
+  type Expense, 
+  type ExpenseFormData, 
+  type ExpenseFormErrors, 
+  type ExpenseCategory, 
+  type CategoryInfo,
+  type PaymentMethod, 
+  type Branch,
+  USER_ROLES
 } from '../types';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../redux/store';
 
 interface ExpenseFormProps {
   expense: Expense | null;
@@ -18,6 +22,16 @@ interface ExpenseFormProps {
 }
 
 const ExpenseForm: React.FC<ExpenseFormProps> = ({ isLoading, expense, onSave, onCancel, categories }) => {
+ const offlineBranchData = useSelector((state:RootState)=> state.branch.value)
+ const user = useSelector((state:RootState )=>state.user.value)
+ const [allBranches] = useState<Branch[] | []>(
+      offlineBranchData,
+    );
+   const [activeBranch, setactiveBranch] = useState(
+      user.role === USER_ROLES.SUPER_ADMIN
+        ? ""
+        : user.branches[0]?.branch_id || "",
+    );
   const [formData, setFormData] = useState<ExpenseFormData>({
     description: '',
     amount: '',
@@ -51,7 +65,9 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isLoading, expense, onSave, o
 
   const validateForm = (): boolean => {
     const newErrors: ExpenseFormErrors = {};
-    
+     if (!activeBranch) {
+      newErrors.description = 'Select a branch';
+    }
     if (!formData.description.trim()) {
       newErrors.description = 'Description is required';
     }
@@ -89,6 +105,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isLoading, expense, onSave, o
     
     if (validateForm()) {
       onSave({
+        branch_id:activeBranch,
         ...formData,
         amount: Number(formData.amount)
       } as Omit<Expense, 'id'>);
@@ -108,6 +125,32 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isLoading, expense, onSave, o
           Please fix the errors in the form
         </div>
       )}
+
+           {/* Branch Selection */}
+                {user.role === USER_ROLES.SUPER_ADMIN && (
+                  <div className="mb-6">
+                    <label className="block mb-2 text-sm font-medium text-gray-700">
+                      Select Branch
+                    </label>
+                    <div className="relative">
+                      <Building className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+                      <select
+                        value={activeBranch}
+                        onChange={(e) => setactiveBranch(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+                        required
+                      >
+                        <option value="">Select a branch</option>
+                        {allBranches.map((b) => (
+                          <option key={b._id} value={b._id}>
+                            {b.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+      
 
       {/* Description */}
       <div>

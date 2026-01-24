@@ -9,3 +9,4 @@ export { default as LandingPpage } from "./LandingPage";
 export { default as SubscriptionRequired } from "./SubscriptionRequired";
 export { default as ResetPassword } from "./ResetPassword";
 export { default as ExpenseManager } from "./ExpenseManager";
+export { default as Analysis } from "./Analysis";

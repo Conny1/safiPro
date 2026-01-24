@@ -44,7 +44,7 @@ const ListStaff = () => {
   }, [paginationdata.page, editmodal]);
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="space-y-8">
       {editmodal && (
         <div className="">
           <UpdateStaff userToEdit={selectedUser} seteditmodal={seteditmodal} />
