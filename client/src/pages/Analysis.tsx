@@ -151,7 +151,7 @@ const queryParams = useMemo(() => (
                   KSh {analysisData.totalRevenue.toLocaleString()}
                 </p>
                 <p className="mt-1 text-sm text-gray-600">
-                  From completed/delivered orders
+                  From  paid orders
                 </p>
               </div>
               <TrendingUp className="w-5 h-5 text-green-500" />

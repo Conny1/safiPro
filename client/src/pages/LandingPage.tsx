@@ -3,7 +3,13 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
 import type { RootState } from "../redux/store";
 import laundryImage from "/laundry-illustration.jpg";
-import { CheckCircle, BarChart3,  CreditCard, Building, Bell } from "lucide-react"; // Install lucide-react for icons
+import {
+  CheckCircle,
+  BarChart3,
+  CreditCard,
+  Building,
+  Bell,
+} from "lucide-react"; // Install lucide-react for icons
 
 const LandingPage = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -28,7 +34,7 @@ const LandingPage = () => {
     return () =>
       window.removeEventListener(
         "beforeinstallprompt",
-        handleBeforeInstallPrompt
+        handleBeforeInstallPrompt,
       );
   }, []);
 
@@ -83,19 +89,13 @@ const LandingPage = () => {
               </div>
               <span className="text-xl font-bold text-gray-900">SafiPro</span>
             </div>
-            
-            <div className="flex items-center space-x-4">
+
+            <div className="flex items-center space-x-4 ">
               <button
                 onClick={() => navigate("/auth")}
                 className="px-4 py-2 text-sm font-medium text-blue-700 transition-colors hover:text-blue-800"
               >
                 Sign In
-              </button>
-              <button
-                onClick={() => navigate("/auth")}
-                className="px-6 py-2 text-sm font-medium text-white transition-all rounded-lg shadow-sm bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow"
-              >
-                Get Started
               </button>
             </div>
           </div>
@@ -110,20 +110,20 @@ const LandingPage = () => {
               <div className="inline-flex px-3 py-1 mb-6 text-sm font-medium text-blue-700 bg-blue-100 rounded-full">
                 Built for Kenyan Businesses
               </div>
-              
+
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
                 Streamline Your
                 <span className="block text-transparent bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text">
                   Laundry Operations
                 </span>
               </h1>
-              
+
               <p className="mt-6 text-lg leading-8 text-gray-600">
-                SafiPro provides an all-in-one solution for laundry businesses to manage orders, 
-                track expenses, coordinate staff, and delight customers—all from a single, 
-                intuitive dashboard.
+                SafiPro provides an all-in-one solution for laundry businesses
+                to manage orders, track expenses, coordinate staff, and delight
+                customers—all from a single, intuitive dashboard.
               </p>
-              
+
               <div className="flex flex-col gap-4 mt-10 sm:flex-row sm:items-center">
                 {showInstallBtn ? (
                   <button
@@ -141,14 +141,18 @@ const LandingPage = () => {
                   </button>
                 )}
                 <div className="text-sm text-gray-500">
-                  <span className="font-medium text-green-600">No credit card required</span>
+                  <span className="font-medium text-green-600">
+                    No credit card required
+                  </span>
                   <span className="mx-2">•</span>
                   <span>Cancel anytime</span>
                 </div>
               </div>
-              
+
               <div className="mt-12">
-                <p className="text-sm font-medium text-gray-500">TRUSTED BY BUSINESSES ACROSS KENYA</p>
+                <p className="text-sm font-medium text-gray-500">
+                  TRUSTED BY BUSINESSES ACROSS KENYA
+                </p>
                 <div className="flex flex-wrap gap-8 mt-4">
                   {["Nairobi", "Mombasa", "Kisumu", "Nakuru"].map((city) => (
                     <div key={city} className="flex items-center">
@@ -159,7 +163,7 @@ const LandingPage = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="relative">
               <div className="relative overflow-hidden shadow-2xl rounded-2xl">
                 <img
@@ -184,10 +188,11 @@ const LandingPage = () => {
               Everything You Need to Scale
             </h2>
             <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-600">
-              Comprehensive tools designed specifically for laundry business growth
+              Comprehensive tools designed specifically for laundry business
+              growth
             </p>
           </div>
-          
+
           <div className="grid gap-8 mt-16 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
               <div
@@ -220,34 +225,38 @@ const LandingPage = () => {
               One simple plan with everything you need to grow
             </p>
           </div>
-          
+
           <div className="mt-16">
             <div className="relative max-w-md mx-auto overflow-hidden bg-white shadow-xl rounded-2xl">
               <div className="absolute top-0 right-0 px-4 py-1 text-sm font-medium text-white rounded-bl-lg bg-gradient-to-r from-blue-600 to-blue-700">
                 Most Popular
               </div>
-              
+
               <div className="p-8">
                 <div className="flex items-baseline">
-                  <span className="text-4xl font-bold text-gray-900">KES 900</span>
+                  <span className="text-4xl font-bold text-gray-900">
+                    KES 900
+                  </span>
                   <span className="ml-2 text-lg text-gray-600">/month</span>
                 </div>
-                
+
                 <div className="p-4 mt-4 rounded-lg bg-green-50">
                   <p className="font-medium text-green-700">
                     ✓ 30-day free trial included
                   </p>
                 </div>
-                
+
                 <ul className="mt-8 space-y-4">
                   {[
-                    "Unlimited orders & customers",
+                    "Unlimited orders",
                     "Up to 5 branch locations",
                     "Staff role management",
                     "Expense tracking & reporting",
                     "Customer SMS notifications",
                     "Priority email support",
                     "Free updates & security patches",
+                    "Realtime analytics of your business",
+                    "Record orders when offline",
                   ].map((item) => (
                     <li key={item} className="flex items-center">
                       <CheckCircle className="w-5 h-5 mr-3 text-green-500" />
@@ -255,14 +264,14 @@ const LandingPage = () => {
                     </li>
                   ))}
                 </ul>
-                
+
                 <button
                   onClick={() => navigate("/auth")}
                   className="w-full py-4 mt-10 font-medium text-white transition-all rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-lg"
                 >
                   Start Free Trial
                 </button>
-                
+
                 <p className="mt-4 text-sm text-center text-gray-500">
                   No setup fees • Cancel anytime
                 </p>
@@ -283,7 +292,7 @@ const LandingPage = () => {
               Watch how SafiPro transforms laundry management
             </p>
           </div>
-          
+
           <div className="mt-12 overflow-hidden shadow-2xl rounded-2xl">
             <div className="relative aspect-video bg-gradient-to-r from-blue-900 to-slate-900">
               <video
@@ -307,24 +316,28 @@ const LandingPage = () => {
             Ready to Transform Your Business?
           </h2>
           <p className="mt-4 text-lg text-blue-100">
-            Join hundreds of laundry businesses already using SafiPro to save time and grow revenue.
+            Join hundreds of laundry businesses already using SafiPro to save
+            time and grow revenue.
           </p>
-          
+
           <div className="flex flex-col gap-4 mt-10 sm:flex-row sm:justify-center">
-            <button
-              onClick={() => navigate("/auth")}
-              className="px-8 py-3 text-base font-medium text-blue-600 transition-colors bg-white rounded-lg shadow-lg hover:bg-gray-50"
-            >
-              Start Free Trial
-            </button>
-            <button
-              onClick={() => window.open("https://calendly.com/safipro/demo", "_blank")}
-              className="px-8 py-3 text-base font-medium text-white transition-colors border-2 border-white rounded-lg hover:bg-white/10"
-            >
-              Schedule a Demo
-            </button>
+            {showInstallBtn ? (
+              <button
+                onClick={handleInstallClick}
+                className="px-8 py-3 text-base font-medium text-blue-500 transition-all bg-white rounded-lg shadow-lg hover:from-blue-700 hover:to-blue-800 hover:shadow-xl"
+              >
+                Install Mobile App
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/auth")}
+                className="px-8 py-3 text-base font-medium text-blue-600 transition-colors bg-white rounded-lg shadow-lg hover:bg-gray-50"
+              >
+                Start Free Trial
+              </button>
+            )}
           </div>
-          
+
           <p className="mt-6 text-sm text-blue-200">
             Get started in minutes • No technical skills required
           </p>
@@ -341,18 +354,24 @@ const LandingPage = () => {
               </div>
               <span className="text-xl font-bold text-white">SafiPro</span>
             </div>
-            
+
             <div className="flex items-center space-x-6 text-sm text-gray-400">
-              <a href="#" className="transition-colors hover:text-white">Privacy Policy</a>
-              <a href="#" className="transition-colors hover:text-white">Terms of Service</a>
-              <a href="#" className="transition-colors hover:text-white">Contact</a>
+              <a href="#" className="transition-colors hover:text-white">
+                Privacy Policy
+              </a>
+              <a href="#" className="transition-colors hover:text-white">
+                Terms of Service
+              </a>
+              <a href="#" className="transition-colors hover:text-white">
+                Contact
+              </a>
             </div>
-            
+
             <div className="text-sm text-gray-400">
               © {new Date().getFullYear()} SafiPro. All rights reserved.
             </div>
           </div>
-          
+
           <div className="pt-6 mt-6 text-xs text-center text-gray-500 border-t border-gray-800">
             Built with ❤️ for laundry businesses across Kenya
           </div>
