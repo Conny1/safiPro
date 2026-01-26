@@ -1,4 +1,4 @@
-import React, { useState,  useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   DollarSign,
   Package,
@@ -12,12 +12,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-import type {
-  
-  DateFilterType,
-  FilterState,
-  OrderStatus,
-} from "../types";
+import type { DateFilterType, FilterState, OrderStatus } from "../types";
 import DateRangeFilter from "../components/DateRangeFilter";
 import { useGetcompleteAnalysisQuery } from "../redux/apislice";
 import { useSelector } from "react-redux";
@@ -31,24 +26,26 @@ const AnalysisPage: React.FC = () => {
 
   const branches = useSelector((state: RootState) => state.branch.value);
   const branchIds = useMemo(
-  () => branches.map(br => br._id).join(","),
-  [branches]
-);
-
-const queryParams = useMemo(() => (
-  `dateFilter=${filter.dateFilter}&branchId=${branchIds}&customStart=${filter.customStart}&customEnd=${filter.customEnd}`
-), [filter.dateFilter, filter.customStart, filter.customEnd, branchIds]);
-
-  const { data:completedData, isLoading } = useGetcompleteAnalysisQuery(
-    queryParams
+    () => branches.map((br) => br._id).join(","),
+    [branches],
   );
-  const analysisData = useMemo(() => completedData?.data || null, [completedData])
 
+  const queryParams = useMemo(
+    () =>
+      `dateFilter=${filter.dateFilter}&branchId=${branchIds}&customStart=${filter.customStart}&customEnd=${filter.customEnd}`,
+    [filter.dateFilter, filter.customStart, filter.customEnd, branchIds],
+  );
+
+  const { data: completedData, isLoading } =
+    useGetcompleteAnalysisQuery(queryParams);
+  const analysisData = useMemo(
+    () => completedData?.data || null,
+    [completedData],
+  );
 
   // Handle filter changes
   const handleDateFilterChange = (dateFilter: DateFilterType) => {
     setFilter((prev) => ({ ...prev, dateFilter }));
-
   };
 
   const handleCustomDateSubmit = (start: string, end: string) => {
@@ -58,29 +55,31 @@ const queryParams = useMemo(() => (
       customStart: start,
       customEnd: end,
     }));
-
   };
-
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="w-12 h-12 mx-auto border-b-2 border-blue-600 rounded-full animate-spin"></div>
-          <p className="mt-4 text-gray-600">Loading analysis data...</p>
+      <OfflineMode>
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+          <div className="text-center">
+            <div className="w-12 h-12 mx-auto border-b-2 border-blue-600 rounded-full animate-spin"></div>
+            <p className="mt-4 text-gray-600">Loading analysis data...</p>
+          </div>
         </div>
-      </div>
+      </OfflineMode>
     );
   }
 
   if (!analysisData) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <AlertCircle className="w-12 h-12 mx-auto text-red-500" />
-          <p className="mt-4 text-gray-600">No analysis data available</p>
+      <OfflineMode>
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+          <div className="text-center">
+            <AlertCircle className="w-12 h-12 mx-auto text-red-500" />
+            <p className="mt-4 text-gray-600">No analysis data available</p>
+          </div>
         </div>
-      </div>
+      </OfflineMode>
     );
   }
 
@@ -96,422 +95,429 @@ const queryParams = useMemo(() => (
     "cancelled",
   ];
 
-  return ( <OfflineMode>
+  return (
+    <OfflineMode>
       <div className="min-h-screen bg-gray-50 md:p-3">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-          <div>
-            <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-800 md:text-3xl">
-              <FileText className="w-8 h-8 text-blue-600" />
-              Analysis & Reports
-            </h1>
-            <p className="mt-1 text-gray-600">
-              Business performance analytics for your laundry
-            </p>
-          </div>
+        {/* Header */}
+        <div className="mb-6">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-800 md:text-3xl">
+                <FileText className="w-8 h-8 text-blue-600" />
+                Analysis & Reports
+              </h1>
+              <p className="mt-1 text-gray-600">
+                Business performance analytics for your laundry
+              </p>
+            </div>
 
-          <div className="flex items-center gap-3">
-            {/* <button
+            <div className="flex items-center gap-3">
+              {/* <button
               className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-green-600 rounded-lg shadow-sm hover:bg-green-700"
             >
               <Download className="w-4 h-4" />
               Export Report
             </button> */}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Filters */}
-      <DateRangeFilter
-        currentFilter={filter.dateFilter}
-        onFilterChange={handleDateFilterChange}
-        onCustomDateSubmit={handleCustomDateSubmit}
-      />
+        {/* Filters */}
+        <DateRangeFilter
+          currentFilter={filter.dateFilter}
+          onFilterChange={handleDateFilterChange}
+          onCustomDateSubmit={handleCustomDateSubmit}
+        />
 
-      {/* Main Performance Metrics */}
-      <div className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold text-gray-800">
-          📊 Business Performance
-        </h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {/* Revenue Card */}
-          <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
-            <div className="flex items-center justify-between mb-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <DollarSign className="w-6 h-6 text-blue-600" />
+        {/* Main Performance Metrics */}
+        <div className="mb-8">
+          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+            📊 Business Performance
+          </h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {/* Revenue Card */}
+            <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-blue-600" />
+                </div>
+                <span className="text-sm font-medium text-gray-500">
+                  Total Revenue
+                </span>
               </div>
-              <span className="text-sm font-medium text-gray-500">
-                Total Revenue
-              </span>
-            </div>
-            <div className="flex items-end justify-between">
-              <div>
-                <p className="text-2xl font-bold text-gray-800">
-                  KSh {analysisData.totalRevenue.toLocaleString()}
-                </p>
-                <p className="mt-1 text-sm text-gray-600">
-                  From  paid orders
-                </p>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-gray-800">
+                    KSh {analysisData.totalRevenue.toLocaleString()}
+                  </p>
+                  <p className="mt-1 text-sm text-gray-600">From paid orders</p>
+                </div>
+                <TrendingUp className="w-5 h-5 text-green-500" />
               </div>
-              <TrendingUp className="w-5 h-5 text-green-500" />
             </div>
-          </div>
 
-          {/* Total Orders Card */}
-          <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
-            <div className="flex items-center justify-between mb-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Package className="w-6 h-6 text-purple-600" />
+            {/* Total Orders Card */}
+            <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Package className="w-6 h-6 text-purple-600" />
+                </div>
+                <span className="text-sm font-medium text-gray-500">
+                  Total Orders
+                </span>
               </div>
-              <span className="text-sm font-medium text-gray-500">
-                Total Orders
-              </span>
-            </div>
-            <div className="flex items-end justify-between">
-              <div>
-                <p className="text-2xl font-bold text-gray-800">
-                  {analysisData.totalOrders}
-                </p>
-                <p className="mt-1 text-sm text-gray-600">
-                  All orders in period
-                </p>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {analysisData.totalOrders}
+                  </p>
+                  <p className="mt-1 text-sm text-gray-600">
+                    All orders in period
+                  </p>
+                </div>
+                <Users className="w-5 h-5 text-purple-500" />
               </div>
-              <Users className="w-5 h-5 text-purple-500" />
             </div>
-          </div>
 
-          {/* Expenses Card */}
-          <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
-            <div className="flex items-center justify-between mb-3">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <DollarSign className="w-6 h-6 text-red-600" />
+            {/* Expenses Card */}
+            <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-red-600" />
+                </div>
+                <span className="text-sm font-medium text-gray-500">
+                  Total Expenses
+                </span>
               </div>
-              <span className="text-sm font-medium text-gray-500">
-                Total Expenses
-              </span>
-            </div>
-            <div className="flex items-end justify-between">
-              <div>
-                <p className="text-2xl font-bold text-gray-800">
-                  KSh {analysisData.totalExpenses.toLocaleString()}
-                </p>
-                <p className="mt-1 text-sm text-gray-600">Operational costs</p>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-gray-800">
+                    KSh {analysisData.totalExpenses.toLocaleString()}
+                  </p>
+                  <p className="mt-1 text-sm text-gray-600">
+                    Operational costs
+                  </p>
+                </div>
+                <span className="text-sm font-medium text-red-500">Costs</span>
               </div>
-              <span className="text-sm font-medium text-red-500">Costs</span>
             </div>
-          </div>
 
-          {/* Net Profit Card */}
-          <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
-            <div className="flex items-center justify-between mb-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+            {/* Net Profit Card */}
+            <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
+                </div>
+                <span className="text-sm font-medium text-gray-500">
+                  Net Profit
+                </span>
               </div>
-              <span className="text-sm font-medium text-gray-500">
-                Net Profit
-              </span>
-            </div>
-            <div className="flex items-end justify-between">
-              <div>
-                <p
-                  className={`text-2xl font-bold ${analysisData.netProfit >= 0 ? "text-green-700" : "text-red-700"}`}
+              <div className="flex items-end justify-between">
+                <div>
+                  <p
+                    className={`text-2xl font-bold ${analysisData.netProfit >= 0 ? "text-green-700" : "text-red-700"}`}
+                  >
+                    KSh {analysisData.netProfit.toLocaleString()}
+                  </p>
+                  <p className="mt-1 text-sm text-gray-600">
+                    Revenue - Expenses
+                  </p>
+                </div>
+                <span
+                  className={`text-sm font-medium ${analysisData.netProfit >= 0 ? "text-green-500" : "text-red-500"}`}
                 >
-                  KSh {analysisData.netProfit.toLocaleString()}
-                </p>
-                <p className="mt-1 text-sm text-gray-600">Revenue - Expenses</p>
-              </div>
-              <span
-                className={`text-sm font-medium ${analysisData.netProfit >= 0 ? "text-green-500" : "text-red-500"}`}
-              >
-                {analysisData.netProfit >= 0 ? "✅ Profit" : "⚠️ Loss"}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Key Performance Indicators */}
-      <div className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold text-gray-800">
-          📈 Key Performance Indicators
-        </h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-yellow-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Average Order Value</p>
-                <p className="text-xl font-bold text-gray-800">
-                  KSh {analysisData.summary.averageOrderValue.toLocaleString()}
-                </p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Per completed order
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Completion Rate</p>
-                <p className="text-xl font-bold text-gray-800">
-                  {analysisData.summary.completionRate}%
-                </p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Orders completed vs total
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Clock className="w-5 h-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Pending Payments</p>
-                <p className="text-xl font-bold text-gray-800">
-                  KSh {analysisData.summary.pendingPayments.toLocaleString()}
-                </p>
-                <p className="mt-1 text-xs text-gray-500">Awaiting payment</p>
+                  {analysisData.netProfit >= 0 ? "✅ Profit" : "⚠️ Loss"}
+                </span>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Payment Analysis */}
-      <div className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold text-gray-800">
-          💰 Payment Analysis
-        </h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="p-5 bg-white border border-gray-200 shadow-md rounded-xl">
-            <div className="flex items-center justify-between">
+        {/* Key Performance Indicators */}
+        <div className="mb-8">
+          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+            📈 Key Performance Indicators
+          </h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-yellow-100 rounded-lg">
+                  <CheckCircle className="w-5 h-5 text-yellow-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Average Order Value</p>
+                  <p className="text-xl font-bold text-gray-800">
+                    KSh{" "}
+                    {analysisData.summary.averageOrderValue.toLocaleString()}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Per completed order
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100 rounded-lg">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
+                  <TrendingUp className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Paid Orders</p>
+                  <p className="text-sm text-gray-500">Completion Rate</p>
                   <p className="text-xl font-bold text-gray-800">
-                    {analysisData.summary.paidOrders}
+                    {analysisData.summary.completionRate}%
                   </p>
-                  <p className="mt-1 text-xs text-gray-500">Payment received</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Orders completed vs total
+                  </p>
                 </div>
               </div>
-              <div className="text-right">
-                <span className="text-sm font-medium text-green-600">Paid</span>
-                <p className="mt-1 text-xs text-gray-500">
-                  {analysisData.summary.paidOrders > 0
-                    ? Math.round(
-                        (analysisData.summary.paidOrders /
-                          analysisData.totalOrders) *
-                          100,
-                      )
-                    : 0}
-                  %
-                </p>
-              </div>
             </div>
-          </div>
 
-          <div className="p-5 bg-white border border-gray-200 shadow-md rounded-xl">
-            <div className="flex items-center justify-between">
+            <div className="p-5 transition-shadow bg-white border border-gray-200 shadow-md rounded-xl hover:shadow-lg">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  <ShoppingBag className="w-5 h-5 text-gray-600" />
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Clock className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Cash Payments</p>
+                  <p className="text-sm text-gray-500">Pending Payments</p>
                   <p className="text-xl font-bold text-gray-800">
-                    {analysisData.summary.cashOrders}
+                    KSh {analysisData.summary.pendingPayments.toLocaleString()}
                   </p>
-                  <p className="mt-1 text-xs text-gray-500">Physical cash</p>
+                  <p className="mt-1 text-xs text-gray-500">Awaiting payment</p>
                 </div>
-              </div>
-              <div className="text-right">
-                <span className="font-medium text-gray-600">Cash</span>
-                <p className="mt-1 text-xs text-gray-500">
-                  {analysisData.summary.cashOrders > 0
-                    ? Math.round(
-                        (analysisData.summary.cashOrders /
-                          analysisData.summary.paidOrders) *
-                          100,
-                      )
-                    : 0}
-                  %
-                </p>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="p-5 bg-white border border-gray-200 shadow-md rounded-xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-teal-100 rounded-lg">
-                  <Smartphone className="w-5 h-5 text-teal-600" />
+        {/* Payment Analysis */}
+        <div className="mb-8">
+          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+            💰 Payment Analysis
+          </h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="p-5 bg-white border border-gray-200 shadow-md rounded-xl">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Paid Orders</p>
+                    <p className="text-xl font-bold text-gray-800">
+                      {analysisData.summary.paidOrders}
+                    </p>
+                    <p className="mt-1 text-xs text-gray-500">
+                      Payment received
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">M-Pesa Payments</p>
-                  <p className="text-xl font-bold text-gray-800">
-                    {analysisData.summary.mpesaOrders}
+                <div className="text-right">
+                  <span className="text-sm font-medium text-green-600">
+                    Paid
+                  </span>
+                  <p className="mt-1 text-xs text-gray-500">
+                    {analysisData.summary.paidOrders > 0
+                      ? Math.round(
+                          (analysisData.summary.paidOrders /
+                            analysisData.totalOrders) *
+                            100,
+                        )
+                      : 0}
+                    %
                   </p>
-                  <p className="mt-1 text-xs text-gray-500">Mobile money</p>
                 </div>
               </div>
-              <div className="text-right">
-                <span className="font-medium text-teal-600">M-Pesa</span>
-                <p className="mt-1 text-xs text-gray-500">
-                  {analysisData.summary.mpesaOrders > 0
-                    ? Math.round(
-                        (analysisData.summary.mpesaOrders /
-                          analysisData.summary.paidOrders) *
-                          100,
-                      )
-                    : 0}
-                  %
-                </p>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Order Status Distribution */}
-      <div className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold text-gray-800">
-          📦 Order Status Distribution
-        </h2>
-        <p className="mb-4 text-gray-600">
-          Breakdown of orders by current processing stage
-        </p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {statusOptions.map((status) => (
-            <div
-              key={status}
-              className="p-4 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span
-                  className={`text-xs font-medium px-2 py-1 rounded-full ${getStatusColor(status)}`}
-                >
-                  {getStatusLabel(status)}
-                </span>
-                <span className="text-lg font-bold text-gray-800">
-                  {analysisData.ordersByStatus[status] || 0}
-                </span>
-              </div>
-              <div className="text-xs text-gray-500">
-                {getStatusDescription(status)}
-              </div>
-              <div className="mt-2">
-                <div className="w-full bg-gray-200 rounded-full h-1.5">
-                  <div
-                    className={`h-1.5 rounded-full ${getStatusBarColor(status)}`}
-                    style={{
-                      width: `${(analysisData.ordersByStatus[status] / analysisData.totalOrders) * 100 || 0}%`,
-                    }}
-                  ></div>
+            <div className="p-5 bg-white border border-gray-200 shadow-md rounded-xl">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gray-100 rounded-lg">
+                    <ShoppingBag className="w-5 h-5 text-gray-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Cash Payments</p>
+                    <p className="text-xl font-bold text-gray-800">
+                      {analysisData.summary.cashOrders}
+                    </p>
+                    <p className="mt-1 text-xs text-gray-500">Physical cash</p>
+                  </div>
                 </div>
-                <p className="mt-1 text-xs text-right text-gray-500">
-                  {analysisData.totalOrders > 0
-                    ? Math.round(
-                        (analysisData.ordersByStatus[status] /
-                          analysisData.totalOrders) *
-                          100,
-                      )
-                    : 0}
-                  %
-                </p>
+                <div className="text-right">
+                  <span className="font-medium text-gray-600">Cash</span>
+                  <p className="mt-1 text-xs text-gray-500">
+                    {analysisData.summary.cashOrders > 0
+                      ? Math.round(
+                          (analysisData.summary.cashOrders /
+                            analysisData.summary.paidOrders) *
+                            100,
+                        )
+                      : 0}
+                    %
+                  </p>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Financial Summary */}
-      <div className="p-4 mt-8 border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-          <div>
-            <h4 className="font-bold text-blue-800">📊 Financial Summary</h4>
-            <p className="mt-1 text-sm text-blue-600">
-              Showing data for{" "}
-              <span className="font-semibold capitalize">
-                {filter.dateFilter}
-              </span>
-              {filter.dateFilter === "custom" &&
-              filter.customStart &&
-              filter.customEnd
-                ? ` (${filter.customStart} to ${filter.customEnd})`
-                : ""}
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-6 text-sm">
-            <div className="text-green-600">
-              <span className="font-semibold">Revenue: </span>
-              KSh {analysisData.totalRevenue.toLocaleString()}
-            </div>
-            <div className="text-red-600">
-              <span className="font-semibold">Expenses: </span>
-              KSh {analysisData.totalExpenses.toLocaleString()}
-            </div>
-            <div
-              className={`font-bold ${analysisData.netProfit >= 0 ? "text-green-700" : "text-red-700"}`}
-            >
-              <span className="font-semibold">Net Profit: </span>
-              KSh {analysisData.netProfit.toLocaleString()}
+            <div className="p-5 bg-white border border-gray-200 shadow-md rounded-xl">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-teal-100 rounded-lg">
+                    <Smartphone className="w-5 h-5 text-teal-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">M-Pesa Payments</p>
+                    <p className="text-xl font-bold text-gray-800">
+                      {analysisData.summary.mpesaOrders}
+                    </p>
+                    <p className="mt-1 text-xs text-gray-500">Mobile money</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="font-medium text-teal-600">M-Pesa</span>
+                  <p className="mt-1 text-xs text-gray-500">
+                    {analysisData.summary.mpesaOrders > 0
+                      ? Math.round(
+                          (analysisData.summary.mpesaOrders /
+                            analysisData.summary.paidOrders) *
+                            100,
+                        )
+                      : 0}
+                    %
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-3">
-          <div className="p-3 bg-white bg-opacity-50 rounded-lg">
-            <p className="text-sm text-gray-600">Profit Margin</p>
-            <p className="text-lg font-bold text-blue-700">
-              {analysisData.totalRevenue > 0
-                ? (
-                    (analysisData.netProfit / analysisData.totalRevenue) *
-                    100
-                  ).toFixed(1)
-                : 0}
-              %
-            </p>
+
+        {/* Order Status Distribution */}
+        <div className="mb-8">
+          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+            📦 Order Status Distribution
+          </h2>
+          <p className="mb-4 text-gray-600">
+            Breakdown of orders by current processing stage
+          </p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {statusOptions.map((status) => (
+              <div
+                key={status}
+                className="p-4 transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span
+                    className={`text-xs font-medium px-2 py-1 rounded-full ${getStatusColor(status)}`}
+                  >
+                    {getStatusLabel(status)}
+                  </span>
+                  <span className="text-lg font-bold text-gray-800">
+                    {analysisData.ordersByStatus[status] || 0}
+                  </span>
+                </div>
+                <div className="text-xs text-gray-500">
+                  {getStatusDescription(status)}
+                </div>
+                <div className="mt-2">
+                  <div className="w-full bg-gray-200 rounded-full h-1.5">
+                    <div
+                      className={`h-1.5 rounded-full ${getStatusBarColor(status)}`}
+                      style={{
+                        width: `${(analysisData.ordersByStatus[status] / analysisData.totalOrders) * 100 || 0}%`,
+                      }}
+                    ></div>
+                  </div>
+                  <p className="mt-1 text-xs text-right text-gray-500">
+                    {analysisData.totalOrders > 0
+                      ? Math.round(
+                          (analysisData.ordersByStatus[status] /
+                            analysisData.totalOrders) *
+                            100,
+                        )
+                      : 0}
+                    %
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="p-3 bg-white bg-opacity-50 rounded-lg">
-            <p className="text-sm text-gray-600">Expense Ratio</p>
-            <p className="text-lg font-bold text-red-600">
-              {analysisData.totalRevenue > 0
-                ? (
-                    (analysisData.totalExpenses / analysisData.totalRevenue) *
-                    100
-                  ).toFixed(1)
-                : 0}
-              %
-            </p>
+        </div>
+
+        {/* Financial Summary */}
+        <div className="p-4 mt-8 border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <h4 className="font-bold text-blue-800">📊 Financial Summary</h4>
+              <p className="mt-1 text-sm text-blue-600">
+                Showing data for{" "}
+                <span className="font-semibold capitalize">
+                  {filter.dateFilter}
+                </span>
+                {filter.dateFilter === "custom" &&
+                filter.customStart &&
+                filter.customEnd
+                  ? ` (${filter.customStart} to ${filter.customEnd})`
+                  : ""}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-6 text-sm">
+              <div className="text-green-600">
+                <span className="font-semibold">Revenue: </span>
+                KSh {analysisData.totalRevenue.toLocaleString()}
+              </div>
+              <div className="text-red-600">
+                <span className="font-semibold">Expenses: </span>
+                KSh {analysisData.totalExpenses.toLocaleString()}
+              </div>
+              <div
+                className={`font-bold ${analysisData.netProfit >= 0 ? "text-green-700" : "text-red-700"}`}
+              >
+                <span className="font-semibold">Net Profit: </span>
+                KSh {analysisData.netProfit.toLocaleString()}
+              </div>
+            </div>
           </div>
-          <div className="p-3 bg-white bg-opacity-50 rounded-lg">
-            <p className="text-sm text-gray-600">Avg Daily Revenue</p>
-            <p className="text-lg font-bold text-green-700">
-              KSh{" "}
-              {getDailyAverage(
-                analysisData.totalRevenue,
-                filter.dateFilter,
-              ).toLocaleString()}
-            </p>
+          <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-3">
+            <div className="p-3 bg-white bg-opacity-50 rounded-lg">
+              <p className="text-sm text-gray-600">Profit Margin</p>
+              <p className="text-lg font-bold text-blue-700">
+                {analysisData.totalRevenue > 0
+                  ? (
+                      (analysisData.netProfit / analysisData.totalRevenue) *
+                      100
+                    ).toFixed(1)
+                  : 0}
+                %
+              </p>
+            </div>
+            <div className="p-3 bg-white bg-opacity-50 rounded-lg">
+              <p className="text-sm text-gray-600">Expense Ratio</p>
+              <p className="text-lg font-bold text-red-600">
+                {analysisData.totalRevenue > 0
+                  ? (
+                      (analysisData.totalExpenses / analysisData.totalRevenue) *
+                      100
+                    ).toFixed(1)
+                  : 0}
+                %
+              </p>
+            </div>
+            <div className="p-3 bg-white bg-opacity-50 rounded-lg">
+              <p className="text-sm text-gray-600">Avg Daily Revenue</p>
+              <p className="text-lg font-bold text-green-700">
+                KSh{" "}
+                {getDailyAverage(
+                  analysisData.totalRevenue,
+                  filter.dateFilter,
+                ).toLocaleString()}
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </OfflineMode>
-  
+    </OfflineMode>
   );
 };
 
