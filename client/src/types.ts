@@ -2,6 +2,7 @@ export type OrderStatus = "pending"|"processing"|"washing"|"drying"|"ironing"|"r
 
 export type addOrder = {
   branch_id?: string;
+  order_no:string,
   name: string;
   email: string;
   phone_number: string;

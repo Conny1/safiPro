@@ -12,7 +12,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-import type { DateFilterType, FilterState, OrderStatus } from "../types";
+import { USER_ROLES, type DateFilterType, type FilterState, type OrderStatus } from "../types";
 import DateRangeFilter from "../components/DateRangeFilter";
 import { useGetcompleteAnalysisQuery } from "../redux/apislice";
 import { useSelector } from "react-redux";
@@ -25,6 +25,7 @@ const AnalysisPage: React.FC = () => {
   });
 
   const branches = useSelector((state: RootState) => state.branch.value);
+  const user = useSelector((state:RootState)=>state.user.value)
   const branchIds = useMemo(
     () => branches.map((br) => br._id).join(","),
     [branches],
@@ -104,7 +105,7 @@ const AnalysisPage: React.FC = () => {
             <div>
               <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-800 md:text-3xl">
                 <FileText className="w-8 h-8 text-blue-600" />
-                Analysis & Reports
+                Analysis & Reports for  { user.role === USER_ROLES.SUPER_ADMIN?"all branches":"this branch" } 
               </h1>
               <p className="mt-1 text-gray-600">
                 Business performance analytics for your laundry

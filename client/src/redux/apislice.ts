@@ -30,7 +30,7 @@ export const laundryApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["User", "Order", "Branch", "Expense"],
+  tagTypes: ["User", "Order", "Branch", "Expense", "Staff",],
   endpoints: (build) => ({
     createAccount: build.mutation<
       {
@@ -56,6 +56,7 @@ export const laundryApi = createApi({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["Staff"],
     }),
 
     login: build.mutation<
@@ -85,6 +86,7 @@ export const laundryApi = createApi({
         method: "PUT",
         body,
       }),
+      invalidatesTags: ["Staff", "User"],
     }),
 
     getauthuser: build.query<{ status: Number; data: user }, void>({
@@ -92,7 +94,7 @@ export const laundryApi = createApi({
       providesTags: ["User"],
     }),
 
-    findAndFilterUser: build.mutation<
+    findAndFilterUser: build.query<
       {
         status: Number;
         data: { results: user[] } & pagination;
@@ -104,6 +106,7 @@ export const laundryApi = createApi({
         method: "POST",
         body,
       }),
+      providesTags: ["Staff"],
     }),
     deleteUser: build.mutation<
       {
@@ -409,7 +412,7 @@ export const {
   useUpdateOrderMutation,
   useGetBranchNamesByBusinessQuery,
   useCreateStaffAccountMutation,
-  useFindAndFilterUserMutation,
+  useFindAndFilterUserQuery,
   useDeleteBranchMutation,
   useDeleteOrderMutation,
   useDeleteUserMutation,
@@ -424,5 +427,5 @@ export const {
   useFindAndFilterExpenseMutation,
   useDeleteExpenseMutation,
   // analysis
-useGetcompleteAnalysisQuery
+  useGetcompleteAnalysisQuery,
 } = laundryApi;

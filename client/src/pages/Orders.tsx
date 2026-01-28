@@ -215,6 +215,17 @@ const Orders = () => {
     setDateFilter("all");
     setBranchFilter("all");
   };
+  const statusOptions = [
+    "pending",
+    "processing",
+    "washing",
+    "drying",
+    "ironing",
+    "ready",
+    "completed",
+    "delivered",
+    "cancelled",
+  ];
 
   return (
     <div className="space-y-6">
@@ -304,10 +315,11 @@ const Orders = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
+                {statusOptions.map((item) => (
+                  <option key={item} value={item}>
+                    {item}{" "}
+                  </option>
+                ))}
               </select>
             </div>
 

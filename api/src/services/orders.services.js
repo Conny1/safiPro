@@ -32,8 +32,6 @@ const addNewOrder = async (body) => {
     throw createError(404, "branch not found.");
   }
   try {
-    const order_no = await generateOrderNo();
-    body["order_no"] = order_no;
     const order = new Order(body);
     return await order.save();
   } catch (error) {

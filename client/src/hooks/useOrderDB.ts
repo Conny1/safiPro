@@ -1,6 +1,6 @@
 // src/hooks/useOrderDB.ts
 import { useEffect, useState, useCallback } from 'react';
-import { generateOfflineOrderId, generateOrderNo, orderDB } from '../utils/indexDB/indexedDBManager';
+import { generateOfflineOrderId, orderDB } from '../utils/indexDB/indexedDBManager';
 import type {  addOrder,  Order, findandfilter as OrderFilter } from '../types';
 
 export function useOrderDB() {
@@ -30,8 +30,7 @@ export function useOrderDB() {
   // CREATE/UPDATE: Save order
   const saveOrder = useCallback(async (order: addOrder &{branch_id:string}  ) => {
     if (!isReady) throw new Error('Database not ready');
-    let order_no = generateOrderNo()
-    const savedOrder = orderDB.saveOrder({_id:generateOfflineOrderId(), order_no, sync_status: 'pending' as const,
+    const savedOrder = orderDB.saveOrder({_id:generateOfflineOrderId(), sync_status: 'pending' as const,
    ...order}  );
 return {
       status: 200,

@@ -52,24 +52,23 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [updateOrder, { isLoading: updateloading }] = useUpdateOrderMutation();
-useEffect(() => {
-  // update online offline mode
-  console.log(isOnline, "isOffline")
-}, [isReady])
-
+  useEffect(() => {
+    // update online offline mode
+    console.log(isOnline, "isOffline");
+  }, [isReady]);
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
     const val =
       type === "checkbox"
         ? (e.target as HTMLInputElement).checked
         : type === "number"
-        ? parseFloat(value) || 0
-        : value;
+          ? parseFloat(value) || 0
+          : value;
 
     setFormData((prev) => ({
       ...prev,
@@ -86,23 +85,23 @@ useEffect(() => {
     }
 
     try {
-      let status
+      let status;
       if (isOnline) {
         const result = await updateOrder({
           ...formData,
           _id: orderData._id,
         });
-        status = result.data?.status
+        status = result.data?.status;
       } else {
-        console.log("updatingOfline data")
-        const result = await updateOrderWhileOffline(orderData._id as string ,{
+        console.log("updatingOfline data");
+        const result = await updateOrderWhileOffline(orderData._id as string, {
           ...formData,
           _id: orderData._id,
         });
-        status = result.status
+        status = result.status;
       }
 
-      if ( status && status === 200) {
+      if (status && status === 200) {
         toast.success("Order updated successfully!");
         setTimeout(() => {
           setupdateModal(false);
@@ -161,8 +160,8 @@ useEffect(() => {
     { value: "washing", label: "Washing" },
     { value: "drying", label: "Drying" },
     { value: "ironing", label: "Ironing" },
-    { value: "ready", label: "Ready for Pickup" },
     { value: "completed", label: "Completed" },
+    { value: "ready", label: "Ready for Pickup/Delivery" },
     { value: "delivered", label: "Delivered" },
     { value: "cancelled", label: "Cancelled" },
   ];
@@ -210,7 +209,7 @@ useEffect(() => {
                   <span className="text-sm text-gray-600">
                     Created on{" "}
                     {new Date(
-                      orderData.createdAt || orderData.order_date || ""
+                      orderData.createdAt || orderData.order_date || "",
                     ).toLocaleDateString()}
                   </span>
                 </div>
@@ -367,7 +366,7 @@ useEffect(() => {
               </div>
               <div className="md:col-span-2">
                 <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Items Description 
+                  Items Description
                 </label>
                 <div className="relative">
                   <ShoppingBag className="absolute w-4 h-4 text-gray-400 left-3 top-3" />

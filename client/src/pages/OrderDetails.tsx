@@ -136,7 +136,7 @@ const [order, setorder] = useState <Order> ()
     setorder(data?.data)
   }
 
-}, [isReady, isLoading])
+}, [isReady, isLoading, data?.data])
 
 
   if (isLoading) {
@@ -445,7 +445,7 @@ const [order, setorder] = useState <Order> ()
             {/* Order Timeline */}
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
               <h3 className="mb-4 font-semibold text-gray-900">
-                Order Timeline
+                Order Timeline <span className="text-red-600" > feature comming soon</span> 
               </h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">

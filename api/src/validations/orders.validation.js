@@ -4,7 +4,7 @@ const { objectId } = require("../utils/index");
   const statusOptions = ["pending", "processing","washing","drying","ironing","ready", "completed", "delivered","cancelled"]
 const createOrder = {
   body: Joi.object().keys({
-    // order_no: Joi.string().optional(),
+    order_no: Joi.string().required(),
     branch_id: Joi.string().custom(objectId).required(),
     name: Joi.string().required(),
     email: Joi.string().email().allow("", null),

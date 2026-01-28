@@ -1,47 +1,41 @@
-import { useEffect, useState } from "react";
-import { useFindAndFilterUserMutation } from "../redux/apislice";
+import {  useMemo, useState } from "react";
 import type { pagination, user } from "../types";
 
 import { UpdateStaff } from ".";
+import { useFindAndFilterUserQuery } from "../redux/apislice";
+import { LoaderIcon } from "lucide-react";
 
 const ListStaff = () => {
-  const [staff, setstaff] = useState<user[] | []>([]);
   const [editmodal, seteditmodal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<user | null>(null);
   const [paginationdata, setpaginationdata] = useState<pagination>({
-    page: 0,
+    page: 1,
     limit: 10,
     totalPages: 0,
     totalResults: 0,
   });
-  const [findAndFilterUser, { isLoading: findloading }] =
-    useFindAndFilterUserMutation();
-  const fetchUsers = () => {
-    findAndFilterUser({
-      match_values: { },
-      sortBy: "_id:-1",
-      limit: 10,
-      page: paginationdata.page,
-      search: "",
-    })
-      .then((resp) => {
-        if (resp.data?.status === 200) {
-          setstaff(resp.data.data.results);
-          setpaginationdata({
-            page: resp.data.data.page || 0,
-            limit: resp.data.data.limit || 10,
-            totalPages: resp.data.data.totalPages || 0,
-            totalResults: resp.data.data.totalResults || 0,
+  const [filters, setfilters] = useState({
+    match_values: {},
+    sortBy: "_id:-1",
+    limit: 10,
+    page: 1,
+    search: "",
+  });
+  const { data, isLoading: findloading } = useFindAndFilterUserQuery(filters);
+  const staff = useMemo(() => {
+    if(data?.data){
+        setpaginationdata({
+            page: data.data.page || 1,
+            limit: data.data.limit || 10,
+            totalPages: data.data.totalPages || 0,
+            totalResults: data.data.totalResults || 0,
           });
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
-  useEffect(() => {
-    fetchUsers();
-  }, [paginationdata.page, editmodal]);
+          return data.data.results
+    }
+    return []
+  }, [filters.page, data,editmodal ])
+ if(findloading) return <> <LoaderIcon /> <p>Loading...</p> </> 
+
 
   return (
     <div className="space-y-8">
@@ -107,7 +101,7 @@ const ListStaff = () => {
         <div className="flex space-x-1">
           <button
             onClick={() => {
-              setpaginationdata((prev) => ({
+              setfilters((prev) => ({
                 ...prev,
 
                 page: prev.page === 1 ? 1 : prev.page - 1,
@@ -120,10 +114,10 @@ const ListStaff = () => {
 
           <button
             onClick={() => {
-              setpaginationdata((prev) => ({
+              setfilters((prev) => ({
                 ...prev,
 
-                page: prev.page < prev.totalPages ? prev.page + 1 : prev.page,
+                page: prev.page < paginationdata.totalPages ? prev.page + 1 : prev.page,
               }));
             }}
             className="px-3 py-1 text-sm font-normal transition duration-200 bg-white border rounded min-w-9 min-h-9 text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 ease"

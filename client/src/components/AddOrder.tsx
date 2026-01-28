@@ -10,7 +10,6 @@ import type { RootState } from "../redux/store";
 import {
   X,
   User,
-  Mail,
   Phone,
   Calendar,
   DollarSign,
@@ -27,6 +26,7 @@ import {
 } from "lucide-react";
 import { useOrderDB } from "../hooks/useOrderDB";
 import useNetworkStatus from "../hooks/useNetworkStatus";
+import { generateOrderNo } from "../utils/indexDB/indexedDBManager";
 
 type Props = {
   setaddModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -42,6 +42,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   );
 
   const [formData, setFormData] = useState<addOrder>({
+    order_no: generateOrderNo(),
     name: "",
     email: "",
     phone_number: "",
@@ -153,6 +154,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
 
         // Reset form
         setFormData({
+          order_no: "",
           name: "",
           email: "",
           phone_number: "",
@@ -339,7 +341,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                     placeholder="John Doe"
                   />
                 </div>
-                <div>
+                {/* <div>
                   <label className="block mb-2 text-sm font-medium text-gray-700">
                     <Mail className="inline w-4 h-4 mr-2" />
                     Email Address
@@ -352,7 +354,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="customer@example.com"
                   />
-                </div>
+                </div> */}
                 <div className="md:col-span-2">
                   <label className="block mb-2 text-sm font-medium text-gray-700">
                     <Phone className="inline w-4 h-4 mr-2" />
@@ -363,6 +365,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                   </label>
                   <input
                     name="phone_number"
+                    type="tel"
                     required
                     value={formData.phone_number}
                     onChange={handleChange}
@@ -525,6 +528,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                     <option value="drying">Drying</option>
                     <option value="ironing">Ironing</option>
                     <option value="completed">Completed</option>
+                    <option value="ready">Ready for pickup/delivery</option>
                     <option value="delivered">Delivered</option>
                   </select>
                 </div>
