@@ -2,11 +2,11 @@ const { createError } = require("../configs/errorConfig");
 const { analysisService } = require("../services");
 
 const getCompleteAnalysisData = async (req, res, next) => {
-  const branches_id = [];
+  let branches_id = [];
   const business_id = req.user.business_id
   try {
     const { branchId, dateFilter, customStart, customEnd } = req.query;
-    if (!branchId) {
+    if (!branchId ) {
       branches_id = req.user.branches.map((item) => item.branch_id);
     } else {
       branches_id.push(...branchId.split(","));
