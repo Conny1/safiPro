@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AddOrder } from "../components";
 import { Link } from "react-router";
-import type { Order, pagination } from "../types";
+import { USER_ROLES, type Order, type pagination } from "../types";
 import { useFindAndFilterOrderMutation } from "../redux/apislice";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
@@ -36,6 +36,7 @@ const Orders = () => {
   const { isOnline } = useNetworkStatus();
   const { getOrders: getOfflineOrders, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
+  const branches = useSelector((state: RootState) => state.branch.value);
   const [addModal, setaddModal] = useState(false);
   const [orders, setorders] = useState<Order[] | []>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,12 +58,17 @@ const Orders = () => {
 
   const fetchOrders = () => {
     const filters: any = {
-      match_values: { branch_id: user.branches.map((val) => val?.branch_id) },
+      match_values: {},
       sortBy: "_id:-1",
       limit: paginationdata.limit,
       page: paginationdata.page,
       search: searchTerm || "",
     };
+
+    if (user.role !== USER_ROLES.SUPER_ADMIN) {
+      filters.match_values.branch_id =  user.branches.map((val) => val?.branch_id)
+      
+    }
 
     if (statusFilter !== "all") {
       filters.match_values.status = statusFilter;
@@ -338,24 +344,7 @@ const Orders = () => {
                 <option value="month">Last 30 Days</option>
               </select>
             </div>
-            {/*             
-            {user.branches.length > 1 && (
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">Branch</label>
-                <select
-                  value={branchFilter}
-                  onChange={(e) => setBranchFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="all">All Branches</option>
-                  {user.branches.map((branch) => (
-                    <option key={branch.branch_id} value={branch.branch_id}>
-                      {branch.branch_name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )} */}
+
           </div>
         )}
       </div>
@@ -374,6 +363,27 @@ const Orders = () => {
                   : `${paginationdata.totalResults} total orders`}
               </p>
             </div>
+
+
+            {user.branches.length > 1 && user.role === USER_ROLES.SUPER_ADMIN && (
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Branch
+                </label>
+                <select
+                  value={branchFilter}
+                  onChange={(e) => setBranchFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">All Branches</option>
+                  {branches.map((branch) => (
+                    <option key={branch._id} value={branch._id}>
+                      {branch.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
 

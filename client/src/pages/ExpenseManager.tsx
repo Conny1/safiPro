@@ -16,15 +16,16 @@ import {
   ChevronDown,
   LoaderIcon,
 } from "lucide-react";
-import type {
-  Expense,
-  ExpenseCategory,
-  CategoryInfo,
-  PaymentMethod,
-  PaymentMethodInfo,
-  DateFilter,
-  pagination,
-  addExpenseType,
+import {
+  type Expense,
+  type ExpenseCategory,
+  type CategoryInfo,
+  type PaymentMethod,
+  type PaymentMethodInfo,
+  type DateFilter,
+  type pagination,
+  type addExpenseType,
+  USER_ROLES,
 } from "../types";
 import { ExpenseForm, OfflineMode } from "../components";
 import {
@@ -34,11 +35,16 @@ import {
   useUpdateExpenseMutation,
 } from "../redux/apislice";
 import { toast, ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux";
+import type { RootState } from "../redux/store";
 
 const ExpenseList: React.FC = () => {
+  const user = useSelector((state: RootState) => state.user.value);
+  const branches = useSelector((state: RootState) => state.branch.value);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [branchFilter, setBranchFilter] = useState("all");
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -46,17 +52,18 @@ const ExpenseList: React.FC = () => {
     from: "",
     to: "",
   });
-  const [addExpense, {isLoading:addLoading }] = useAddnewExpenseMutation();
-  const [updateExpense ,{isLoading:updateLoading} ] = useUpdateExpenseMutation();
+  const [addExpense, { isLoading: addLoading }] = useAddnewExpenseMutation();
+  const [updateExpense, { isLoading: updateLoading }] =
+    useUpdateExpenseMutation();
   const [paginationdata, setpaginationdata] = useState<pagination>({
     page: 1,
     limit: 10,
     totalPages: 0,
     totalResults: 0,
   });
-  const [findAndFilterExpense] =
-    useFindAndFilterExpenseMutation();
-const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
+  const [findAndFilterExpense] = useFindAndFilterExpenseMutation();
+  const [deleteExpense, { isLoading: deleteLoading }] =
+    useDeleteExpenseMutation();
   const fetchExpense = () => {
     const filters: any = {
       match_values: {},
@@ -70,6 +77,15 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
       filters.match_values.category = selectedCategory;
     }
 
+    if (user.role !== USER_ROLES.SUPER_ADMIN) {
+      filters.match_values.branch_id = user.branches.map(
+        (val) => val?.branch_id,
+      );
+    }
+
+    if (branchFilter !== "all" && user.branches.length > 1) {
+      filters.match_values.branch_id = branchFilter;
+    }
     // if (dateFilter.from) {
     //   let startDate = dateFilter.from
     //   filters.match_values.date = { $gte: startDate };
@@ -83,7 +99,7 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
     findAndFilterExpense(filters)
       .then((resp) => {
         if (resp.data?.status === 200) {
-          console.log(resp.data)
+          console.log(resp.data);
           setExpenses(resp.data.data.results);
           setpaginationdata({
             page: resp.data.data.page || 1,
@@ -99,9 +115,8 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
   };
 
   useEffect(() => {
-    console.log(expenses)
     fetchExpense();
-  }, [paginationdata.page, selectedCategory, dateFilter, searchTerm]);
+  }, [paginationdata.page, selectedCategory, dateFilter, searchTerm, branchFilter ]);
 
   // Expense categoriesbank
   const categories: CategoryInfo[] = [
@@ -175,7 +190,7 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
   const handleDeleteExpense = async (id: string) => {
     const resp = await deleteExpense(id);
     if (resp.data?.status == 200) {
-      fetchExpense()
+      fetchExpense();
       toast.success("expense deleted");
     } else {
       toast.error("Try again..");
@@ -184,10 +199,9 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
   const addnewExpense = async (data: addExpenseType) => {
     const resp = await addExpense(data);
     if (resp.data?.status == 200) {
-      fetchExpense()
+      fetchExpense();
       setShowForm(false);
       toast.success("new expense added");
-      
     } else {
       toast.error("Try again..");
     }
@@ -196,7 +210,7 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
   const updateTheExpense = async (data: Partial<Expense>) => {
     const resp = await updateExpense(data);
     if (resp.data?.status == 200) {
-      fetchExpense()
+      fetchExpense();
       setShowForm(false);
       toast.success("Data edited");
     } else {
@@ -205,13 +219,13 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
   };
   const handleSaveExpense = (expenseData: Omit<Expense, "_id">): void => {
     if (editingExpense) {
-      updateTheExpense({...expenseData,_id:editingExpense._id });
+      updateTheExpense({ ...expenseData, _id: editingExpense._id });
     } else {
       addnewExpense(expenseData);
     }
   };
 
-  const formatCurrency = (amount: number): string => { 
+  const formatCurrency = (amount: number): string => {
     return `Ksh ${amount.toLocaleString("en-KE")}`;
   };
 
@@ -234,28 +248,28 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
 
   return (
     <OfflineMode>
-         <div className="p-3 mx-auto ">
-      {/* Header */}
-      <ToastContainer/>
-      <div className="flex flex-col items-start justify-between gap-4 mb-6 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">
-            Expense Management
-          </h1>
-          <p className="mt-1 text-gray-600">
-            Track and manage your business expenses
-          </p>
+      <div className="p-3 mx-auto ">
+        {/* Header */}
+        <ToastContainer />
+        <div className="flex flex-col items-start justify-between gap-4 mb-6 sm:flex-row sm:items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">
+              Expense Management
+            </h1>
+            <p className="mt-1 text-gray-600">
+              Track and manage your business expenses
+            </p>
+          </div>
+          <button
+            onClick={handleAddExpense}
+            className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+          >
+            <Plus className="w-5 h-5" />
+            Add Expense
+          </button>
         </div>
-        <button
-          onClick={handleAddExpense}
-          className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
-        >
-          <Plus className="w-5 h-5" />
-          Add Expense
-        </button>
-      </div>
 
-      {/* Summary Cards
+        {/* Summary Cards
       <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-4">
         <div className="p-4 bg-white border rounded-lg shadow">
           <div className="flex items-center justify-between">
@@ -316,77 +330,77 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
         </div>
       </div> */}
 
-      {/* Search and Filter Bar */}
-      <div className="p-4 mb-6 bg-white border rounded-lg shadow">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
-          <div className="md:col-span-5">
-            <div className="relative">
-              <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
-              <input
-                type="text"
-                placeholder="Search expenses..."
-                value={searchTerm}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setSearchTerm(e.target.value)
-                }
-                className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+        {/* Search and Filter Bar */}
+        <div className="p-4 mb-6 bg-white border rounded-lg shadow">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
+            <div className="md:col-span-5">
+              <div className="relative">
+                <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search expenses..."
+                  value={searchTerm}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSearchTerm(e.target.value)
+                  }
+                  className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="md:col-span-3">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center justify-center w-full gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                <Filter className="w-4 h-4" />
+                Filters
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${
+                    showFilters ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+            </div>
+
+            <div className="flex gap-2 md:col-span-4">
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("all");
+                  setDateFilter({ from: "", to: "" });
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Clear All
+              </button>
             </div>
           </div>
 
-          <div className="md:col-span-3">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center justify-center w-full gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-            >
-              <Filter className="w-4 h-4" />
-              Filters
-              <ChevronDown
-                className={`w-4 h-4 transition-transform ${
-                  showFilters ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-          </div>
-
-          <div className="flex gap-2 md:col-span-4">
-            <button
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedCategory("all");
-                setDateFilter({ from: "", to: "" });
-              }}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-            >
-              Clear All
-            </button>
-          </div>
-        </div>
-
-        {/* Expanded Filters */}
-        {showFilters && (
-          <div className="pt-4 mt-4 border-t border-gray-200">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div>
-                <label className="block mb-1 text-sm font-medium text-gray-700">
-                  Category
-                </label>
-                <select
-                  value={selectedCategory}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    setSelectedCategory(e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="all">All Categories</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-{/* 
+          {/* Expanded Filters */}
+          {showFilters && (
+            <div className="pt-4 mt-4 border-t border-gray-200">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Category
+                  </label>
+                  <select
+                    value={selectedCategory}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                      setSelectedCategory(e.target.value)
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="all">All Categories</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* 
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">
                   From Date
@@ -401,7 +415,7 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
                 />
               </div> */}
 
-              {/* <div>
+                {/* <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">
                   To Date
                 </label>
@@ -414,191 +428,214 @@ const [deleteExpense, {isLoading:deleteLoading}] = useDeleteExpenseMutation()
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div> */}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      {/* Category Filter Chips */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <button
-          onClick={() => setSelectedCategory("all")}
-          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-            selectedCategory === "all"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
-        >
-          All
-        </button>
-        {categories.map((category) => (
+        {/* Category Filter Chips */}
+        <div className="flex flex-wrap gap-2 mb-6">
           <button
-            key={category.id}
-            onClick={() => setSelectedCategory(category.id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              selectedCategory === category.id
-                ? `${category.color} text-white`
+            onClick={() => setSelectedCategory("all")}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              selectedCategory === "all"
+                ? "bg-blue-600 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
-            {category.icon}
-            {category.label}
+            All
           </button>
-        ))}
-      </div>
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setSelectedCategory(category.id)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === category.id
+                  ? `${category.color} text-white`
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {category.icon}
+              {category.label}
+            </button>
+          ))}
 
-      {/* Expenses List */}
-      <div className="overflow-hidden bg-white border rounded-lg shadow">
-        {expenses.length === 0 ? (
-          <div className="p-8 text-center">
-            <div className="mb-2 text-gray-400">
-              <FileText className="w-12 h-12 mx-auto" />
+          {user.branches.length > 1 && user.role === USER_ROLES.SUPER_ADMIN && (
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Branch
+              </label>
+              <select
+                value={branchFilter}
+                onChange={(e) => setBranchFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="all">All Branches</option>
+                {branches.map((branch) => (
+                  <option key={branch._id} value={branch._id}>
+                    {branch.name}
+                  </option>
+                ))}
+              </select>
             </div>
-            <p className="text-gray-600">
-              No expenses found.{" "}
-              {searchTerm
-                ? "Try a different search."
-                : "Add your first expense!"}
-            </p>
-          </div>
-        ) : (
-          <div className="divide-y divide-gray-200">
-            {expenses.map((expense: Expense) => {
-              const categoryInfo = getCategoryInfo(expense.category);
-              const paymentInfo = paymentMethods[expense.paymentMethod];
+          )}
+        </div>
 
-              return (
-                <div
-                  key={expense._id}
-                  className="p-4 transition-colors hover:bg-gray-50"
-                >
-                  <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                    <div className="flex items-start flex-1 gap-3">
-                      <div className={`${categoryInfo.color} p-2 rounded-lg`}>
-                        {categoryInfo.icon}
-                      </div>
+        {/* Expenses List */}
+        <div className="overflow-hidden bg-white border rounded-lg shadow">
+          {expenses.length === 0 ? (
+            <div className="p-8 text-center">
+              <div className="mb-2 text-gray-400">
+                <FileText className="w-12 h-12 mx-auto" />
+              </div>
+              <p className="text-gray-600">
+                No expenses found.{" "}
+                {searchTerm
+                  ? "Try a different search."
+                  : "Add your first expense!"}
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {expenses.map((expense: Expense) => {
+                const categoryInfo = getCategoryInfo(expense.category);
+                const paymentInfo = paymentMethods[expense.paymentMethod];
 
-                      <div className="flex-1">
-                        <div className="flex flex-col gap-2 mb-2 sm:flex-row sm:items-center">
-                          <h3 className="font-medium text-gray-900">
-                            {expense.description}
-                          </h3>
-                          <div className="flex flex-wrap gap-2">
-                            <span
-                              className={`px-2 py-0.5 rounded text-xs font-medium ${categoryInfo.color.replace(
-                                "bg-",
-                                "bg-"
-                              )} bg-opacity-20 text-gray-700`}
-                            >
-                              {categoryInfo.label}
+                return (
+                  <div
+                    key={expense._id}
+                    className="p-4 transition-colors hover:bg-gray-50"
+                  >
+                    <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                      <div className="flex items-start flex-1 gap-3">
+                        <div className={`${categoryInfo.color} p-2 rounded-lg`}>
+                          {categoryInfo.icon}
+                        </div>
+
+                        <div className="flex-1">
+                          <div className="flex flex-col gap-2 mb-2 sm:flex-row sm:items-center">
+                            <h3 className="font-medium text-gray-900">
+                              {expense.description}
+                            </h3>
+                            <div className="flex flex-wrap gap-2">
+                              <span
+                                className={`px-2 py-0.5 rounded text-xs font-medium ${categoryInfo.color.replace(
+                                  "bg-",
+                                  "bg-",
+                                )} bg-opacity-20 text-gray-700`}
+                              >
+                                {categoryInfo.label}
+                              </span>
+                              <span
+                                className={`px-2 py-0.5 rounded text-xs font-medium border ${paymentInfo.color}`}
+                              >
+                                {paymentInfo.label}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              {expense.date}
                             </span>
-                            <span
-                              className={`px-2 py-0.5 rounded text-xs font-medium border ${paymentInfo.color}`}
-                            >
-                              {paymentInfo.label}
+                            <span className="font-medium text-red-600">
+                              {formatCurrency(expense.amount)}
                             </span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {expense.date}
-                          </span>
-                          <span className="font-medium text-red-600">
-                            {formatCurrency(expense.amount)}
-                          </span>
-                        </div>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEditExpense(expense)}
+                          className="p-2 text-blue-600 transition-colors rounded-lg hover:bg-blue-50"
+                          title="Edit"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          disabled={deleteLoading}
+                          onClick={() => handleDeleteExpense(expense._id)}
+                          className="p-2 text-red-600 transition-colors rounded-lg hover:bg-red-50"
+                          title="Delete"
+                        >
+                          {deleteLoading ? (
+                            <LoaderIcon className="w-4 h-4" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </button>
                       </div>
                     </div>
-
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEditExpense(expense)}
-                        className="p-2 text-blue-600 transition-colors rounded-lg hover:bg-blue-50"
-                        title="Edit"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button
-                      disabled={deleteLoading}
-                        onClick={() => handleDeleteExpense(expense._id)}
-                        className="p-2 text-red-600 transition-colors rounded-lg hover:bg-red-50"
-                        title="Delete"
-                      >
-                       { deleteLoading? <LoaderIcon className="w-4 h-4" />  : <Trash2 className="w-4 h-4" />}
-                      </button>
-                    </div>
                   </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Expense Form Modal */}
+        {showForm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-gray-900">
+                    {editingExpense ? "Edit Expense" : "Add New Expense"}
+                  </h2>
+                  <button
+                    onClick={() => setShowForm(false)}
+                    className="p-1 transition-colors rounded-lg hover:bg-gray-100"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
 
-      {/* Expense Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900">
-                  {editingExpense ? "Edit Expense" : "Add New Expense"}
-                </h2>
-                <button
-                  onClick={() => setShowForm(false)}
-                  className="p-1 transition-colors rounded-lg hover:bg-gray-100"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <ExpenseForm
+                  expense={editingExpense}
+                  onSave={handleSaveExpense}
+                  onCancel={() => setShowForm(false)}
+                  categories={categories}
+                  isLoading={addLoading || updateLoading}
+                />
               </div>
-
-              <ExpenseForm
-                expense={editingExpense}
-                onSave={handleSaveExpense}
-                onCancel={() => setShowForm(false)}
-                categories={categories}
-                isLoading={ addLoading || updateLoading }
-              />
             </div>
           </div>
-        </div>
-      )}
-            <div className="flex items-center justify-between px-4 py-3 ">
-        <div className="text-sm text-slate-500">
-          Showing <b>{paginationdata.page} </b> of {paginationdata.totalPages}
-        </div>
-        <div className="flex space-x-1">
-          <button
-            onClick={() => {
-              setpaginationdata((prev) => ({
-                ...prev,
+        )}
+        <div className="flex items-center justify-between px-4 py-3 ">
+          <div className="text-sm text-slate-500">
+            Showing <b>{paginationdata.page} </b> of {paginationdata.totalPages}
+          </div>
+          <div className="flex space-x-1">
+            <button
+              onClick={() => {
+                setpaginationdata((prev) => ({
+                  ...prev,
 
-                page: prev.page === 1 ? 1 : prev.page - 1,
-              }));
-            }}
-            className="px-3 py-1 text-sm font-normal transition duration-200 bg-white border rounded min-w-9 min-h-9 text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 ease"
-          >
-            Prev
-          </button>
+                  page: prev.page === 1 ? 1 : prev.page - 1,
+                }));
+              }}
+              className="px-3 py-1 text-sm font-normal transition duration-200 bg-white border rounded min-w-9 min-h-9 text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 ease"
+            >
+              Prev
+            </button>
 
-          <button
-            onClick={() => {
-              setpaginationdata((prev) => ({
-                ...prev,
+            <button
+              onClick={() => {
+                setpaginationdata((prev) => ({
+                  ...prev,
 
-                page: prev.page < prev.totalPages ? prev.page + 1 : prev.page,
-              }));
-            }}
-            className="px-3 py-1 text-sm font-normal transition duration-200 bg-white border rounded min-w-9 min-h-9 text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 ease"
-          >
-            Next
-          </button>
+                  page: prev.page < prev.totalPages ? prev.page + 1 : prev.page,
+                }));
+              }}
+              className="px-3 py-1 text-sm font-normal transition duration-200 bg-white border rounded min-w-9 min-h-9 text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-400 ease"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
-    </div>
     </OfflineMode>
- 
   );
 };
 

@@ -53,6 +53,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isLoading, expense, onSave, o
         paymentMethod: expense.paymentMethod || 'cash',
         notes: expense.notes || ''
       });
+      setactiveBranch( expense.branch_id || "" )
     }
   }, [expense]);
 

@@ -41,7 +41,7 @@ const Dashboard = () => {
     (state: RootState) => state.branch.value
   );
   const dispatch = useDispatch();
-  const [branchModal, setbranchModal] = useState(true);
+  const [branchModal, setbranchModal] = useState( user.role === USER_ROLES.SUPER_ADMIN?true:false);
   const [activeBranch, setactiveBranch] = useState(
     user.role === USER_ROLES.SUPER_ADMIN ? "" : user?.branches[0]?.branch_id
   );

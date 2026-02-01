@@ -26,7 +26,7 @@ const checkSubscription = cron.schedule(
                 { $set: { subscription: "inactive" } }
               ),
               Payment.findOneAndUpdate(
-                { business_id: new ObjectId(business_id) },
+                { _id: new ObjectId(item._id) },
                 {
                   $set: { status: "expired" },
                 }
