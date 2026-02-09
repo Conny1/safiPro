@@ -308,7 +308,7 @@ const OrderItem: React.FC<OrderItemProps> = ({
 
                 <div className="flex gap-3">
                   <button
-                    onClick={() => removeImage(images[currentIndex + 1].id)}
+                    onClick={() => removeImage(images[currentIndex].id)}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-red-700 transition-colors duration-200 bg-red-100 rounded-md hover:bg-red-200"
                   >
                     <svg
