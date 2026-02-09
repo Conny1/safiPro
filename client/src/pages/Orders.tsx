@@ -34,7 +34,7 @@ import { useOrderDB } from "../hooks/useOrderDB";
 const Orders = () => {
   // check connection
   const { isOnline } = useNetworkStatus();
-  const { getOrders: getOfflineOrders, isReady } = useOrderDB();
+  const { getOrders:getOfflineOrders, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
   const branches = useSelector((state: RootState) => state.branch.value);
   const [addModal, setaddModal] = useState(false);
