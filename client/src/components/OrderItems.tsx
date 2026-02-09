@@ -63,6 +63,13 @@ const OrderItem: React.FC<OrderItemProps> = ({
       const resp = await deleteOrderItem({ _id: orderId, id: key });
       if (resp && resp.data?.status == 200) {
         toast.success("item removed");
+        setCurrentIndex((prev)=>{
+          if(prev<= images.length -1 && prev >0 ){
+            return prev-1
+          }else{
+            return 0
+          }
+        })
         if( images.length ===1){
           setIsViewerOpen(false)
         }
@@ -248,7 +255,7 @@ const OrderItem: React.FC<OrderItemProps> = ({
               {/* Main Image */}
               <div className="flex items-center justify-center flex-1 h-full">
                 <img
-                  src={images[currentIndex].url}
+                  src={images[currentIndex]?.url}
                   alt={`View ${currentIndex + 1}`}
                   className="max-h-[50vh] sm:max-h-[60vh] max-w-full object-contain rounded-lg"
                 />
