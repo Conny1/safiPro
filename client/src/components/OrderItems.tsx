@@ -63,6 +63,9 @@ const OrderItem: React.FC<OrderItemProps> = ({
       const resp = await deleteOrderItem({ _id: orderId, id: key });
       if (resp && resp.data?.status == 200) {
         toast.success("item removed");
+        if( images.length ===1 && currentIndex === 0){
+          setIsViewerOpen(false)
+        }
       }
     } catch (error) {
       toast.error("Try again!!");
