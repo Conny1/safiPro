@@ -64,4 +64,11 @@ route.get(
   orderController.dashboardanalysis
 );
 
+route.patch(
+  "/delete/item/:id",
+  roleValidation,
+  validate(orderValidation.deleteOrderItem),
+  orderController.deleteOrderItem
+);
+
 module.exports = route;

@@ -20,7 +20,6 @@ import {
   Save,
   RefreshCw,
   Plus,
-  ShoppingBag,
 } from "lucide-react";
 import useNetworkStatus from "../hooks/useNetworkStatus";
 import { useOrderDB } from "../hooks/useOrderDB";
@@ -364,22 +363,7 @@ const UpdateOrder = ({ setupdateModal, orderData, onUpdate }: Props) => {
                   </select>
                 </div>
               </div>
-              <div className="md:col-span-2">
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Items Description
-                </label>
-                <div className="relative">
-                  <ShoppingBag className="absolute w-4 h-4 text-gray-400 left-3 top-3" />
-                  <textarea
-                    name="items_description"
-                    value={formData.items_description}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Example: 3 Shirts, 2 Trousers, 1 Jacket..."
-                  />
-                </div>
-              </div>
+            
             </div>
           </div>
 

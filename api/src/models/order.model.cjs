@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const toJSON = require("./plugins/toJSON.plugin");
 const paginate = require("./plugins/paginatePulugins");
 const deletion = require("./plugins/deletion.plugin");
+const { string } = require("joi");
 
 const OrderSchema = new mongoose.Schema(
   {
@@ -37,7 +38,7 @@ const OrderSchema = new mongoose.Schema(
     },
     payment_status: {
       type: String,
-      enum: [ "pending",  "partial",  "paid", "refunded"],
+      enum: ["pending", "partial", "paid", "refunded"],
       default: "pending",
     },
     payment_method: {
@@ -47,7 +48,17 @@ const OrderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum:  ["pending", "processing","washing","drying","ironing","ready", "completed", "delivered","cancelled"],
+      enum: [
+        "pending",
+        "processing",
+        "washing",
+        "drying",
+        "ironing",
+        "ready",
+        "completed",
+        "delivered",
+        "cancelled",
+      ],
       default: "pending",
     },
     order_date: {
@@ -74,9 +85,19 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    items: {
+      type: [
+        {
+          description: String,
+          url: String,
+          id:String
+        },
+      ],
+      default: [],
+    },
     delivery_method: {
       type: String,
-      enum: [ "pickup", "delivery"],
+      enum: ["pickup", "delivery"],
       required: true,
     },
     is_completed: {
@@ -98,7 +119,7 @@ const OrderSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // clientSchema.plugin(toJSON);

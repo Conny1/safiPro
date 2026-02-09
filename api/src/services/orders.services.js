@@ -1,6 +1,7 @@
 const { createError } = require("../configs/errorConfig.js");
 const { Order, Branch } = require("../models/index.js");
 const { ObjectId } = require("mongodb");
+const axios = require("axios");
 
 const generateOrderNo = async () => {
   try {
@@ -43,10 +44,50 @@ const updateOrder = async (id, body) => {
   const order = await Order.findByIdAndUpdate(
     id,
     { $set: body },
-    { new: true }
+    { new: true },
   );
 
   return order;
+};
+
+const deleteImageInUploadThing = async (key) => {
+  let payload = { fileKeys: [key] };
+  try {
+    const resp = await axios.post(
+      `${process.env.UPLOADTHING_URL}/v6/deleteFiles`,
+      payload,
+      {
+        headers: {
+          "X-Uploadthing-Api-Key": process.env.UPLOADTHING_SK,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    return resp.data;
+  } catch (error) {
+    console.log(error);
+    throw createError(500, error);
+  }
+};
+
+const deleteOrderItem = async (id, body) => {
+  const order = await Order.findById(id);
+  if (!order) {
+    throw createError(404, "order not found.");
+  }
+
+  // delete from upload thing
+  const [Uresp, orderItems] = await Promise.all([
+    await deleteImageInUploadThing(body.id),
+
+    await Order.findByIdAndUpdate(
+      id,
+      { $set: { items: order.items.filter((item) => item.id !== body.id) } },
+      { new: true },
+    ),
+  ]);
+
+  return orderItems;
 };
 
 const getOrderByid = async (id) => {
@@ -87,7 +128,7 @@ const dashboardanalysis = async (id) => {
         completed_orders: [
           { $match: { status: "completed" } },
           { $count: "count" },
-        ], 
+        ],
         pending_orders: [
           { $match: { status: "pending" } },
           { $count: "count" },
@@ -108,7 +149,7 @@ const dashboardanalysis = async (id) => {
         total_orders: {
           $ifNull: [{ $arrayElemAt: ["$total_orders.count", 0] }, 0],
         },
-          pending_orders: {
+        pending_orders: {
           $ifNull: [{ $arrayElemAt: ["$pending_orders.count", 0] }, 0],
         },
         completed_orders: {
@@ -135,4 +176,5 @@ module.exports = {
   getOrderByBranchid,
   getOrderByid,
   dashboardanalysis,
+  deleteOrderItem,
 };

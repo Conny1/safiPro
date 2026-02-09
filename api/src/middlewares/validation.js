@@ -50,7 +50,7 @@ const ROUTES = {
 // Define route + method combinations per role
 const ROUTE_PERMISSIONS = {
   [USER_ROLES.SUPER_ADMIN]: [
-    { path: ROUTES.ORDER, methods: ["GET", "POST", "PUT", "DELETE"] },
+    { path: ROUTES.ORDER, methods: ["GET", "POST", "PUT", "PATCH" , "DELETE"] },
     { path: ROUTES.BRANCH, methods: ["GET", "POST", "PUT", "DELETE"] },
     { path: ROUTES.STAFF, methods: ["POST"] },
     { path: ROUTES.USER, methods: ["GET", "PUT", "DELETE", "POST"] },
@@ -59,7 +59,7 @@ const ROUTE_PERMISSIONS = {
     { path: ROUTES.ANALYSIS, methods: ["GET", "PUT", "DELETE", "POST"] },
   ],
   [USER_ROLES.STAFF]: [
-    { path: ROUTES.ORDER, methods: ["GET", "POST", "PUT"] },
+    { path: ROUTES.ORDER, methods: ["GET", "POST", "PUT", "PATCH"] },
     { path: ROUTES.STAFF, methods: ["PUT"] },
     { path: ROUTES.EXPENSE, methods: ["GET", "PUT", "DELETE", "POST"] },
     { path: ROUTES.ANALYSIS, methods: ["GET", "PUT", "DELETE", "POST"] },

@@ -21,7 +21,6 @@ import {
   Loader2,
   Building,
   Plus,
-  ShoppingBag,
   Clock,
 } from "lucide-react";
 import { useOrderDB } from "../hooks/useOrderDB";
@@ -455,20 +454,7 @@ const AddOrder = ({ setaddModal, onSuccess }: Props) => {
                     ))}
                   </select>
                 </div>
-                <div className="md:col-span-2">
-                  <label className="block mb-2 text-sm font-medium text-gray-700">
-                    <ShoppingBag className="inline w-4 h-4 mr-2" />
-                    Items Description
-                  </label>
-                  <textarea
-                    name="items_description"
-                    value={formData.items_description}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Example: 3 Shirts, 2 Trousers, 1 Jacket..."
-                  />
-                </div>
+             
               </div>
             </div>
           )}

@@ -4,7 +4,7 @@ import {
   useDeleteOrderMutation,
   useGetOrderByIdQuery,
 } from "../redux/apislice";
-import { ForwardButtons, UpdateOrder } from "../components";
+import { ForwardButtons, OfflineMode, OrderItems, UpdateOrder } from "../components";
 import { toast } from "react-toastify";
 import {
   ArrowLeft,
@@ -19,14 +19,12 @@ import {
   MapPin,
   Package,
   Phone,
-  Printer,
   Tag,
   Trash2,
   Truck,
   User,
   AlertCircle,
-  Download,
-  MoreVertical,
+
   Loader2,
 } from "lucide-react";
 import { useOrderDB } from "../hooks/useOrderDB";
@@ -177,7 +175,7 @@ const [order, setorder] = useState <Order> ()
       if (resp.data?.status === 200) {
         toast.success("Order deleted successfully");
         setTimeout(() => {
-          navigate("/orders");
+          navigate("/order");
         }, 1500);
       } else {
         toast.error("Failed to delete order");
@@ -241,19 +239,7 @@ const [order, setorder] = useState <Order> ()
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
-                  <Printer className="w-4 h-4" />
-                  Print
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
-                  <Download className="w-4 h-4" />
-                  Export
-                </button>
-                <button className="p-2 text-gray-600 rounded-lg hover:text-gray-900 hover:bg-gray-100">
-                  <MoreVertical className="w-5 h-5" />
-                </button>
-              </div>
+           
             </div>
           </div>
         </div>
@@ -293,18 +279,18 @@ const [order, setorder] = useState <Order> ()
             </InfoCard>
 
             {/* Order Items */}
-            <InfoCard title="Order Items" icon={Package}>
-              {order.items_description ? (
+            <OfflineMode>
+                  <InfoCard title="Order Items" icon={Package}>
+              {order.items_description && (
                 <div className="p-3 rounded-lg bg-gray-50">
                   <p className="text-gray-700">{order.items_description}</p>
                 </div>
-              ) : (
-                <p className="text-sm text-gray-500">
-                  No item details provided
-                </p>
               )}
+              <OrderItems initialImages={order.items || []} orderId={order._id as string } orderName={order.name as string } />
     
             </InfoCard>
+            </OfflineMode>
+        
 
             {/* Service Details */}
             <InfoCard title="Service Details" icon={Home}>

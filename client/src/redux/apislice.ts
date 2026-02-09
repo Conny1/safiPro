@@ -30,7 +30,7 @@ export const laundryApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["User", "Order", "Branch", "Expense", "Staff",],
+  tagTypes: ["User", "Order", "Branch", "Expense", "Staff"],
   endpoints: (build) => ({
     createAccount: build.mutation<
       {
@@ -235,6 +235,21 @@ export const laundryApi = createApi({
       invalidatesTags: ["Order"],
     }),
 
+    deleteOrderItem: build.mutation<
+      {
+        status: Number;
+        data: Order;
+      },
+      {id:string, _id:string}
+    >({
+      query: (body) => ({
+        url: `/admin/orders/delete/item/${body?._id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Order"],
+    }),
+
     getOrderById: build.query<{ status: Number; data: Order }, string>({
       query: (id) => `/admin/orders/${id}`,
       providesTags: ["Order"],
@@ -394,6 +409,7 @@ export const laundryApi = createApi({
       }),
       providesTags: ["Expense", "Order"],
     }),
+
   }),
 });
 
@@ -406,8 +422,10 @@ export const {
   useFindAndFilterBranchMutation,
   useGetBranchByIdQuery,
   useUpdateBranchMutation,
+  // ORDERS
   useCreateNewOrderMutation,
   useFindAndFilterOrderMutation,
+  useDeleteOrderItemMutation,
   useGetOrderByIdQuery,
   useUpdateOrderMutation,
   useGetBranchNamesByBusinessQuery,
@@ -415,6 +433,7 @@ export const {
   useFindAndFilterUserQuery,
   useDeleteBranchMutation,
   useDeleteOrderMutation,
+  // 
   useDeleteUserMutation,
   useFindAndFilterPaymentMutation,
   useMpesaPaymentMutation,
@@ -428,4 +447,5 @@ export const {
   useDeleteExpenseMutation,
   // analysis
   useGetcompleteAnalysisQuery,
+
 } = laundryApi;

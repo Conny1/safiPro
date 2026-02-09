@@ -15,3 +15,4 @@ export { default as Forgotpassword } from "./Forgotpassword";
 export { default as ExpenseForm } from "./ExpenseForm";
 export { default as OfflineMode } from "./OfflineMode";
 export { default as DateRangeFilter } from "./DateRangeFilter";
+export { default as OrderItems } from "./OrderItems";

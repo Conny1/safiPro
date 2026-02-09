@@ -1,7 +1,17 @@
 const Joi = require("joi");
 const { objectId } = require("../utils/index");
-  const paymentStatusOptions = [ "pending",  "partial",  "paid", "refunded"]
-  const statusOptions = ["pending", "processing","washing","drying","ironing","ready", "completed", "delivered","cancelled"]
+const paymentStatusOptions = ["pending", "partial", "paid", "refunded"];
+const statusOptions = [
+  "pending",
+  "processing",
+  "washing",
+  "drying",
+  "ironing",
+  "ready",
+  "completed",
+  "delivered",
+  "cancelled",
+];
 const createOrder = {
   body: Joi.object().keys({
     order_no: Joi.string().required(),
@@ -9,9 +19,7 @@ const createOrder = {
     name: Joi.string().required(),
     email: Joi.string().email().allow("", null),
     phone_number: Joi.string().required(),
-    delivery_method: Joi.string()
-      .valid( "pickup" , "delivery")
-      .required(),
+    delivery_method: Joi.string().valid("pickup", "delivery").required(),
     items_description: Joi.string().default("").allow("", null),
     service_type: Joi.string()
       .valid(
@@ -20,15 +28,17 @@ const createOrder = {
         "Ironing",
         "Wash & Fold",
         "Full Service",
-        "Wash & Iron"
+        "Wash & Iron",
       )
       .required(),
-    address: Joi.string().allow(null,""),
+    address: Joi.string().allow(null, ""),
     pickup_date: Joi.string().required(),
     order_date: Joi.string().optional(),
     amount: Joi.number().required(),
     currency: Joi.string().default("KES"),
-    payment_status: Joi.string().valid(...paymentStatusOptions).required(),
+    payment_status: Joi.string()
+      .valid(...paymentStatusOptions)
+      .required(),
     payment_method: Joi.string().valid("cash", "mpesa", "card").required(),
 
     status: Joi.string()
@@ -52,16 +62,24 @@ const updateOrder = {
     email: Joi.string().email().allow("", null),
     phone_number: Joi.string(),
     is_deleted: Joi.boolean(),
-    delivery_method: Joi.string().valid( "pickup" , "delivery"),
+    delivery_method: Joi.string().valid("pickup", "delivery"),
     items_description: Joi.string().allow("", null),
-    address: Joi.string().allow(null,""),
+    address: Joi.string().allow(null, ""),
+    items: Joi.array().items(
+      Joi.object({
+        _id: Joi.string(),
+        url: Joi.string().required(),
+        description: Joi.string().allow(""),
+        id: Joi.string().required(),
+      }).required(),
+    ),
     service_type: Joi.string().valid(
       "Wash Only",
       "Dry Cleaning",
       "Ironing",
       "Wash & Fold",
       "Full Service",
-      "Wash & Iron"
+      "Wash & Iron",
     ),
     pickup_date: Joi.string(),
     order_date: Joi.string(),
@@ -74,6 +92,15 @@ const updateOrder = {
     is_completed: Joi.boolean(),
     _id: Joi.custom(objectId).required(),
     notes: Joi.string().allow("", null),
+  }),
+  params: Joi.object().keys({
+    id: Joi.custom(objectId).required(),
+  }),
+};
+const deleteOrderItem = {
+  body: Joi.object().keys({
+    id: Joi.string().required(),
+    _id:Joi.string()
   }),
   params: Joi.object().keys({
     id: Joi.custom(objectId).required(),
@@ -102,9 +129,5 @@ module.exports = {
   updateOrder,
   deleteOrder,
   findAndFilterOrders,
+  deleteOrderItem,
 };
-
-
-
-
-

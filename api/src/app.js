@@ -3,13 +3,19 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
+const { createRouteHandler } = require("uploadthing/express");
+
 const app = express();
 const appRoute = require("./routes");
 
 dotenv.config();
 app.use(express.json());
 
-const allowedOrigins = [process.env.CLIENT_URL, process.env.PAYSTACK_BASE_URL, "http://localhost:4173"];
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  process.env.PAYSTACK_BASE_URL,
+  "http://localhost:4173",
+];
 
 app.use(
   cors({
@@ -21,11 +27,26 @@ app.use(
       }
     },
     credentials: true,
-  })
+  }),
 );
 app.use(helmet());
 app.use(morgan("dev"));
+// file upload via uploadthing
 
+(async () => {
+  const { uploadRouter } = await import("./uploadthing.mjs");
+
+  app.use(
+    "/api/uploadthing/:orderId",
+    createRouteHandler({
+      router: uploadRouter,
+      config: {
+        uploadthingToken: process.env.UPLOADTHING_TOKEN,
+      },
+    })
+  );
+})();
+// All other api routes
 app.use("/", appRoute);
 
 app.use((err, req, resp, next) => {

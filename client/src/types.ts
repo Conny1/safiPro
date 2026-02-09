@@ -47,6 +47,7 @@ export type Order = {
     | "Full Service"
     | "Wash & Iron";
   items_description?: string;
+  items?:{url:string, description:string, id:string}[]
   delivery_method?:  "pickup" | "delivery"
   is_completed?: boolean;
   notes?: string;

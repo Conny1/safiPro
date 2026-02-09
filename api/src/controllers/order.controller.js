@@ -23,6 +23,15 @@ const updateOrder = async (req, resp, next) => {
   }
 };
 
+const deleteOrderItem = async (req, resp, next) => {
+  try {
+    const order = await orderService.deleteOrderItem(req.params.id, req.body);
+    resp.status(200).json({ status: 200, order });
+  } catch (error) {
+    return next(createError(error.status || 500, error.message));
+  }
+};
+
 const getOrderByBranchid = async (req, resp, next) => {
   try {
     let filter = { is_deleted: false };
@@ -100,4 +109,5 @@ module.exports = {
   getOrderByBranchid,
   getOrderByid,
   dashboardanalysis,
+  deleteOrderItem
 };
