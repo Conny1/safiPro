@@ -92,7 +92,6 @@ async function syncOrders() {
   for (const order of orders) {
     const {
       _id,
-      order_no,
       createdAt,
       updatedAt,
       last_syced,

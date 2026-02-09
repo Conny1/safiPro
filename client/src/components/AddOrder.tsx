@@ -34,7 +34,7 @@ type Props = {
 
 const AddOrder = ({ setaddModal, onSuccess }: Props) => {
   const { isOnline } = useNetworkStatus();
-  const { saveOrder: saveOrderWhileOffiline, isReady } = useOrderDB();
+  const { saveOrder:saveOrderWhileOffiline, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
   const offlineBranchData = useSelector(
     (state: RootState) => state.branch.value,
