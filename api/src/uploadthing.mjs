@@ -13,7 +13,7 @@ export const uploadRouter = {
       return { orderId: orderID };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.error(file,"ORDERS");
+      // console.error(file,"ORDERS");
   
     }),
 };
