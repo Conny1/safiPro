@@ -44,7 +44,11 @@ const ResetPassword = () => {
           navigate("/auth");
         }, 2000);
       } else {
-        toast.error("Failed to reset password. Try again.");
+        if (resp.error && "data" in resp.error && resp.error.data) {
+          let data = resp.error.data as { message: string };
+          let message = data.message || "Try again.";
+          toast.error(message);
+        }
       }
     } catch (error) {
       console.log(error);
