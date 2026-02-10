@@ -12,7 +12,7 @@ type ResetForm = {
 
 const schema = Yup.object({
   password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
+    .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
@@ -53,11 +53,11 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center px-4">
+    <div className="flex items-center justify-center min-h-screen px-4 bg-gray-100">
       <ToastContainer />
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-sm bg-white p-6 rounded-md shadow-md space-y-4"
+        className="w-full max-w-sm p-6 space-y-4 bg-white rounded-md shadow-md"
       >
         <h2 className="text-xl font-semibold">Reset Your Password</h2>
 
@@ -66,10 +66,10 @@ const ResetPassword = () => {
             type="password"
             placeholder="New Password"
             {...register("password")}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full px-3 py-2 border rounded"
           />
           {errors.password && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="mt-1 text-sm text-red-500">
               {errors.password.message}
             </p>
           )}
@@ -80,10 +80,10 @@ const ResetPassword = () => {
             type="password"
             placeholder="Confirm Password"
             {...register("confirmPassword")}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full px-3 py-2 border rounded"
           />
           {errors.confirmPassword && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="mt-1 text-sm text-red-500">
               {errors.confirmPassword.message}
             </p>
           )}
@@ -92,7 +92,7 @@ const ResetPassword = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="w-full py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
         >
           {isLoading ? "Resetting..." : "Reset Password"}
         </button>

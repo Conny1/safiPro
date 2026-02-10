@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useCreateAccountMutation } from "../redux/apislice";
-import type { createAccount } from "../types";
+import { USER_ROLES, type createAccount } from "../types";
 import { toast } from "react-toastify";
 
 type Props = {
@@ -14,7 +14,7 @@ const schema = Yup.object({
   last_name: Yup.string().required("Last name is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
+    .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
   repeat_password: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
@@ -34,7 +34,7 @@ const Signup = ({ onSwitch }: Props) => {
 
   const onSubmit = async (data: createAccount) => {
     try {
-      const resp = await createAccount({ ...data, role: "Super Admin" });
+      const resp = await createAccount({ ...data, role:USER_ROLES.SUPER_ADMIN });
       console.log("Signup response:", resp);
       if (resp.data?.status === 200) {
         toast.success("Success..Log in to proceed.");
@@ -42,8 +42,10 @@ const Signup = ({ onSwitch }: Props) => {
           onSwitch();
         }, 4000);
       }else{
-        if( resp.error && "status" in resp.error &&  resp.error?.status === 400){
-        toast.error("Account with that email exists")
+        if( resp.error && "data" in resp.error &&  resp.error.data  ){
+          let data = resp.error.data as {message:string}
+          let message = data.message  || "Try again."
+        toast.error( message )
 
         }
       }
