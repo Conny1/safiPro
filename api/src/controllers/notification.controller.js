@@ -17,8 +17,8 @@ const createNotification = async (req, resp, next) => {
 
 const resetPasswordlink = async (req, resp, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) next(createError(401, "Invalid email account"));
+    const user = await User.findOne({ email: req.body?.email });
+    if (!user) return next(createError(401, "Invalid email account"));
     const token = jwt.sign(
       { email: user.email, _id: user._id },
       process.env.JWT_KEY,

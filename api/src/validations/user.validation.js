@@ -9,11 +9,13 @@ const createUser = {
       .valid("Super Admin", "Admin", "Branch Manager", "Staff")
       .required(),
     password: Joi.string()
-      .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
+      .min(8)
+      .max(30)
+      .pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])/)
       .required()
       .messages({
         "string.pattern.base":
-          "Password must be alphanumeric and between 3 to 30 characters.",
+          "Password must contain letters, numbers, and a special character.",
         "string.empty": "Password is required.",
       }),
     repeat_password: Joi.string()
@@ -39,11 +41,13 @@ const createStaff = {
       .valid("Super Admin", "Admin", "Branch Manager", "Staff")
       .required(),
     password: Joi.string()
-      .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
+      .min(8)
+      .max(30)
+      .pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])/)
       .required()
       .messages({
         "string.pattern.base":
-          "Password must be alphanumeric and between 3 to 30 characters.",
+          "Password must contain letters, numbers, and a special character.",
         "string.empty": "Password is required.",
       }),
     repeat_password: Joi.string()
@@ -64,16 +68,14 @@ const createStaff = {
         role: Joi.string()
           .valid("Super Admin", "Admin", "Branch Manager", "Staff")
           .required(),
-      })
+      }),
     ),
   }),
 };
 
 const login = {
   body: Joi.object().keys({
-    password: Joi.string()
-      .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
-      .required(),
+    password: Joi.string().required(),
     email: Joi.string()
       .email({
         minDomainSegments: 2,
@@ -86,8 +88,15 @@ const login = {
 const resetPassword = {
   body: Joi.object().keys({
     password: Joi.string()
-      .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
-      .required(),
+      .min(8)
+      .max(30)
+      .pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])/)
+      .required()
+      .messages({
+        "string.pattern.base":
+          "Password must contain letters, numbers, and a special character.",
+        "string.empty": "Password is required.",
+      }),
   }),
 };
 
@@ -109,7 +118,7 @@ const updateUser = {
         role: Joi.string()
           .valid("Super Admin", "Admin", "Branch Manager", "Staff")
           .required(),
-      })
+      }),
     ),
     _id: Joi.string().custom(objectId),
     role: Joi.string().valid("Super Admin", "Admin", "Branch Manager", "Staff"),
