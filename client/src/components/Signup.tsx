@@ -41,8 +41,14 @@ const Signup = ({ onSwitch }: Props) => {
         setTimeout(() => {
           onSwitch();
         }, 4000);
+      }else{
+        if( resp.error && "status" in resp.error &&  resp.error?.status === 400){
+        toast.error("Account with that email exists")
+
+        }
       }
     } catch (error) {
+  
       console.error("Signup failed:", error);
     }
   };
