@@ -5,7 +5,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 
 const addNewOrder = async (req, resp, next) => {
   try {
-    const order = await orderService.addNewOrder(req.body);
+    const order = await orderService.addNewOrder({ business_id:req.user.business_id, ...req.body});
     resp
       .status(200)
       .json({ status: 200, data: { message: "New order added" } });
@@ -34,7 +34,7 @@ const deleteOrderItem = async (req, resp, next) => {
 
 const getOrderByBranchid = async (req, resp, next) => {
   try {
-    let filter = { is_deleted: false };
+    let filter = { is_deleted: false, business_id:req.user.business_id};
 
     for (key in req.body.match_values) {
       if (req.body.match_values[key] || req.body.match_values[key] === "") {
@@ -64,7 +64,7 @@ const getOrderByBranchid = async (req, resp, next) => {
         },
       ];
     }
-  
+    
     const order = await orderService.getOrderByBranchid(filter, options);
 
     resp.status(200).json({ status: 200, data: order });

@@ -13,7 +13,7 @@ const schema = Yup.object({
   last_name: Yup.string().required("Last name is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
+    .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
   repeat_password: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
@@ -35,7 +35,7 @@ const AddNewUser = () => {
   });
 
   const onSubmit = async (
-    data: createAccount & { role: string; branch_id: string }
+    data: createAccount & { role: string; branch_id: string },
   ) => {
     try {
       const { branch_id, ...userData } = data;
@@ -50,6 +50,12 @@ const AddNewUser = () => {
         if (resp?.error && "status" in resp?.error) {
           if (resp?.error.status === 400) {
             toast.error("Email in use.");
+          } else {
+            if (resp.error && "data" in resp.error && resp.error.data) {
+              let data = resp.error.data as { message: string };
+              let message = data.message || "Try again.";
+              toast.error(message);
+            }
           }
         } else {
           toast.error("Failed to create user");

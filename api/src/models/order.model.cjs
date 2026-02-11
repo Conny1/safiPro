@@ -11,6 +11,11 @@ const OrderSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    business_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Business", // assuming you have a Branch model
+      required: true,
+    },
     branch_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Branch", // assuming you have a Branch model
@@ -90,7 +95,7 @@ const OrderSchema = new mongoose.Schema(
         {
           description: String,
           url: String,
-          id:String
+          id: String,
         },
       ],
       default: [],
