@@ -121,7 +121,7 @@ const Payments = () => {
               >
                 Pay with M-PESA
               </button>
-              <a
+              {/* <a
                 href={import.meta.env.VITE_PAYMENT_URL}
                 target="_blank"
                 className="mt-10"
@@ -129,7 +129,7 @@ const Payments = () => {
                 <button className="w-full py-2 text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50">
                   Pay with Card
                 </button>
-              </a>
+              </a> */}
             </div>
           )}
         </div>
