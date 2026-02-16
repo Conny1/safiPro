@@ -11,7 +11,7 @@ import { roles, type createAccount } from "../types";
 const schema = Yup.object({
   first_name: Yup.string().required("First name is required").trim() ,
   last_name: Yup.string().required("Last name is required").trim(),
-  email: Yup.string().email("Invalid email").required("Email is required"),
+  email: Yup.string().email("Invalid email").required("Email is required").trim(),
   password: Yup.string()
     .min(8, "Password must be at least 8 characters")
     .required("Password is required"),

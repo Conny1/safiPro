@@ -69,7 +69,7 @@ const AnalysisPage: React.FC = () => {
   if (isLoading) {
     return (
       <OfflineMode>
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="flex items-center justify-center min-h-screen  bg-gray-50">
           <div className="text-center">
             <div className="w-12 h-12 mx-auto border-b-2 border-blue-600 rounded-full animate-spin"></div>
             <p className="mt-4 text-gray-600">Loading analysis data...</p>
@@ -106,7 +106,7 @@ const AnalysisPage: React.FC = () => {
 
   return (
     <OfflineMode>
-      <div className="min-h-screen bg-gray-50 md:p-3">
+      <div className="min-h-screen p-2 bg-gray-50">
         {/* Header */}
         <div className="mb-6">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">

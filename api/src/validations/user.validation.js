@@ -3,8 +3,8 @@ const { objectId } = require("../utils");
 
 const createUser = {
   body: Joi.object().keys({
-    first_name: Joi.string().alphanum().required(),
-    last_name: Joi.string().alphanum().required(),
+    first_name: Joi.string().required().trim(),
+    last_name: Joi.string().required().trim(),
     role: Joi.string()
       .valid("Super Admin", "Admin", "Branch Manager", "Staff")
       .required(),
@@ -35,8 +35,8 @@ const createUser = {
 
 const createStaff = {
   body: Joi.object().keys({
-    first_name: Joi.string().alphanum().required(),
-    last_name: Joi.string().alphanum().required(),
+    first_name: Joi.string().required().trim(),
+    last_name: Joi.string().required().trim(),
     role: Joi.string()
       .valid("Super Admin", "Admin", "Branch Manager", "Staff")
       .required(),
@@ -102,9 +102,9 @@ const resetPassword = {
 
 const updateUser = {
   body: Joi.object().keys({
-    first_name: Joi.string().alphanum(),
+    first_name: Joi.string().trim(),
     is_deleted: Joi.boolean(),
-    last_name: Joi.string().alphanum(),
+    last_name: Joi.string().trim(),
     password: Joi.string(),
 
     email: Joi.string().email({

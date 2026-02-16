@@ -234,7 +234,7 @@ const Orders = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="p-2 space-y-6 ">
       {/* Header */}
       <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
         <div>
