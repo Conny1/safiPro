@@ -14,8 +14,8 @@ const userSchema = mongoose.Schema(
     },
     business_id: {
       type: mongoose.Schema.Types.ObjectId,
-      required:true,
-      ref:"Business"
+      required: true,
+      ref: "Business",
     },
     email: {
       type: String,
@@ -36,7 +36,10 @@ const userSchema = mongoose.Schema(
     },
     branches: [
       {
-        branch_id: mongoose.Schema.Types.ObjectId,
+        branch_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Branch",
+        },
         role: {
           type: String,
           enum: ["Admin", "Branch Manager", "Staff"],
@@ -53,7 +56,7 @@ const userSchema = mongoose.Schema(
       default: "active", /// active for the one month free trial
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 userSchema.plugin(paginate);

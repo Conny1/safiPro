@@ -57,11 +57,10 @@ const deleteBranch = async (id) => {
     $set: { is_deleted: true },
   });
 
-  await User.findByIdAndUpdate(
-    new ObjectId(branch.user_id), // The user's ID
-    {
+  await User.updateMany(
+{    business_id:new ObjectId(branch.business_id), },    {
       $pull: {
-        branches: { branch_id: new ObjectId(branch._id) }, // Match the branch_id to remove
+        branches: { branch_id: new ObjectId(id) }, // Match the branch_id to remove
       },
     }
   );

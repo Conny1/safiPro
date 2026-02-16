@@ -13,7 +13,6 @@ import {
   User,
   Settings as SettingsIcon,
   Shield,
-  Users,
   Bell,
   CreditCard,
   HelpCircle,
@@ -42,6 +41,7 @@ const Settings = () => {
     },
     { id: "billing", label: "Billing", icon: CreditCard, available: false },
   ];
+  console.log(user.branches)
 
   return (
     <OfflineMode>
@@ -187,12 +187,7 @@ const Settings = () => {
                                   Add and manage system users
                                 </p>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <Users className="w-5 h-5 text-gray-400" />
-                                <span className="text-sm text-gray-600">
-                                  {user.branches?.length || 0} active staff
-                                </span>
-                              </div>
+                         
                             </div>
                           </div>
                           <div>
