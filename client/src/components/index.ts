@@ -16,3 +16,4 @@ export { default as ExpenseForm } from "./ExpenseForm";
 export { default as OfflineMode } from "./OfflineMode";
 export { default as DateRangeFilter } from "./DateRangeFilter";
 export { default as OrderItems } from "./OrderItems";
+export { default as PermissionValidation } from "./PermissionValidation";

@@ -10,8 +10,8 @@ type Props = {
 };
 
 const schema = Yup.object({
-  first_name: Yup.string().required("First name is required"),
-  last_name: Yup.string().required("Last name is required"),
+  first_name: Yup.string().required("First name is required").trim(),
+  last_name: Yup.string().required("Last name is required").trim(),
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
     .min(8, "Password must be at least 8 characters")

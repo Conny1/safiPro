@@ -4,7 +4,13 @@ import {
   useDeleteOrderMutation,
   useGetOrderByIdQuery,
 } from "../redux/apislice";
-import { ForwardButtons, OfflineMode, OrderItems, UpdateOrder } from "../components";
+import {
+  ForwardButtons,
+  OfflineMode,
+  OrderItems,
+  PermissionValidation,
+  UpdateOrder,
+} from "../components";
 import { toast } from "react-toastify";
 import {
   ArrowLeft,
@@ -24,7 +30,6 @@ import {
   Truck,
   User,
   AlertCircle,
-
   Loader2,
 } from "lucide-react";
 import { useOrderDB } from "../hooks/useOrderDB";
@@ -96,7 +101,7 @@ const DetailItem = ({
   icon: Icon,
 }: {
   label: string;
-  value: string | number | ReactNode
+  value: string | number | ReactNode;
   icon?: React.ElementType;
 }) => (
   <div className="flex items-start justify-between py-2 border-b border-gray-100 last:border-0">
@@ -111,31 +116,28 @@ const DetailItem = ({
 );
 
 const OrderDetails = () => {
- const { isOnline } = useNetworkStatus();
-  const { getOrder:getOrderWhileOffline, isReady } = useOrderDB();
+  const { isOnline } = useNetworkStatus();
+  const { getOrder: getOrderWhileOffline, isReady } = useOrderDB();
   const [updateModal, setupdateModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { id } = useParams();
   const { data, isLoading, refetch } = useGetOrderByIdQuery(id as string);
   const [deleteOrder, { isLoading: deleteLoading }] = useDeleteOrderMutation();
   const navigate = useNavigate();
-const [order, setorder] = useState <Order> ()
+  const [order, setorder] = useState<Order>();
   useEffect(() => {
-  if(!isOnline && id){
-    console.log("workking")
-     getOrderWhileOffline(id).then(resp=>{
-      const data = resp.data
-      if(resp.status === 200){
-      setorder(data as Order)
-      }
-
-    })
-  }else{
-    setorder(data?.data)
-  }
-
-}, [isReady, isLoading, data?.data])
-
+    if (!isOnline && id) {
+      console.log("workking");
+      getOrderWhileOffline(id).then((resp) => {
+        const data = resp.data;
+        if (resp.status === 200) {
+          setorder(data as Order);
+        }
+      });
+    } else {
+      setorder(data?.data);
+    }
+  }, [isReady, isLoading, data?.data]);
 
   if (isLoading) {
     return (
@@ -154,7 +156,7 @@ const [order, setorder] = useState <Order> ()
         <AlertCircle className="w-16 h-16 mb-4 text-gray-300" />
         <h2 className="mb-2 text-xl font-semibold text-gray-900">
           Order Not Found
-        </h2> 
+        </h2>
         <p className="mb-6 text-gray-600">
           The order you're looking for doesn't exist.
         </p>
@@ -231,15 +233,13 @@ const [order, setorder] = useState <Order> ()
                         {formatDate(
                           order.createdAt ||
                             order.order_date ||
-                            new Date().toISOString()
+                            new Date().toISOString(),
                         )}
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
-
-           
             </div>
           </div>
         </div>
@@ -280,17 +280,19 @@ const [order, setorder] = useState <Order> ()
 
             {/* Order Items */}
             <OfflineMode>
-                  <InfoCard title="Order Items" icon={Package}>
-              {order.items_description && (
-                <div className="p-3 rounded-lg bg-gray-50">
-                  <p className="text-gray-700">{order.items_description}</p>
-                </div>
-              )}
-              <OrderItems initialImages={order.items || []} orderId={order._id as string } orderName={order.name as string } />
-    
-            </InfoCard>
+              <InfoCard title="Order Items" icon={Package}>
+                {order.items_description && (
+                  <div className="p-3 rounded-lg bg-gray-50">
+                    <p className="text-gray-700">{order.items_description}</p>
+                  </div>
+                )}
+                <OrderItems
+                  initialImages={order.items || []}
+                  orderId={order._id as string}
+                  orderName={order.name as string}
+                />
+              </InfoCard>
             </OfflineMode>
-        
 
             {/* Service Details */}
             <InfoCard title="Service Details" icon={Home}>
@@ -304,12 +306,14 @@ const [order, setorder] = useState <Order> ()
                 value={order.delivery_method || "Pickup"}
                 icon={Truck}
               />
-          { order.delivery_method ==="pickup"&&    <DetailItem
-                label="Pickup Date"
-                value={formatDate(order.pickup_date as string)}
-                icon={Calendar}
-              />}
-              {order.delivery_method ==="delivery" && (
+              {order.delivery_method === "pickup" && (
+                <DetailItem
+                  label="Pickup Date"
+                  value={formatDate(order.pickup_date as string)}
+                  icon={Calendar}
+                />
+              )}
+              {order.delivery_method === "delivery" && (
                 <DetailItem
                   label=" Delivery Date"
                   value={formatDate(order.pickup_date as string)}
@@ -356,9 +360,7 @@ const [order, setorder] = useState <Order> ()
                 <div className="pt-3 border-t border-gray-200">
                   <DetailItem
                     label="Total Amount"
-                    value={formatCurrency(
-                       order.amount || 0
-                    )}
+                    value={formatCurrency(order.amount || 0)}
                   />
                 </div>
               </div>
@@ -371,7 +373,7 @@ const [order, setorder] = useState <Order> ()
                 value={
                   <div className="flex items-center gap-2">
                     <StatusBadge status={order.payment_status || "pending"} />
-                  </div> 
+                  </div>
                 }
               />
               <DetailItem
@@ -415,23 +417,25 @@ const [order, setorder] = useState <Order> ()
                   phone_number={order.phone_number as string}
                   // fullWidth
                 />
-
-                <div className="pt-3 border-t border-gray-200">
-                  <button
-                    onClick={() => setShowDeleteConfirm(true)}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete Order
-                  </button>
-                </div>
+                <PermissionValidation>
+                  <div className="pt-3 border-t border-gray-200">
+                    <button
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete Order
+                    </button>
+                  </div>
+                </PermissionValidation>
               </div>
             </div>
 
             {/* Order Timeline */}
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
               <h3 className="mb-4 font-semibold text-gray-900">
-                Order Timeline <span className="text-red-600" > feature comming soon</span> 
+                Order Timeline{" "}
+                <span className="text-red-600"> feature comming soon</span>
               </h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
@@ -446,7 +450,7 @@ const [order, setorder] = useState <Order> ()
                       {formatDate(
                         order.createdAt ||
                           order.order_date ||
-                          new Date().toISOString()
+                          new Date().toISOString(),
                       )}
                     </p>
                   </div>

@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  BarChart3,
-  DollarSign,
   ShoppingCart,
   PlusCircle,
   Settings,
@@ -16,14 +14,11 @@ import {
 } from "lucide-react";
 import AddBranchModal from "../components/NewBranch";
 import { Link } from "react-router";
-import { Listbranches, OfflineMode } from "../components";
+import { Listbranches, OfflineMode, PermissionValidation } from "../components";
 import { ToastContainer } from "react-toastify";
 import {
   useFindAndFilterOrderMutation,
-  
   useGetBranchNamesByBusinessQuery,
-  
-  useGetOrderDashbardAnalysisQuery,
 } from "../redux/apislice";
 import { USER_ROLES, type Branch, type Order } from "../types";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,12 +33,14 @@ const Dashboard = () => {
   const { getOrders: getOfflineOrders, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
   const offlineBranchData = useSelector(
-    (state: RootState) => state.branch.value
+    (state: RootState) => state.branch.value,
   );
   const dispatch = useDispatch();
-  const [branchModal, setbranchModal] = useState( user.role === USER_ROLES.SUPER_ADMIN?true:false);
+  const [branchModal, setbranchModal] = useState(
+    user.role === USER_ROLES.SUPER_ADMIN ? true : false,
+  );
   const [activeBranch, setactiveBranch] = useState(
-    user.role === USER_ROLES.SUPER_ADMIN ? "" : user?.branches[0]?.branch_id
+    user.role === USER_ROLES.SUPER_ADMIN ? "" : user?.branches[0]?.branch_id,
   );
   const [lisbranchesModal, setlisbranchesModal] = useState(false);
   const [recentOrders, setrecentOrders] = useState<Order[] | []>([]);
@@ -54,9 +51,9 @@ const Dashboard = () => {
 
   const { data: allBranchesResp, refetch: refetchBranches } =
     useGetBranchNamesByBusinessQuery();
-  const [allBranches, setallBranches] = useState<Branch[] | []>(offlineBranchData || []);
-  const { data: dashboard_analysis, refetch: refetchDashboard } =
-    useGetOrderDashbardAnalysisQuery(activeBranch, { skip:!activeBranch } );
+  const [allBranches, setallBranches] = useState<Branch[] | []>(
+    offlineBranchData || [],
+  );
 
   // Status colors mapping
   const statusConfig = {
@@ -85,39 +82,6 @@ const Dashboard = () => {
       icon: AlertCircle,
     },
   };
-
-  const stats = [
-    {
-      title: "Total Orders",
-      value: dashboard_analysis?.data.total_orders || 0,
-      trend: "up",
-      icon: ShoppingCart,
-      color: "blue",
-    },
-    {
-      title: "Completed",
-      value: dashboard_analysis?.data.completed_orders || 0,
-      trend: "up",
-      icon: CheckCircle,
-      color: "green",
-    },
-    {
-      title: "Pending",
-      value: dashboard_analysis?.data.pending_orders || 0,
-      trend: "down",
-      icon: Clock,
-      color: "yellow",
-    },
-    {
-      title: "Total Revenue",
-      value: `KES ${
-        dashboard_analysis?.data.total_revenue?.toLocaleString() || "0"
-      }`,
-      trend: "up",
-      icon: DollarSign,
-      color: "purple",
-    },
-  ];
 
   const quickActions = [
     {
@@ -157,7 +121,7 @@ const Dashboard = () => {
       if (allBranchesResp.data.length > 0) {
         setallBranches(allBranchesResp.data);
         dispatch(updatebranchData(allBranchesResp.data));
-        setbranchModal(false)
+        setbranchModal(false);
       }
 
       if (
@@ -167,7 +131,7 @@ const Dashboard = () => {
         let id =
           (allBranchesResp.data[0]._id as string) || offlineBranchData[0]._id;
         setactiveBranch(id);
-        setbranchModal(false)
+        setbranchModal(false);
       }
     }
   }, [allBranchesResp]);
@@ -206,9 +170,9 @@ const Dashboard = () => {
         .then((resp) => {
           if (resp?.status === 200) {
             setrecentOrders(resp?.data.results as Order[]);
-          } 
+          }
         })
-        .catch((err) => {    
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -254,7 +218,6 @@ const Dashboard = () => {
   ];
 
   const handleRefresh = () => {
-    refetchDashboard();
     refetchBranches();
   };
 
@@ -286,8 +249,7 @@ const Dashboard = () => {
             <RefreshCw className="w-4 h-4" />
             Refresh
           </button>
-
-          {user.role === USER_ROLES.SUPER_ADMIN && (
+          <PermissionValidation>
             <div className="relative">
               <select
                 value={activeBranch}
@@ -303,40 +265,9 @@ const Dashboard = () => {
               </select>
               <Building className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
             </div>
-          )}
+          </PermissionValidation>
         </div>
       </div>
-<OfflineMode>
-        {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat, i) => {
-          const Icon = stat.icon;
-          const colors = colorClasses[stat.color as keyof typeof colorClasses];
-
-          return (
-            <div
-              key={i}
-              className={`${colors.bg} ${colors.border} border rounded-xl p-5 hover:shadow-lg transition-all duration-300`}
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    {stat.title}
-                  </p>
-                  <p className="mt-2 text-2xl font-bold text-gray-900">
-                    {stat.value}
-                  </p>
-                </div>
-                <div className={`p-3 rounded-lg ${colors.bg}`}>
-                  <Icon className={`w-6 h-6 ${colors.text}`} />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-</OfflineMode>
-
 
       {/* Recent Orders Section */}
       <div className="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
@@ -446,7 +377,7 @@ const Dashboard = () => {
                       <td className="px-6 py-4">
                         <span className="text-gray-600">
                           {new Date(
-                            item.createdAt || Date.now()
+                            item.createdAt || Date.now(),
                           ).toLocaleDateString()}
                         </span>
                       </td>
@@ -486,26 +417,46 @@ const Dashboard = () => {
         </div>
       </div>
 
-<OfflineMode>
+      <OfflineMode>
         {/* Quick Actions & Charts Row */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Quick Actions */}
-        <div className="lg:col-span-1">
-          <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-xl">
-            <h2 className="mb-6 text-xl font-semibold text-gray-900">
-              Quick Actions
-            </h2>
-            <div className="space-y-3">
-              {quickActions
-                .filter((action) => action.show !== false)
-                .map((action, i) => {
-                  const Icon = action.icon;
-                  const colors =
-                    colorClasses[action.color as keyof typeof colorClasses];
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Quick Actions */}
+          <div className="lg:col-span-1">
+            <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-xl">
+              <h2 className="mb-6 text-xl font-semibold text-gray-900">
+                Quick Actions
+              </h2>
+              <div className="space-y-3">
+                {quickActions
+                  .filter((action) => action.show !== false)
+                  .map((action, i) => {
+                    const Icon = action.icon;
+                    const colors =
+                      colorClasses[action.color as keyof typeof colorClasses];
 
-                  return action.link ? (
-                    <Link key={i} to={action.link}>
+                    return action.link ? (
+                      <Link key={i} to={action.link}>
+                        <div
+                          className={`flex items-center gap-4 p-4 ${colors.border} border rounded-lg hover:shadow-md transition-all cursor-pointer group`}
+                        >
+                          <div className={`p-3 rounded-lg ${colors.bg}`}>
+                            <Icon className={`w-5 h-5 ${colors.text}`} />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-medium text-gray-900">
+                              {action.title}
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              {action.description}
+                            </p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
+                        </div>
+                      </Link>
+                    ) : (
                       <div
+                        key={i}
+                        onClick={action.onClick}
                         className={`flex items-center gap-4 p-4 ${colors.border} border rounded-lg hover:shadow-md transition-all cursor-pointer group`}
                       >
                         <div className={`p-3 rounded-lg ${colors.bg}`}>
@@ -521,89 +472,42 @@ const Dashboard = () => {
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
                       </div>
-                    </Link>
-                  ) : (
-                    <div
-                      key={i}
-                      onClick={action.onClick}
-                      className={`flex items-center gap-4 p-4 ${colors.border} border rounded-lg hover:shadow-md transition-all cursor-pointer group`}
-                    >
-                      <div className={`p-3 rounded-lg ${colors.bg}`}>
-                        <Icon className={`w-5 h-5 ${colors.text}`} />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-medium text-gray-900">
-                          {action.title}
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          {action.description}
-                        </p>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
-        </div>
-
-        {/* Performance Chart */}
-        <div className="lg:col-span-2">
-          <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-xl">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Performance Overview
-                </h2>
-                <p className="text-gray-600">Orders and revenue trends</p>
-              </div>
-              <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg">
-                <option>Last 7 days</option>
-                <option>Last 30 days</option>
-                <option>Last 3 months</option>
-              </select>
-            </div>
-
-            {/* Chart Placeholder */}
-            <div className="flex items-center justify-center h-64 border border-gray-200 rounded-lg bg-gradient-to-br from-gray-50 to-white">
-              <div className="text-center">
-                <BarChart3 className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <p className="text-gray-600">Revenue chart coming soon</p>
-                <p className="text-sm text-gray-500">
-                  Visualize your business growth
-                </p>
+                    );
+                  })}
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Branch Summary (for Super Admin) */}
-      {user.role === USER_ROLES.SUPER_ADMIN && allBranches.length > 0 && (
-        <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-xl">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                Branch Performance
-              </h2>
-              <p className="text-gray-600">Overview across all branches</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {allBranches.slice(0, 3).map((branch) => (
-              <div
-                key={branch._id}
-                className="p-4 transition-shadow border border-gray-200 rounded-lg hover:shadow-md"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 rounded-lg bg-blue-50">
-                    <Building className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <h3 className="font-medium text-gray-900">{branch.name}</h3>
+        {/* Branch Summary (for Super Admin) */}
+        <PermissionValidation>
+          {allBranches.length > 0 && (
+            <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-xl">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Branch Performance
+                  </h2>
+                  <p className="text-gray-600">Overview across all branches</p>
                 </div>
-                <div className="space-y-2">
-                  {/* <div className="flex justify-between">
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {allBranches.slice(0, 3).map((branch) => (
+                  <div
+                    key={branch._id}
+                    className="p-4 transition-shadow border border-gray-200 rounded-lg hover:shadow-md"
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 rounded-lg bg-blue-50">
+                        <Building className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <h3 className="font-medium text-gray-900">
+                        {branch.name}
+                      </h3>
+                    </div>
+                    <div className="space-y-2">
+                      {/* <div className="flex justify-between">
                     <span className="text-sm text-gray-600">Today's Orders</span>
                     <span className="font-medium">12</span>
                   </div>
@@ -611,34 +515,32 @@ const Dashboard = () => {
                     <span className="text-sm text-gray-600">Revenue</span>
                     <span className="font-medium">KES 15,000</span>
                   </div> */}
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Status</span>
-                    <span className="inline-flex items-center gap-1 text-sm text-green-600">
-                      <CheckCircle className="w-4 h-4" />
-                      Active
-                    </span>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Status</span>
+                        <span className="inline-flex items-center gap-1 text-sm text-green-600">
+                          <CheckCircle className="w-4 h-4" />
+                          Active
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {allBranches.length > 3 && (
-            <div className="mt-6 text-center">
-              <button
-                onClick={() => setbranchModal(true)}
-                className="font-medium text-blue-600 hover:text-blue-700"
-              >
-                View All {allBranches.length} Branches
-              </button>
+              {allBranches.length > 3 && (
+                <div className="mt-6 text-center">
+                  <button
+                    onClick={() => setbranchModal(true)}
+                    className="font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    View All {allBranches.length} Branches
+                  </button>
+                </div>
+              )}
             </div>
           )}
-        </div>
-      )}
-</OfflineMode>
-
-
-
+        </PermissionValidation>
+      </OfflineMode>
     </div>
   );
 };

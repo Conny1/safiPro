@@ -7,6 +7,7 @@ const getAnalysisData = async (
   dateFilter = "thisWeek",
   customStart,
   customEnd,
+  business_id,
 ) => {
   // Build date match based on filter
   const dateMatch = buildDateMatch(dateFilter, customStart, customEnd);
@@ -18,6 +19,7 @@ const getAnalysisData = async (
         branch_id: {
           $in: branchId.map((id) => new mongoose.Types.ObjectId(id)),
         },
+        business_id: business_id,
         is_deleted: false,
         ...dateMatch,
       },
@@ -323,7 +325,6 @@ const buildDateMatch = (dateFilter, customStart, customEnd) => {
 // If you need to fetch expenses too, add this function:
 const getExpensesData = async (branchId, dateMatch, business_id) => {
   // Assuming you have an Expense model
-  console.log(business_id);
   const expenses = await Expense.aggregate([
     {
       $addFields: {
@@ -336,15 +337,9 @@ const getExpensesData = async (branchId, dateMatch, business_id) => {
     },
     {
       $match: {
-        $or: [
-          {
-            branch_id: {
-              $in: branchId.map((id) => new mongoose.Types.ObjectId(id)),
-            },
-          },
-          { branch_id: { $exists: false } },
-        ],
-
+        branch_id: {
+          $in: branchId.map((id) => new mongoose.Types.ObjectId(id)),
+        },
         business_id: business_id,
         is_deleted: false,
         dateAsDate: {
@@ -380,7 +375,7 @@ const getCompleteAnalysisData = async (
   const dateMatch = buildDateMatch(dateFilter, customStart, customEnd);
 
   const [ordersData, expensesData] = await Promise.all([
-    getAnalysisData(branchId, dateFilter, customStart, customEnd),
+    getAnalysisData(branchId, dateFilter, customStart, customEnd, business_id),
     getExpensesData(branchId, dateMatch, business_id),
   ]);
 

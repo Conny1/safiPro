@@ -11,7 +11,7 @@ const createUser = {
     password: Joi.string()
       .min(8)
       .max(30)
-      .pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])/)
+      .pattern(/^(?=.*[A-Za-z])(?=.*\d).+$/)
       .required()
       .messages({
         "string.pattern.base":
@@ -43,7 +43,7 @@ const createStaff = {
     password: Joi.string()
       .min(8)
       .max(30)
-      .pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])/)
+      .pattern(/^(?=.*[A-Za-z])(?=.*\d).+$/)
       .required()
       .messages({
         "string.pattern.base":
@@ -90,7 +90,7 @@ const resetPassword = {
     password: Joi.string()
       .min(8)
       .max(30)
-      .pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])/)
+      .pattern(/^(?=.*[A-Za-z])(?=.*\d).+$/)
       .required()
       .messages({
         "string.pattern.base":

@@ -57,12 +57,6 @@ route.delete(
   orderController.deleteOrder
 );
 
-route.get(
-  "/dashboard/:id",
-  roleValidation,
-  validate(orderValidation.getOrderById),
-  orderController.dashboardanalysis
-);
 
 route.patch(
   "/delete/item/:id",

@@ -115,60 +115,7 @@ const deleteOrder = async (id) => {
   return order;
 };
 
-const dashboardanalysis = async (id) => {
-  const data = await Order.aggregate([
-    {
-      $match: {
-        branch_id: new ObjectId(id),
-        is_deleted: false,
-      },
-    },
-    {
-      $facet: {
-        total_orders: [{ $count: "count" }],
-        completed_orders: [
-          { $match: { status: "completed" } },
-          { $count: "count" },
-        ],
-        pending_orders: [
-          { $match: { status: "pending" } },
-          { $count: "count" },
-        ],
-        total_revenue: [
-          { $match: { payment_status: "paid" } },
-          {
-            $group: {
-              _id: null,
-              total: { $sum: "$amount" },
-            },
-          },
-        ],
-      },
-    },
-    {
-      $project: {
-        total_orders: {
-          $ifNull: [{ $arrayElemAt: ["$total_orders.count", 0] }, 0],
-        },
-        pending_orders: {
-          $ifNull: [{ $arrayElemAt: ["$pending_orders.count", 0] }, 0],
-        },
-        completed_orders: {
-          $ifNull: [{ $arrayElemAt: ["$completed_orders.count", 0] }, 0],
-        },
-        total_revenue: {
-          $ifNull: [{ $arrayElemAt: ["$total_revenue.total", 0] }, 0],
-        },
-      },
-    },
-  ]);
 
-  if (!data || !data.length) {
-    throw createError(404, "No data found.");
-  }
-
-  return data[0]; // return { total_orders, completed_orders, total_revenue }
-};
 
 module.exports = {
   addNewOrder,
@@ -176,6 +123,5 @@ module.exports = {
   deleteOrder,
   getOrderByBranchid,
   getOrderByid,
-  dashboardanalysis,
   deleteOrderItem,
 };

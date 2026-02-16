@@ -17,7 +17,7 @@ const verifyTokens = (req, res, next) => {
     if (err) {
       return next(createError(401, err?.message || "Token expired"));
     }
-      const userData = await User.findOne({ _id: new ObjectId(user._id) });
+      const userData = await User.findOne({ _id: new ObjectId(user._id) , is_deleted:false});
       if (!userData) {
         throw createError(400, "Invalid.Cannot proceed");
       }

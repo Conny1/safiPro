@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router";
-import { 
-  MenuIcon, 
-  XIcon, 
+import {
+  MenuIcon,
+  XIcon,
   LayoutDashboard,
   Package,
   Settings,
@@ -24,9 +24,34 @@ import { updatebranchData } from "../redux/branchSlice";
 const Nav = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const location = useLocation()
+  const location = useLocation();
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallBtn, setShowInstallBtn] = useState(false);
   const user = useSelector((state: RootState) => state.user.value);
-  
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallBtn(true);
+    };
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    return () =>
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt,
+      );
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      console.log("User accepted the install prompt");
+    }
+    setDeferredPrompt(null);
+    setShowInstallBtn(false);
+  };
 
   const navItems = [
     {
@@ -39,22 +64,22 @@ const Nav = () => {
       label: "Orders",
       icon: Package,
     },
-        {
+    {
       value: "/expense",
       label: "Business expense",
-      icon:   DollarSign  ,
+      icon: DollarSign,
     },
-        {
+    {
       value: "/analysis",
       label: "Analysis",
-      icon:   ChartBar  ,
+      icon: ChartBar,
     },
     {
       value: "/payment",
       label: "Payments",
       icon: CreditCard,
     },
-   
+
     {
       value: "/settings",
       label: "Settings",
@@ -67,7 +92,7 @@ const Nav = () => {
 
   const logOut = async () => {
     dispatch(logout());
-    dispatch(updatebranchData([]))
+    dispatch(updatebranchData([]));
     store.dispatch({ type: "RESET_APP" });
     await persistor.purge();
     setTimeout(() => {
@@ -83,8 +108,6 @@ const Nav = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
-
-
   return (
     <>
       {/* Mobile Menu Toggle (Hamburger) - Only visible on mobile */}
@@ -94,7 +117,7 @@ const Nav = () => {
           className="p-2 bg-white rounded-lg shadow-md"
         >
           {isMobileMenuOpen ? (
-            <XIcon className="w-6 h-6 "  color="black" />
+            <XIcon className="w-6 h-6 " color="black" />
           ) : (
             <MenuIcon className="w-6 h-6 " color="black" />
           )}
@@ -102,14 +125,18 @@ const Nav = () => {
       </div>
 
       {/* Sidebar for Desktop */}
-      <div className={`
+      <div
+        className={`
         hidden lg:flex flex-col h-screen bg-white border-r border-gray-200
         fixed left-0 top-0 z-40 transition-all duration-300 ease-in-out
-        ${isSidebarCollapsed ? 'w-20' : 'w-64'}
-      `}>
+        ${isSidebarCollapsed ? "w-20" : "w-64"}
+      `}
+      >
         {/* Sidebar Header */}
         <div className="p-6 border-b border-gray-200">
-          <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
+          <div
+            className={`flex items-center gap-3 ${isSidebarCollapsed ? "justify-center" : ""}`}
+          >
             <div className="p-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-800">
               <span className="text-lg font-bold text-white">S</span>
             </div>
@@ -123,16 +150,20 @@ const Nav = () => {
         </div>
 
         {/* User Profile */}
-        <div className={`p-6 border-b border-gray-200 ${isSidebarCollapsed ? 'text-center' : ''}`}>
+        <div
+          className={`p-6 border-b border-gray-200 ${isSidebarCollapsed ? "text-center" : ""}`}
+        >
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-blue-100 to-blue-200">
               <User className="w-5 h-5 text-blue-600" />
             </div>
             {!isSidebarCollapsed && (
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-gray-900 truncate">{user.first_name || "User"}</h3>
+                <h3 className="font-medium text-gray-900 truncate">
+                  {user.first_name || "User"}
+                </h3>
                 <p className="text-xs text-gray-500 capitalize truncate">
-                 {user.role}
+                  {user.role}
                 </p>
               </div>
             )}
@@ -143,22 +174,25 @@ const Nav = () => {
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.value 
-            
+            const isActive = location.pathname === item.value;
+
             return (
               <Link
                 key={item.value}
                 to={item.value}
                 className={`
                   flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
-                  ${isActive 
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200' 
-                    : 'text-gray-700 hover:bg-gray-50'
+                  ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700 border border-blue-200"
+                      : "text-gray-700 hover:bg-gray-50"
                   }
-                  ${isSidebarCollapsed ? 'justify-center' : ''}
+                  ${isSidebarCollapsed ? "justify-center" : ""}
                 `}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-blue-600' : 'text-gray-500'}`} />
+                <Icon
+                  className={`w-5 h-5 ${isActive ? "text-blue-600" : "text-gray-500"}`}
+                />
                 {!isSidebarCollapsed && (
                   <span className="font-medium">{item.label}</span>
                 )}
@@ -196,10 +230,10 @@ const Nav = () => {
 
           {/* Logout Button */}
           <button
-            onClick={ async ()=>await logOut()}
+            onClick={async () => await logOut()}
             className={`
               flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 w-full
-              ${isSidebarCollapsed ? 'justify-center' : ''}
+              ${isSidebarCollapsed ? "justify-center" : ""}
             `}
           >
             <LogOut className="w-5 h-5" />
@@ -224,11 +258,11 @@ const Nav = () => {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           {/* Overlay */}
-          <div 
+          <div
             className="absolute inset-0 bg-black bg-opacity-50"
             onClick={toggleMobileMenu}
           />
-          
+
           {/* Mobile Sidebar */}
           <div className="absolute top-0 left-0 w-64 h-full bg-white shadow-xl">
             {/* Mobile Header */}
@@ -256,10 +290,10 @@ const Nav = () => {
                   <User className="w-5 h-5 text-blue-600" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-gray-900 truncate">{user.first_name || "User"}</h3>
-                  <p className="text-xs text-gray-500 truncate">
-                    {user.role}
-                  </p>
+                  <h3 className="font-medium text-gray-900 truncate">
+                    {user.first_name || "User"}
+                  </h3>
+                  <p className="text-xs text-gray-500 truncate">{user.role}</p>
                 </div>
               </div>
             </div>
@@ -269,7 +303,7 @@ const Nav = () => {
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.value;
-                
+
                 return (
                   <Link
                     key={item.value}
@@ -277,13 +311,16 @@ const Nav = () => {
                     onClick={toggleMobileMenu}
                     className={`
                       flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
-                      ${isActive 
-                        ? 'bg-blue-50 text-blue-700 border border-blue-200' 
-                        : 'text-gray-700 hover:bg-gray-50'
+                      ${
+                        isActive
+                          ? "bg-blue-50 text-blue-700 border border-blue-200"
+                          : "text-gray-700 hover:bg-gray-50"
                       }
                     `}
                   >
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-blue-600' : 'text-gray-500'}`} />
+                    <Icon
+                      className={`w-5 h-5 ${isActive ? "text-blue-600" : "text-gray-500"}`}
+                    />
                     <span className="font-medium">{item.label}</span>
                   </Link>
                 );
@@ -305,8 +342,21 @@ const Nav = () => {
                 <span className="font-medium">Help & Support</span>
               </button> */}
 
+              <div className="flex flex-col gap-4 mt-10 sm:flex-row sm:items-center">
+                {showInstallBtn &&( 
+                  <button
+                    onClick={handleInstallClick}
+                    className="px-8 py-3 text-base font-medium text-white transition-all rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl"
+                  >
+                    Install  App Version
+                  </button>
+                ) 
+                }
+              
+              </div>
+
               <button
-                onClick={async() => {
+                onClick={async () => {
                   toggleMobileMenu();
                   await logOut();
                 }}

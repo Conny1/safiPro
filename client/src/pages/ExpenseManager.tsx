@@ -27,7 +27,7 @@ import {
   type addExpenseType,
   USER_ROLES,
 } from "../types";
-import { ExpenseForm, OfflineMode } from "../components";
+import { ExpenseForm, OfflineMode, PermissionValidation } from "../components";
 import {
   useAddnewExpenseMutation,
   useDeleteExpenseMutation,
@@ -459,8 +459,8 @@ const ExpenseList: React.FC = () => {
               {category.label}
             </button>
           ))}
-
-          {user.branches.length > 1 && user.role === USER_ROLES.SUPER_ADMIN && (
+        <PermissionValidation>
+              {user.branches.length > 1 &&  (
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
                 Branch
@@ -479,6 +479,8 @@ const ExpenseList: React.FC = () => {
               </select>
             </div>
           )}
+        </PermissionValidation>
+      
         </div>
 
         {/* Expenses List */}
@@ -553,7 +555,8 @@ const ExpenseList: React.FC = () => {
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
-                        <button
+                        <PermissionValidation>
+                                <button
                           disabled={deleteLoading}
                           onClick={() => handleDeleteExpense(expense._id)}
                           className="p-2 text-red-600 transition-colors rounded-lg hover:bg-red-50"
@@ -565,6 +568,8 @@ const ExpenseList: React.FC = () => {
                             <Trash2 className="w-4 h-4" />
                           )}
                         </button>
+                        </PermissionValidation>
+                  
                       </div>
                     </div>
                   </div>

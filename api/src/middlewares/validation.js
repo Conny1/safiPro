@@ -61,8 +61,8 @@ const ROUTE_PERMISSIONS = {
   [USER_ROLES.STAFF]: [
     { path: ROUTES.ORDER, methods: ["GET", "POST", "PUT", "PATCH"] },
     { path: ROUTES.STAFF, methods: ["PUT"] },
-    { path: ROUTES.EXPENSE, methods: ["GET", "PUT", "DELETE", "POST"] },
-    { path: ROUTES.ANALYSIS, methods: ["GET", "PUT", "DELETE", "POST"] },
+    { path: ROUTES.EXPENSE, methods: ["GET", "PUT", "POST"] },
+    { path: ROUTES.ANALYSIS, methods: ["GET", "POST"] },
   ],
 };
 

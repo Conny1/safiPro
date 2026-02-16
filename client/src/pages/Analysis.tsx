@@ -10,33 +10,41 @@ import {
   ShoppingBag,
   Smartphone,
   AlertCircle,
+  Building,
 } from "lucide-react";
 
-import { USER_ROLES, type DateFilterType, type FilterState, type OrderStatus } from "../types";
+import {
+  USER_ROLES,
+  type DateFilterType,
+  type FilterState,
+  type OrderStatus,
+} from "../types";
 import DateRangeFilter from "../components/DateRangeFilter";
 import { useGetcompleteAnalysisQuery } from "../redux/apislice";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
-import { OfflineMode } from "../components";
+import { OfflineMode, PermissionValidation } from "../components";
 
 const AnalysisPage: React.FC = () => {
   const [filter, setFilter] = useState<FilterState>({
     dateFilter: "thisMonth",
   });
-
+  const [branchFilter, setBranchFilter] = useState("all");
   const branches = useSelector((state: RootState) => state.branch.value);
-  const user = useSelector((state:RootState)=>state.user.value)
-  const branchIds = useMemo(
-    () => branches.map((br) => br._id).join(","),
-    [branches],
-  );
+  const user = useSelector((state: RootState) => state.user.value);
+  const branchIds = useMemo(() => {
+    if (branchFilter === "all") {
+      return branches.map((br) => br._id).join(",");
+    } else {
+      return branchFilter
+    }
+  }, [branches, branchFilter]);
 
   const queryParams = useMemo(
     () =>
       `dateFilter=${filter.dateFilter}&branchId=${branchIds}&customStart=${filter.customStart}&customEnd=${filter.customEnd}`,
-    [filter.dateFilter, filter.customStart, filter.customEnd, branchIds],
+    [filter.dateFilter, filter.customStart, filter.customEnd, branchIds,],
   );
-
   const { data: completedData, isLoading } =
     useGetcompleteAnalysisQuery(queryParams);
   const analysisData = useMemo(
@@ -105,7 +113,10 @@ const AnalysisPage: React.FC = () => {
             <div>
               <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-800 md:text-3xl">
                 <FileText className="w-8 h-8 text-blue-600" />
-                Analysis & Reports for  { user.role === USER_ROLES.SUPER_ADMIN?"all branches":"this branch" } 
+                Analysis & Reports for{" "}
+                {user.role === USER_ROLES.SUPER_ADMIN
+                  ? branchFilter === "all"? "all branches":branches.find(item=>item._id === branchFilter)?.name
+                  : "this branch"}
               </h1>
               <p className="mt-1 text-gray-600">
                 Business performance analytics for your laundry
@@ -113,6 +124,23 @@ const AnalysisPage: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-3">
+              <PermissionValidation>
+                <div className="relative">
+                  <select
+                    value={ branchFilter }
+                    onChange={(e) => setBranchFilter(e.target.value)}
+                    className="pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+                  >
+                    <option value="all">All Branches</option>
+                    {branches.map((b) => (
+                      <option key={b._id} value={b._id}>
+                        {b.name}
+                      </option>
+                    ))}
+                  </select>
+                  <Building className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+                </div>
+              </PermissionValidation>
               {/* <button
               className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-green-600 rounded-lg shadow-sm hover:bg-green-700"
             >

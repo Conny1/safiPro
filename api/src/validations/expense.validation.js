@@ -4,12 +4,12 @@ const { objectId } = require("../utils");
 const addNewExpense = {
   body: Joi.object().keys({
     description: Joi.string().required(),
-    branch_id:Joi.string().custom(objectId).required(),
+    branch_id: Joi.string().custom(objectId).required(),
     amount: Joi.number().required(),
     date: Joi.string().required(),
     category: Joi.string().required(),
     paymentMethod: Joi.string().required(),
-    notes:Joi.string().allow(null, "")
+    notes: Joi.string().allow(null, ""),
   }),
 };
 
@@ -31,12 +31,13 @@ const getExpenseByid = {
 
 const updateExpense = {
   body: Joi.object().keys({
-        description: Joi.string(),
+    description: Joi.string(),
+    branch_id: Joi.string().custom(objectId),
     amount: Joi.number(),
     date: Joi.string(),
     category: Joi.string(),
     paymentMethod: Joi.string(),
-    notes:Joi.string().allow(null, ""),
+    notes: Joi.string().allow(null, ""),
     business_id: Joi.string().custom(objectId),
     _id: Joi.string().custom(objectId),
     __v: Joi.number().optional(),
@@ -52,8 +53,6 @@ const deleteExpense = {
     id: Joi.string().custom(objectId).required(),
   }),
 };
-
-
 
 module.exports = {
   addNewExpense,

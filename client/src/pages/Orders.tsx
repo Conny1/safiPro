@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AddOrder } from "../components";
+import { AddOrder, PermissionValidation } from "../components";
 import { Link } from "react-router";
 import { USER_ROLES, type Order, type pagination } from "../types";
 import { useFindAndFilterOrderMutation } from "../redux/apislice";
@@ -363,9 +363,9 @@ const Orders = () => {
                   : `${paginationdata.totalResults} total orders`}
               </p>
             </div>
-
-
-            {user.branches.length > 1 && user.role === USER_ROLES.SUPER_ADMIN && (
+         
+            <PermissionValidation>
+                 {user.branches.length > 1 && (
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-700">
                   Branch
@@ -384,6 +384,8 @@ const Orders = () => {
                 </select>
               </div>
             )}
+            </PermissionValidation>
+         
           </div>
         </div>
 

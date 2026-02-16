@@ -255,22 +255,6 @@ export const laundryApi = createApi({
       providesTags: ["Order"],
     }),
 
-    getOrderDashbardAnalysis: build.query<
-      {
-        status: Number;
-        data: {
-          total_orders: number;
-          completed_orders: number;
-          total_revenue: number;
-          pending_orders: number;
-        };
-      },
-      string
-    >({
-      query: (id) => `/admin/orders/dashboard/${id}`,
-      providesTags: ["Order"],
-    }),
-
     findAndFilterOrder: build.mutation<
       {
         status: Number;
@@ -437,7 +421,6 @@ export const {
   useDeleteUserMutation,
   useFindAndFilterPaymentMutation,
   useMpesaPaymentMutation,
-  useGetOrderDashbardAnalysisQuery,
   useSendResetLinkEmailMutation,
   useResetPasswordMutation,
   // expense

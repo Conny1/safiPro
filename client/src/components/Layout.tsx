@@ -101,7 +101,7 @@ const Layout = () => {
         lg:pl-64 /* Full sidebar width */
       `}
       >
-        <div className="p-6">
+        <div className="sm:p-6">
           <Outlet />
         </div>
       </div>

@@ -11,6 +11,7 @@ const getCompleteAnalysisData = async (req, res, next) => {
     } else {
       branches_id.push(...branchId.split(","));
     }
+    
     const data = await analysisService.getCompleteAnalysisData(
       branches_id,
       dateFilter || "thisWeek",

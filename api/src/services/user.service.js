@@ -57,7 +57,7 @@ const adminCreateEmployee = async (body) => {
 };
 
 const login = async (body) => {
-  const user = await User.findOne({ email: body.email });
+  const user = await User.findOne({ email: body.email, is_deleted:false });
   if (!user) {
     throw createError(400, "Email with that account does not exist.");
   }
