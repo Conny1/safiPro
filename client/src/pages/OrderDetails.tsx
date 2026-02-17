@@ -410,7 +410,7 @@ const OrderDetails = () => {
                   }, your laundry order #${order.order_no} is ${
                     order.status
                   }. ${
-                    order.status === "completed"
+                    order.status === "ready"
                       ? "Ready for collection!"
                       : "Still in progress."
                   }`}
