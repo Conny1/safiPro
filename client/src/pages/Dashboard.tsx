@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ShoppingCart,
   PlusCircle,
@@ -17,10 +17,10 @@ import { Link } from "react-router";
 import { Listbranches, OfflineMode, PermissionValidation } from "../components";
 import { ToastContainer } from "react-toastify";
 import {
-  useFindAndFilterOrderMutation,
+  useFindAndFilterOrderQuery,
   useGetBranchNamesByBusinessQuery,
 } from "../redux/apislice";
-import { USER_ROLES, type Branch, type Order } from "../types";
+import { USER_ROLES, type Order } from "../types";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import useNetworkStatus from "../hooks/useNetworkStatus";
@@ -43,17 +43,47 @@ const Dashboard = () => {
     user.role === USER_ROLES.SUPER_ADMIN ? "" : user?.branches[0]?.branch_id,
   );
   const [lisbranchesModal, setlisbranchesModal] = useState(false);
-  const [recentOrders, setrecentOrders] = useState<Order[] | []>([]);
   const [statusFilter, setStatusFilter] = useState("all");
+  const filters = useMemo(() => {
+    const filters: any = {
+      match_values: {
+        branch_id: activeBranch,
+      },
+      sortBy: "_id:-1",
+      limit: 10,
+      page: 1,
+    };
 
-  const [findAndFilterOrder, { isLoading: findloading }] =
-    useFindAndFilterOrderMutation();
+    if (statusFilter !== "all") {
+      filters.match_values.status = statusFilter;
+    }
+    return filters;
+  }, [statusFilter, activeBranch]);
+  const { data: orderResp, isLoading: findloading } =
+    useFindAndFilterOrderQuery(filters);
 
   const { data: allBranchesResp, refetch: refetchBranches } =
     useGetBranchNamesByBusinessQuery();
-  const [allBranches, setallBranches] = useState<Branch[] | []>(
-    offlineBranchData || [],
-  );
+
+  const allBranches = useMemo(() => {
+    if (allBranchesResp && "data" in allBranchesResp) {
+      if (allBranchesResp.data.length > 0) {
+        dispatch(updatebranchData(allBranchesResp.data));
+        setbranchModal(false);
+      }
+
+      if (
+        !activeBranch &&
+        (allBranchesResp.data.length > 0 || offlineBranchData.length > 0)
+      ) {
+        let id =
+          (allBranchesResp.data[0]._id as string) || offlineBranchData[0]._id;
+        setactiveBranch(id);
+        setbranchModal(false);
+      }
+    }
+    return allBranchesResp?.data || offlineBranchData;
+  }, [allBranchesResp?.data]);
 
   // Status colors mapping
   const statusConfig = {
@@ -116,67 +146,26 @@ const Dashboard = () => {
     },
   ];
 
-  useEffect(() => {
-    if (allBranchesResp && "data" in allBranchesResp) {
-      if (allBranchesResp.data.length > 0) {
-        setallBranches(allBranchesResp.data);
-        dispatch(updatebranchData(allBranchesResp.data));
-        setbranchModal(false);
-      }
-
-      if (
-        !activeBranch &&
-        (allBranchesResp.data.length > 0 || offlineBranchData.length > 0)
-      ) {
-        let id =
-          (allBranchesResp.data[0]._id as string) || offlineBranchData[0]._id;
-        setactiveBranch(id);
-        setbranchModal(false);
-      }
-    }
-  }, [allBranchesResp]);
-
-  useEffect(() => {
-    if (!activeBranch) return;
-
-    const filters: any = {
-      match_values: {
-        branch_id: activeBranch,
-      },
-      sortBy: "_id:-1",
-      limit: 10,
-      page: 1,
-    };
-
-    if (statusFilter !== "all") {
-      filters.match_values.status = statusFilter;
-    }
+  const recentOrders = useMemo(() => {
     if (isOnline) {
-      findAndFilterOrder(filters)
-        .then((resp) => {
-          if (resp.data?.status === 200) {
-            const orders = resp.data.data.results;
-
-            setrecentOrders(orders);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+      if (orderResp?.status === 200) {
+        const orders = orderResp.data.results;
+        return orders || [];
+      }else{
+        return []
+      }
     } else {
-      console.log("offline mode");
-      // while offline fetch local data
+      let result: Order[] = [];
       getOfflineOrders(filters)
-        .then((resp) => {
-          if (resp?.status === 200) {
-            setrecentOrders(resp?.data.results as Order[]);
-          }
+        .then((data) => {
+          result = (data?.data.results as Order[]) || [];
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          result = [];
         });
+      return result;
     }
-  }, [activeBranch, statusFilter, isReady]);
+  }, [orderResp?.data.results, isReady]);
 
   const colorClasses = {
     blue: {
@@ -220,7 +209,7 @@ const Dashboard = () => {
   const handleRefresh = () => {
     refetchBranches();
   };
-
+  
   return (
     <div className="min-h-screen p-2 space-y-8 bg-gray-50">
       <ToastContainer />
@@ -257,7 +246,7 @@ const Dashboard = () => {
                 className="pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
               >
                 <option value="">Select Branch</option>
-                {allBranches.map((b) => (
+                {allBranches?.map((b) => (
                   <option key={b._id} value={b._id}>
                     {b.name}
                   </option>
@@ -306,7 +295,7 @@ const Dashboard = () => {
               <div className="inline-block w-8 h-8 border-b-2 border-blue-600 rounded-full animate-spin"></div>
               <p className="mt-2 text-gray-600">Loading orders...</p>
             </div>
-          ) : recentOrders.length > 0 ? (
+          ) : recentOrders?.length > 0 ? (
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
@@ -331,7 +320,7 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {recentOrders.map((item) => {
+                {recentOrders?.map((item) => {
                   const status =
                     statusConfig[item.status as keyof typeof statusConfig] ||
                     statusConfig.pending;
@@ -407,7 +396,7 @@ const Dashboard = () => {
 
         <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
           <p className="text-sm text-gray-600">
-            Showing {recentOrders.length} most recent orders
+            Showing {recentOrders?.length} most recent orders
           </p>
           <Link to="/order">
             <button className="font-medium text-blue-600 hover:text-blue-700">

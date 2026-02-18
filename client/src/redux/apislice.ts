@@ -30,7 +30,7 @@ export const laundryApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["User", "Order", "Branch", "Expense", "Staff"],
+  tagTypes: ["User", "Order", "Branch", "Expense", "Staff", "Orders"],
   endpoints: (build) => ({
     createAccount: build.mutation<
       {
@@ -217,7 +217,7 @@ export const laundryApi = createApi({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["User", "Orders"],
     }),
 
     updateOrder: build.mutation<
@@ -232,7 +232,7 @@ export const laundryApi = createApi({
         method: "PUT",
         body,
       }),
-      invalidatesTags: ["Order"],
+      invalidatesTags: ["Order", "Orders"],
     }),
 
     deleteOrderItem: build.mutation<
@@ -255,7 +255,7 @@ export const laundryApi = createApi({
       providesTags: ["Order"],
     }),
 
-    findAndFilterOrder: build.mutation<
+    findAndFilterOrder: build.query<
       {
         status: Number;
         data: { results: Order[] } & pagination;
@@ -267,6 +267,7 @@ export const laundryApi = createApi({
         method: "POST",
         body,
       }),
+      providesTags:["Orders"]
     }),
 
     deleteOrder: build.mutation<
@@ -279,7 +280,7 @@ export const laundryApi = createApi({
         url: `/admin/orders/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["User", "Orders"],
     }),
 
     // PAYMENTS
@@ -408,7 +409,7 @@ export const {
   useUpdateBranchMutation,
   // ORDERS
   useCreateNewOrderMutation,
-  useFindAndFilterOrderMutation,
+  useFindAndFilterOrderQuery,
   useDeleteOrderItemMutation,
   useGetOrderByIdQuery,
   useUpdateOrderMutation,

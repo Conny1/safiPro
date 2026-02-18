@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import {  useMemo, useState } from "react";
 import { AddOrder, PermissionValidation } from "../components";
 import { Link } from "react-router";
 import { USER_ROLES, type Order, type pagination } from "../types";
-import { useFindAndFilterOrderMutation } from "../redux/apislice";
+import { useFindAndFilterOrderQuery } from "../redux/apislice";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import {
@@ -34,11 +34,10 @@ import { useOrderDB } from "../hooks/useOrderDB";
 const Orders = () => {
   // check connection
   const { isOnline } = useNetworkStatus();
-  const { getOrders:getOfflineOrders, isReady } = useOrderDB();
+  const { getOrders: getOfflineOrders, isReady } = useOrderDB();
   const user = useSelector((state: RootState) => state.user.value);
   const branches = useSelector((state: RootState) => state.branch.value);
   const [addModal, setaddModal] = useState(false);
-  const [orders, setorders] = useState<Order[] | []>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
@@ -53,10 +52,7 @@ const Orders = () => {
     totalResults: 0,
   });
 
-  const [findAndFilterOrder, { isLoading: fetchloading }] =
-    useFindAndFilterOrderMutation();
-
-  const fetchOrders = () => {
+  const filters = useMemo(() => {
     const filters: any = {
       match_values: {},
       sortBy: "_id:-1",
@@ -66,8 +62,9 @@ const Orders = () => {
     };
 
     if (user.role !== USER_ROLES.SUPER_ADMIN) {
-      filters.match_values.branch_id =  user.branches.map((val) => val?.branch_id)
-      
+      filters.match_values.branch_id = user.branches.map(
+        (val) => val?.branch_id,
+      );
     }
 
     if (statusFilter !== "all") {
@@ -98,60 +95,57 @@ const Orders = () => {
     if (branchFilter !== "all" && user.branches.length > 1) {
       filters.match_values.branch_id = branchFilter;
     }
-    // confirm connection B4 fetching The data.
+    return filters;
+  }, [
+    statusFilter,
+    branchFilter,
+    dateFilter,
+    searchTerm,
+    paginationdata.page,
+    paginationdata.limit,
+  ]);
+
+  const {
+    data: orderResp,
+    isLoading: fetchloading,
+    refetch,
+  } = useFindAndFilterOrderQuery(filters);
+
+  const orders: Order[] = useMemo(() => {
     if (isOnline) {
-      console.log("online mode");
-      findAndFilterOrder(filters)
-        .then((resp) => {
-          if (resp.data?.status === 200) {
-            setorders(resp.data.data.results);
-            setpaginationdata({
-              page: resp.data.data.page || 1,
-              limit: resp.data.data.limit || 10,
-              totalPages: resp.data.data.totalPages || 0,
-              totalResults: resp.data.data.totalResults || 0,
-            });
-          } else {
-            setorders([]);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
+      if (orderResp && orderResp.status === 200) {
+        setpaginationdata({
+          page: orderResp.data.page || 1,
+          limit: orderResp.data.limit || 10,
+          totalPages: orderResp.data.totalPages || 0,
+          totalResults: orderResp.data.totalResults || 0,
         });
+        return orderResp.data.results || [];
+      }else {
+        return []
+      }
     } else {
-      console.log("offline mode");
-      // while offline fetch local data
+      let result: Order[] = [];
       getOfflineOrders(filters)
         .then((resp) => {
           if (resp?.status === 200) {
-            setorders(resp?.data.results as Order[]);
+            result = resp?.data.results as Order[];
             setpaginationdata({
               page: resp.data.page || 1,
               limit: resp.data.limit || 10,
               totalPages: resp.data.totalPages || 0,
               totalResults: resp.data.totalResults || 0,
             });
-          } else {
-            setorders([]);
+          }else{
+            return []
           }
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          result = [];
         });
+      return result;
     }
-  };
-
-  useEffect(() => {
-    fetchOrders();
-  }, [
-    paginationdata.page,
-    paginationdata.limit,
-    statusFilter,
-    dateFilter,
-    branchFilter,
-    searchTerm,
-    isReady,
-  ]);
+  }, [orderResp?.data.results, isReady]);
 
   const statusConfig = {
     completed: {
@@ -195,10 +189,10 @@ const Orders = () => {
   };
 
   const handleSelectAll = () => {
-    if (selectedOrders.length === orders.length) {
+    if (selectedOrders.length === orders?.length) {
       setSelectedOrders([]);
     } else {
-      setSelectedOrders(orders.map((order) => order._id as string));
+      setSelectedOrders(orders?.map((order) => order._id as string));
     }
   };
 
@@ -244,7 +238,7 @@ const Orders = () => {
 
         <div className="flex flex-wrap gap-3">
           <button
-            onClick={fetchOrders}
+            onClick={refetch}
             className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             <RefreshCw className="w-4 h-4" />
@@ -344,7 +338,6 @@ const Orders = () => {
                 <option value="month">Last 30 Days</option>
               </select>
             </div>
-
           </div>
         )}
       </div>
@@ -363,29 +356,28 @@ const Orders = () => {
                   : `${paginationdata.totalResults} total orders`}
               </p>
             </div>
-         
+
             <PermissionValidation>
-                 {user.branches.length > 1 && (
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Branch
-                </label>
-                <select
-                  value={branchFilter}
-                  onChange={(e) => setBranchFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="all">All Branches</option>
-                  {branches.map((branch) => (
-                    <option key={branch._id} value={branch._id}>
-                      {branch.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
+              {user.branches.length > 1 && (
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-700">
+                    Branch
+                  </label>
+                  <select
+                    value={branchFilter}
+                    onChange={(e) => setBranchFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="all">All Branches</option>
+                    {branches.map((branch) => (
+                      <option key={branch._id} value={branch._id}>
+                        {branch.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </PermissionValidation>
-         
           </div>
         </div>
 
@@ -620,6 +612,7 @@ const Orders = () => {
               }
               className="px-3 py-2 text-sm border border-gray-300 rounded-lg"
             >
+              
               <option value="10">10 per page</option>
               <option value="25">25 per page</option>
               <option value="50">50 per page</option>
@@ -636,7 +629,7 @@ const Orders = () => {
             <AddOrder
               setaddModal={setaddModal}
               onSuccess={() => {
-                fetchOrders();
+                // refetch();
               }}
             />
           </div>
