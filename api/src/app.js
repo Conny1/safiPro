@@ -14,7 +14,7 @@ app.use(express.json());
 const allowedOrigins = [
   process.env.CLIENT_URL,
   process.env.PAYSTACK_BASE_URL,
-  "http://localhost:4173",
+  "http://localhost:5173",
 ];
 
 app.use(
